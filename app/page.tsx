@@ -88,7 +88,7 @@ export default function Home() {
           <div className="flex items-center marquee whitespace-nowrap">
             {[...Array(2)].flatMap(() =>
               ["Cursor", "Bolt", "Replit", "Lovable", "v0", "Windsurf", "Claude", "ChatGPT", "Vercel", "Supabase", "Next.js", "React"].map((t, i) => (
-                <span key={`${t}-${i}`} className="mx-10 h text-[13px] font-semibold text-black/[0.08] uppercase tracking-[0.15em]">{t}</span>
+                <span key={`${t}-${i}`} className="mx-10 h text-[13px] font-semibold text-black/[0.18] uppercase tracking-[0.15em]">{t}</span>
               ))
             )}
           </div>
