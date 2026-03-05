@@ -6,14 +6,14 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space" });
 
 export const metadata: Metadata = {
-  title: "SampleThis — Real humans test your app in hours",
+  title: "Flinchify — Real humans test your app in hours",
   description: "Post a test job, set your budget, and real humans matched to your audience will test your app. Screen recordings, bug reports, honest feedback.",
-  metadataBase: new URL("https://SampleThis.dev"),
+  metadataBase: new URL("https://Flinchify.dev"),
   openGraph: {
-    title: "SampleThis — Real humans test your app in hours",
+    title: "Flinchify — Real humans test your app in hours",
     description: "Post a test job. Set your budget. Matched humans test your app. Results in hours.",
     type: "website",
-    siteName: "SampleThis",
+    siteName: "Flinchify",
   },
   twitter: { card: "summary_large_image" },
   keywords: ["user testing", "app testing", "beta testing", "QA testing", "human testers", "vibe coding", "indie dev"],
@@ -29,3 +29,4 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
+

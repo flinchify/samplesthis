@@ -48,3 +48,4 @@ export default function LiveCounter({ size = "sm" }: { size?: "sm" | "lg" }) {
     </div>
   );
 }
+

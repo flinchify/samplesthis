@@ -13,7 +13,7 @@ export default function TermsPage() {
           <div className="space-y-8 text-[14px] text-[var(--text-muted)] leading-relaxed">
             <section>
               <h2 className="text-[16px] font-semibold text-white mb-2">1. Service Description</h2>
-              <p>SampleThis is a marketplace connecting businesses that need user testing with real human testers. We facilitate the matching, payment, and delivery of testing results.</p>
+              <p>Flinchify is a marketplace connecting businesses that need user testing with real human testers. We facilitate the matching, payment, and delivery of testing results.</p>
             </section>
 
             <section>
@@ -43,7 +43,7 @@ export default function TermsPage() {
 
             <section>
               <h2 className="text-[16px] font-semibold text-white mb-2">7. Limitation of Liability</h2>
-              <p>SampleThis provides a marketplace service. We are not responsible for the quality of apps submitted for testing or the completeness of tester feedback beyond our verification processes. Our liability is limited to the amount paid for the specific service.</p>
+              <p>Flinchify provides a marketplace service. We are not responsible for the quality of apps submitted for testing or the completeness of tester feedback beyond our verification processes. Our liability is limited to the amount paid for the specific service.</p>
             </section>
 
             <section>
@@ -58,7 +58,7 @@ export default function TermsPage() {
 
             <section>
               <h2 className="text-[16px] font-semibold text-white mb-2">10. Contact</h2>
-              <p>For questions about these terms: hello@SampleThis.dev</p>
+              <p>For questions about these terms: hello@Flinchify.dev</p>
             </section>
           </div>
         </div>
@@ -67,3 +67,4 @@ export default function TermsPage() {
     </>
   );
 }
+

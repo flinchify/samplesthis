@@ -46,3 +46,4 @@ export async function migrate() {
 
   return { success: true, tables: ["testers", "orders", "waitlist"] };
 }
+

@@ -8,7 +8,7 @@ export default function AboutPage() {
       <Nav />
       <main className="pt-16 min-h-screen">
         <div className="max-w-2xl mx-auto px-5 py-16 md:py-24">
-          <h1 className="text-3xl md:text-[3rem] font-bold tracking-tight mb-6">About SampleThis</h1>
+          <h1 className="text-3xl md:text-[3rem] font-bold tracking-tight mb-6">About Flinchify</h1>
 
           <div className="space-y-6 text-[15px] text-[var(--text-muted)] leading-relaxed">
             <p>
@@ -18,7 +18,7 @@ export default function AboutPage() {
               The existing testing platforms were built for enterprise. $30K annual contracts. Weeks of setup. Research panels designed for Fortune 500 UX teams. That doesn&apos;t work when you shipped your app at 2am and want feedback before you share it tomorrow.
             </p>
             <p>
-              SampleThis exists to close that gap. Submit your URL, describe who your app is for, and get real humans — matched to your target audience — testing it within hours. Screen recordings, bug reports, honest feedback. No subscription, no minimum spend.
+              Flinchify exists to close that gap. Submit your URL, describe who your app is for, and get real humans — matched to your target audience — testing it within hours. Screen recordings, bug reports, honest feedback. No subscription, no minimum spend.
             </p>
             <p>
               On the other side, anyone can become a tester. You don&apos;t need QA experience. You just need to be a real human who fits a particular audience. If you&apos;re a gym-goer, you test fitness apps. If you&apos;re a crypto trader, you test trading tools. You get paid to try apps that are relevant to your life.
@@ -41,3 +41,4 @@ export default function AboutPage() {
     </>
   );
 }
+
