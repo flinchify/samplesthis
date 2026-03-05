@@ -30,14 +30,18 @@ export async function ensureTables() {
       app_type VARCHAR(50),
       description TEXT,
       target_audience TEXT,
-      plan VARCHAR(30) NOT NULL,
+      plan VARCHAR(30) NOT NULL DEFAULT 'custom',
       testers_count INTEGER NOT NULL,
       price_cents INTEGER NOT NULL,
-      status VARCHAR(20) DEFAULT 'pending',
+      price_per_tester_cents INTEGER,
+      status VARCHAR(20) DEFAULT 'pending_payment',
       turnaround VARCHAR(20),
       stripe_session_id VARCHAR(255),
       created_at TIMESTAMP DEFAULT NOW()
     )`;
+    // Add column if upgrading from old schema
+    await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS price_per_tester_cents INTEGER`;
+    await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'pending_payment'`;
     await sql`CREATE TABLE IF NOT EXISTS waitlist (
       id SERIAL PRIMARY KEY,
       email VARCHAR(255) UNIQUE NOT NULL,
