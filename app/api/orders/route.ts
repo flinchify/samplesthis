@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSql } from "@/lib/db";
+import { ensureTables } from "@/lib/schema";
 
 const PLANS: Record<string, { testers: number; price: number; turnaround: string }> = {
   quick: { testers: 3, price: 2900, turnaround: "4 hours" },
@@ -9,6 +10,7 @@ const PLANS: Record<string, { testers: number; price: number; turnaround: string
 
 export async function POST(req: NextRequest) {
   try {
+    await ensureTables();
     const body = await req.json();
     const { email, company, app_url, app_type, description, target_audience, plan } = body;
 
@@ -50,4 +52,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
-

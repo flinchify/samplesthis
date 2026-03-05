@@ -18,13 +18,8 @@ export default function SubmitPage() {
   const [done, setDone] = useState(false);
   const [error, setError] = useState("");
   const [form, setForm] = useState({
-    email: "",
-    company: "",
-    app_url: "",
-    app_type: "",
-    description: "",
-    target_audience: "",
-    plan: "full",
+    email: "", company: "", app_url: "", app_type: "",
+    description: "", target_audience: "", plan: "full",
   });
 
   const selectedPlan = PLANS.find((p) => p.id === form.plan)!;
@@ -55,21 +50,21 @@ export default function SubmitPage() {
         <div className="max-w-xl mx-auto px-5 py-16 md:py-24">
 
           {done ? (
-            <div className="text-center reveal-in">
-              <div className="w-16 h-16 rounded-2xl bg-[var(--accent)]/10 flex items-center justify-center mx-auto mb-6">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#6C5CE7" strokeWidth="2"><polyline points="20 6 9 17 4 12" /></svg>
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-2xl grad-warm-subtle border border-orange-200 flex items-center justify-center mx-auto mb-6">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#F97316" strokeWidth="2"><polyline points="20 6 9 17 4 12" /></svg>
               </div>
-              <h1 className="text-2xl font-bold mb-3">Order received.</h1>
+              <h1 className="h text-2xl font-bold mb-3 text-[var(--text)]">Order received.</h1>
               <p className="text-[15px] text-[var(--text-muted)] mb-2">
                 We&apos;re matching testers to your audience now.
               </p>
               <p className="text-[15px] text-[var(--text-muted)] mb-6">
-                Expect results in your inbox within <span className="text-white font-medium">{selectedPlan.time}</span>.
+                Expect results in your inbox within <span className="text-[var(--text)] font-medium">{selectedPlan.time}</span>.
               </p>
-              <div className="card p-5 text-left">
+              <div className="card-light p-5 text-left">
                 <div className="flex justify-between items-center mb-3">
-                  <span className="text-[14px] font-medium">{selectedPlan.name}</span>
-                  <span className="text-[14px] font-bold">${selectedPlan.price}</span>
+                  <span className="text-[14px] font-medium text-[var(--text)]">{selectedPlan.name}</span>
+                  <span className="h text-[14px] font-bold grad-warm">${selectedPlan.price}</span>
                 </div>
                 <div className="text-[12px] text-[var(--text-muted)] space-y-1">
                   <p>{selectedPlan.testers} matched testers</p>
@@ -81,7 +76,7 @@ export default function SubmitPage() {
           ) : (
             <>
               <div className="text-center mb-10">
-                <h1 className="text-2xl md:text-3xl font-bold mb-2">Get your app tested</h1>
+                <h1 className="h text-2xl md:text-3xl font-bold mb-2 text-[var(--text)]">Get your app tested</h1>
                 <p className="text-[15px] text-[var(--text-muted)]">
                   Real humans, matched to your audience, results in hours.
                 </p>
@@ -90,23 +85,18 @@ export default function SubmitPage() {
               {/* Progress */}
               <div className="flex items-center gap-2 mb-8">
                 {[1, 2, 3].map((s) => (
-                  <div key={s} className="flex-1 h-1 rounded-full overflow-hidden bg-[var(--card)]">
-                    <div className={`h-full rounded-full transition-all duration-500 ${step >= s ? "bg-[var(--accent)] w-full" : "w-0"}`} />
+                  <div key={s} className="flex-1 h-1.5 rounded-full overflow-hidden bg-black/[0.04]">
+                    <div className={`h-full rounded-full transition-all duration-500 ${step >= s ? "grad-warm-bg w-full" : "w-0"}`} />
                   </div>
                 ))}
               </div>
 
               {/* Step 1: Your app */}
               {step === 1 && (
-                <div className="space-y-4 reveal-up">
+                <div className="space-y-4">
                   <div>
                     <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-1.5">App URL</label>
-                    <input
-                      className="input"
-                      placeholder="https://your-app.vercel.app"
-                      value={form.app_url}
-                      onChange={(e) => setForm({ ...form, app_url: e.target.value })}
-                    />
+                    <input className="input" placeholder="https://your-app.vercel.app" value={form.app_url} onChange={(e) => setForm({ ...form, app_url: e.target.value })} />
                   </div>
                   <div>
                     <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-1.5">App type</label>
@@ -117,93 +107,58 @@ export default function SubmitPage() {
                   </div>
                   <div>
                     <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-1.5">What should testers focus on? (optional)</label>
-                    <textarea
-                      className="input min-h-[80px] resize-none"
-                      placeholder='E.g. "Test the checkout flow" or "Try to break the onboarding" or just "Use it naturally"'
-                      value={form.description}
-                      onChange={(e) => setForm({ ...form, description: e.target.value })}
-                    />
+                    <textarea className="input min-h-[80px] resize-none" placeholder='E.g. "Test the checkout flow" or "Try to break the onboarding"' value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
                   </div>
-                  <button
-                    onClick={() => { if (form.app_url) setStep(2); }}
-                    disabled={!form.app_url}
-                    className="btn btn-primary w-full mt-2 disabled:opacity-40 disabled:cursor-not-allowed"
-                  >
-                    Continue
-                  </button>
+                  <button onClick={() => { if (form.app_url) setStep(2); }} disabled={!form.app_url} className="btn btn-primary w-full mt-2 disabled:opacity-40 disabled:cursor-not-allowed">Continue</button>
                 </div>
               )}
 
               {/* Step 2: Audience */}
               {step === 2 && (
-                <div className="space-y-4 reveal-up">
+                <div className="space-y-4">
                   <div>
                     <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-1.5">Who is your ideal tester?</label>
-                    <textarea
-                      className="input min-h-[80px] resize-none"
-                      placeholder='E.g. "Women 25-40 who shop online" or "Crypto traders" or "Small business owners who use Shopify"'
-                      value={form.target_audience}
-                      onChange={(e) => setForm({ ...form, target_audience: e.target.value })}
-                    />
-                    <p className="text-[11px] text-[var(--text-dim)] mt-1">We&apos;ll match testers from our pool who fit this profile. Leave blank for general audience.</p>
+                    <textarea className="input min-h-[80px] resize-none" placeholder='E.g. "Women 25-40 who shop online" or "Crypto traders"' value={form.target_audience} onChange={(e) => setForm({ ...form, target_audience: e.target.value })} />
+                    <p className="text-[11px] text-[var(--text-dim)] mt-1">Leave blank for general audience.</p>
                   </div>
                   <div>
                     <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-1.5">Your email</label>
-                    <input
-                      className="input"
-                      type="email"
-                      placeholder="you@company.com"
-                      value={form.email}
-                      onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    />
+                    <input className="input" type="email" placeholder="you@company.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
                   </div>
                   <div>
                     <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-1.5">Company (optional)</label>
-                    <input
-                      className="input"
-                      placeholder="Your company name"
-                      value={form.company}
-                      onChange={(e) => setForm({ ...form, company: e.target.value })}
-                    />
+                    <input className="input" placeholder="Your company name" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
                   </div>
                   <div className="flex gap-3">
-                    <button onClick={() => setStep(1)} className="btn btn-secondary flex-1">Back</button>
-                    <button
-                      onClick={() => { if (form.email) setStep(3); }}
-                      disabled={!form.email}
-                      className="btn btn-primary flex-1 disabled:opacity-40 disabled:cursor-not-allowed"
-                    >
-                      Continue
-                    </button>
+                    <button onClick={() => setStep(1)} className="btn btn-outline flex-1">Back</button>
+                    <button onClick={() => { if (form.email) setStep(3); }} disabled={!form.email} className="btn btn-primary flex-1 disabled:opacity-40 disabled:cursor-not-allowed">Continue</button>
                   </div>
                 </div>
               )}
 
               {/* Step 3: Plan */}
               {step === 3 && (
-                <div className="space-y-5 reveal-up">
+                <div className="space-y-5">
                   <div>
                     <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-3">Choose your plan</label>
                     <div className="space-y-3">
                       {PLANS.map((p) => (
-                        <button
-                          key={p.id}
-                          onClick={() => setForm({ ...form, plan: p.id })}
-                          className={`w-full text-left card p-4 flex items-center justify-between ${
-                            form.plan === p.id ? "!border-[var(--accent)]/40 !bg-[var(--accent)]/[0.04]" : ""
+                        <button key={p.id} onClick={() => setForm({ ...form, plan: p.id })}
+                          className={`w-full text-left card-light p-4 flex items-center justify-between ${
+                            form.plan === p.id ? "!border-orange-300 !bg-orange-50/50" : ""
                           }`}
                         >
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="text-[15px] font-semibold">{p.name}</span>
-                              {p.popular && <span className="bg-[var(--accent)] text-white text-[9px] font-semibold px-2 py-0.5 rounded-full">Popular</span>}
+                              <span className="h text-[15px] font-semibold text-[var(--text)]">{p.name}</span>
+                              {p.popular && <span className="grad-warm-bg text-white text-[9px] font-semibold px-2 py-0.5 rounded-full">Popular</span>}
                             </div>
                             <p className="text-[12px] text-[var(--text-muted)]">{p.testers} testers / {p.time}</p>
                           </div>
                           <div className="text-right">
-                            <span className="text-xl font-bold">${p.price}</span>
+                            <span className="h text-xl font-bold text-[var(--text)]">${p.price}</span>
                             <div className={`w-5 h-5 rounded-full border-2 mt-1 ml-auto flex items-center justify-center ${
-                              form.plan === p.id ? "border-[var(--accent)] bg-[var(--accent)]" : "border-[var(--border)]"
+                              form.plan === p.id ? "border-orange-500 bg-orange-500" : "border-black/10"
                             }`}>
                               {form.plan === p.id && (
                                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><polyline points="20 6 9 17 4 12" /></svg>
@@ -216,12 +171,12 @@ export default function SubmitPage() {
                   </div>
 
                   {/* Summary */}
-                  <div className="card p-4 bg-[var(--surface)]">
-                    <p className="text-[11px] font-semibold text-[var(--text-dim)] uppercase tracking-wider mb-2">Order summary</p>
+                  <div className="card-light p-4 bg-[var(--bg-2)]">
+                    <p className="h text-[11px] font-semibold text-[var(--text-dim)] uppercase tracking-wider mb-2">Order summary</p>
                     <div className="space-y-1 text-[13px]">
                       <div className="flex justify-between">
                         <span className="text-[var(--text-muted)]">{selectedPlan.name} ({selectedPlan.testers} testers)</span>
-                        <span className="font-medium">${selectedPlan.price}</span>
+                        <span className="font-medium text-[var(--text)]">${selectedPlan.price}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-[var(--text-muted)]">Delivery</span>
@@ -237,22 +192,15 @@ export default function SubmitPage() {
                   </div>
 
                   {error && (
-                    <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-[13px] rounded-xl px-4 py-3">
-                      {error}
-                    </div>
+                    <div className="bg-red-50 border border-red-200 text-red-700 text-[13px] rounded-xl px-4 py-3">{error}</div>
                   )}
 
                   <div className="flex gap-3">
-                    <button onClick={() => setStep(2)} className="btn btn-secondary flex-1">Back</button>
-                    <button
-                      onClick={submit}
-                      disabled={submitting}
-                      className="btn btn-primary flex-1 glow disabled:opacity-60"
-                    >
+                    <button onClick={() => setStep(2)} className="btn btn-outline flex-1">Back</button>
+                    <button onClick={submit} disabled={submitting} className="btn btn-primary flex-1 disabled:opacity-60">
                       {submitting ? "Processing..." : `Pay $${selectedPlan.price}`}
                     </button>
                   </div>
-
                   <p className="text-[11px] text-[var(--text-dim)] text-center">
                     Secure payment via Stripe. Money-back guarantee if we can&apos;t match testers.
                   </p>
@@ -266,4 +214,3 @@ export default function SubmitPage() {
     </>
   );
 }
-

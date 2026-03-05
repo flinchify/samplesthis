@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSql } from "@/lib/db";
+import { ensureTables } from "@/lib/schema";
 
 export async function POST(req: NextRequest) {
   try {
+    await ensureTables();
     const body = await req.json();
     const { name, email, age_range, location, devices, interests, tech_comfort, bio } = body;
 
@@ -17,7 +19,6 @@ export async function POST(req: NextRequest) {
 
     const sql = getSql();
 
-    // Check duplicate
     const existing = await sql`SELECT id FROM testers WHERE email = ${email.toLowerCase()}`;
     if (existing.length > 0) {
       return NextResponse.json({ error: "You're already registered! We'll be in touch." }, { status: 409 });
@@ -38,7 +39,6 @@ export async function POST(req: NextRequest) {
       RETURNING id
     `;
 
-    // Get new count
     const countRows = await sql`SELECT COUNT(*)::int as count FROM testers`;
 
     return NextResponse.json({
@@ -51,4 +51,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
-
