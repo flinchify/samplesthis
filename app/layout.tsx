@@ -1,32 +1,30 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Inter, Sora } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space" });
+const sora = Sora({ subsets: ["latin"], variable: "--font-sora", weight: ["400", "500", "600", "700", "800"] });
 
 export const metadata: Metadata = {
-  title: "Flinchify — Real humans test your app in hours",
-  description: "Post a test job, set your budget, and real humans matched to your audience will test your app. Screen recordings, bug reports, honest feedback.",
-  metadataBase: new URL("https://Flinchify.dev"),
+  title: "Flinchify — Find the flinch before your users do",
+  description: "Real humans matched to your audience test your app and find every friction point. Screen recordings, bug reports, UX feedback — delivered in hours.",
+  metadataBase: new URL("https://flinchify.com"),
   openGraph: {
-    title: "Flinchify — Real humans test your app in hours",
-    description: "Post a test job. Set your budget. Matched humans test your app. Results in hours.",
+    title: "Flinchify — Find the flinch before your users do",
+    description: "Post a test job. Set your budget. Matched humans find every flinch moment in your app.",
     type: "website",
     siteName: "Flinchify",
   },
   twitter: { card: "summary_large_image" },
-  keywords: ["user testing", "app testing", "beta testing", "QA testing", "human testers", "vibe coding", "indie dev"],
+  keywords: ["user testing", "app testing", "beta testing", "human testers", "QA testing", "flinch moments", "UX feedback"],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
-      <body className="font-[family-name:var(--font-inter)] antialiased">
-        <div className="mesh-bg" />
+    <html lang="en" className={`${inter.variable} ${sora.variable}`}>
+      <body className="font-[family-name:var(--font-inter)] antialiased overflow-x-hidden">
         {children}
       </body>
     </html>
   );
 }
-
