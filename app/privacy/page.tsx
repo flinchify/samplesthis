@@ -33,7 +33,7 @@ export default function PrivacyPage() {
 
             <section>
               <h2 className="text-[16px] font-semibold text-white mb-2">Your Rights</h2>
-              <p>Under the Australian Privacy Act 1988 and applicable privacy principles, you have the right to access, correct, or delete your personal information. Contact us at privacy@shiptest.dev.</p>
+              <p>Under the Australian Privacy Act 1988 and applicable privacy principles, you have the right to access, correct, or delete your personal information. Contact us at privacy@SampleThis.dev.</p>
             </section>
 
             <section>
@@ -43,7 +43,7 @@ export default function PrivacyPage() {
 
             <section>
               <h2 className="text-[16px] font-semibold text-white mb-2">Contact</h2>
-              <p>For privacy inquiries: privacy@shiptest.dev</p>
+              <p>For privacy inquiries: privacy@SampleThis.dev</p>
             </section>
           </div>
         </div>

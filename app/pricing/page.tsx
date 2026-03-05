@@ -121,7 +121,7 @@ export default function PricingPage() {
                 <thead>
                   <tr className="border-b border-[var(--border)]">
                     <th className="text-left py-3 pr-4 text-[var(--text-muted)] font-medium">Feature</th>
-                    <th className="text-center py-3 px-4 text-[var(--accent)] font-semibold">ShipTest</th>
+                    <th className="text-center py-3 px-4 text-[var(--accent)] font-semibold">SampleThis</th>
                     <th className="text-center py-3 px-4 text-[var(--text-muted)] font-medium">UserTesting</th>
                     <th className="text-center py-3 px-4 text-[var(--text-muted)] font-medium">BetaTesting</th>
                   </tr>

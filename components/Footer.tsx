@@ -58,7 +58,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-white/[0.04] pt-6 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p className="text-[11px] text-white/12">&copy; 2026 ShipTest. All rights reserved.</p>
+          <p className="text-[11px] text-white/12">&copy; 2026 SampleThis. All rights reserved.</p>
           <p className="text-[11px] text-white/12">Made in Australia</p>
         </div>
       </div>
