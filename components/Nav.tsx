@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 
 const MENUS = [
@@ -48,9 +49,7 @@ export default function Nav() {
       <div className="max-w-[1200px] mx-auto px-6 h-[72px] flex items-center justify-between">
         {/* Logo mark */}
         <Link href="/" className="flex items-center group">
-          <div className="w-10 h-10 rounded-[12px] grad-warm-bg flex items-center justify-center shadow-lg shadow-orange-500/20 transition-all duration-300 group-hover:shadow-orange-500/30 group-hover:scale-105">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><path d="M9 12l2 2 4-4" /></svg>
-          </div>
+          <Image src="/logo.png" alt="Flinchify" width={44} height={44} className="transition-transform duration-300 group-hover:scale-105" priority />
         </Link>
 
         {/* Desktop */}

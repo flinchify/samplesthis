@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 const COLS = [
   { title: "Product", links: [{ href: "/submit", label: "Post a test job" }, { href: "/pricing", label: "Budget guide" }, { href: "/how-it-works", label: "How it works" }] },
@@ -12,9 +13,7 @@ export default function Footer() {
       <div className="max-w-[1200px] mx-auto px-6 py-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-16">
           <div>
-            <div className="w-9 h-9 rounded-[12px] grad-warm-bg flex items-center justify-center shadow-lg shadow-orange-500/15 mb-5">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><path d="M9 12l2 2 4-4" /></svg>
-            </div>
+            <Image src="/logo.png" alt="Flinchify" width={40} height={40} className="mb-5" />
             <p className="text-[12px] text-[var(--text-muted)] leading-[1.8]">Find the flinch before<br />your users do.</p>
           </div>
           {COLS.map((col) => (

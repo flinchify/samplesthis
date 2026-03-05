@@ -9,6 +9,14 @@ export const metadata: Metadata = {
   title: "Flinchify — Find the flinch before your users do",
   description: "Real humans matched to your audience test your app and find every friction point. Screen recordings, bug reports, UX feedback — delivered in hours.",
   metadataBase: new URL("https://flinchify.com"),
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
   openGraph: {
     title: "Flinchify — Find the flinch before your users do",
     description: "Post a test job. Set your budget. Matched humans find every flinch moment in your app.",
