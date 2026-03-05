@@ -81,7 +81,7 @@ export default function Home() {
                       </div>
                       <span className="text-[11px] sm:text-[12px] text-[var(--text-dim)]">{job.applied} applied</span>
                     </div>
-                    <span className="text-[12px] font-medium text-[var(--accent)]">Apply</span>
+                    <Link href="/become-a-tester" className="text-[12px] font-medium text-[var(--accent)] hover:underline">Apply</Link>
                   </div>
                 </div>
               ))}
