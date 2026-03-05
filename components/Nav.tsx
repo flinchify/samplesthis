@@ -27,8 +27,8 @@ export default function Nav() {
 
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-8">
+          <Link href="/jobs" className="text-[13px] text-[var(--text-muted)] hover:text-[var(--text)] transition-colors">Browse jobs</Link>
           <Link href="/how-it-works" className="text-[13px] text-[var(--text-muted)] hover:text-[var(--text)] transition-colors">How it works</Link>
-          <Link href="/pricing" className="text-[13px] text-[var(--text-muted)] hover:text-[var(--text)] transition-colors">Pricing</Link>
           <Link href="/become-a-tester" className="text-[13px] text-[var(--text-muted)] hover:text-[var(--text)] transition-colors">Become a tester</Link>
         </div>
 
@@ -47,8 +47,8 @@ export default function Nav() {
       {open && (
         <div className="md:hidden bg-white border-t border-black/[0.04]">
           <div className="px-6 py-5 space-y-4">
+            <Link href="/jobs" onClick={() => setOpen(false)} className="block text-[15px] text-[var(--text-muted)]">Browse jobs</Link>
             <Link href="/how-it-works" onClick={() => setOpen(false)} className="block text-[15px] text-[var(--text-muted)]">How it works</Link>
-            <Link href="/pricing" onClick={() => setOpen(false)} className="block text-[15px] text-[var(--text-muted)]">Pricing</Link>
             <Link href="/become-a-tester" onClick={() => setOpen(false)} className="block text-[15px] text-[var(--text-muted)]">Become a tester</Link>
             <div className="pt-3 border-t border-black/[0.04]">
               <Link href="/submit" onClick={() => setOpen(false)} className="btn btn-accent w-full">Post a test</Link>

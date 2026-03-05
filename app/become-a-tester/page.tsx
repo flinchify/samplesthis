@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 
@@ -14,6 +16,7 @@ const INTERESTS = [
 ];
 
 export default function BecomeATester() {
+  const router = useRouter();
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
@@ -41,7 +44,11 @@ export default function BecomeATester() {
         body: JSON.stringify(form),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      if (!res.ok && !data.existing) throw new Error(data.error);
+      if (data.existing) {
+        router.push("/dashboard");
+        return;
+      }
       setDone(true);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Something went wrong");
@@ -66,6 +73,7 @@ export default function BecomeATester() {
                 We&apos;ll match you with apps that fit your profile and reach out when there&apos;s a test ready.
                 Most testers get their first test within 48 hours.
               </p>
+              <Link href="/dashboard" className="btn btn-accent">Go to your dashboard</Link>
             </div>
           ) : (
             <>
