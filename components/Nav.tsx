@@ -41,10 +41,10 @@ export default function Nav() {
   }, []);
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+    <nav className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-500 ${
       scrolled
-        ? "bg-white/80 backdrop-blur-2xl border-b border-black/[0.04] shadow-sm"
-        : "bg-transparent"
+        ? "bg-white/80 backdrop-blur-2xl border-black/[0.04] shadow-sm"
+        : "bg-transparent border-transparent"
     }`}>
       <div className="max-w-[1200px] mx-auto px-6 h-[72px] flex items-center justify-between">
         {/* Logo mark */}
