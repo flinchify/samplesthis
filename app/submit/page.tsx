@@ -123,7 +123,7 @@ export default function SubmitPage() {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-1.5">App URL</label>
-                    <input className="input" placeholder="https://your-app.vercel.app" value={form.app_url} onChange={(e) => setForm({ ...form, app_url: e.target.value })} />
+                    <input className="input" placeholder="https://yourapp.com" value={form.app_url} onChange={(e) => setForm({ ...form, app_url: e.target.value })} />
                   </div>
                   <div>
                     <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-1.5">App type</label>
