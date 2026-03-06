@@ -63,6 +63,9 @@ export default function ExplorePage() {
   const [sort, setSort] = useState("Newest");
   const [typeFilter, setTypeFilter] = useState("All");
   const [showFilters, setShowFilters] = useState(false);
+  const [applying, setApplying] = useState<number | null>(null);
+  const [applied, setApplied] = useState<Set<number>>(new Set());
+  const [applyError, setApplyError] = useState("");
 
   useEffect(() => {
     fetch("/api/testers/me").then(r => r.json()).then(d => {
@@ -86,6 +89,26 @@ export default function ExplorePage() {
       if (sort === "Most spots") return (b.testers_count - b.accepted_count) - (a.testers_count - a.accepted_count);
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
+
+  const applyToJob = async (jobId: number) => {
+    if (!tester) { router.push("/become-a-tester"); return; }
+    setApplying(jobId);
+    setApplyError("");
+    try {
+      const res = await fetch("/api/applications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ order_id: jobId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setApplied(prev => new Set(prev).add(jobId));
+    } catch (e: unknown) {
+      setApplyError(e instanceof Error ? e.message : "Failed to apply");
+    } finally {
+      setApplying(null);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white flex">
@@ -200,40 +223,57 @@ export default function ExplorePage() {
               <p className="text-[13px] text-[var(--text-dim)] mt-1">Check back soon or post your own test.</p>
             </div>
           ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {filtered.map(job => {
-                const pay = (job.price_per_tester_cents || 0) / 100;
-                const spots = job.testers_count - job.accepted_count;
-                const hostname = dom(job.app_url);
-                return (
-                  <button key={job.id} onClick={() => tester ? router.push(`/dashboard`) : router.push(`/become-a-tester`)}
-                    className="rounded-xl border border-black/[0.06] p-5 text-left hover:border-black/[0.12] hover:shadow-sm transition-all group">
-                    <h3 className="h text-[14px] font-semibold text-[var(--text)] mb-0.5 line-clamp-1 group-hover:text-[var(--accent)] transition-colors">{hostname}</h3>
-                    <p className="text-[13px] text-[var(--text-muted)] mb-3">${pay.toFixed(0)} per test</p>
-                    {job.description && <p className="text-[12px] text-[var(--text-dim)] line-clamp-2 mb-4">{job.description}</p>}
-                    <div className="flex items-center justify-between mt-auto">
-                      <div className="flex items-center gap-1">
-                        {/* Avatar dots */}
-                        <div className="flex -space-x-1.5">
-                          {Array.from({ length: Math.min(job.applications_count, 3) }).map((_, i) => (
-                            <div key={i} className="w-5 h-5 rounded-full border-2 border-white text-[8px] font-bold text-white flex items-center justify-center"
-                              style={{ backgroundColor: avatarColor(`${job.id}-${i}`) }} />
-                          ))}
+            <>
+              {applyError && <div className="bg-red-50 border border-red-200 text-red-700 text-[13px] rounded-xl px-4 py-3 mb-4">{applyError}</div>}
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filtered.map(job => {
+                  const pay = (job.price_per_tester_cents || 0) / 100;
+                  const spots = job.testers_count - job.accepted_count;
+                  const hostname = dom(job.app_url);
+                  const hasApplied = applied.has(job.id);
+                  return (
+                    <div key={job.id} className="rounded-xl border border-black/[0.06] p-5 hover:border-black/[0.12] hover:shadow-sm transition-all">
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <div>
+                          <h3 className="h text-[14px] font-semibold text-[var(--text)] line-clamp-1">{hostname}</h3>
+                          {job.app_type ? <span className="text-[11px] text-[var(--text-dim)]">{job.app_type}</span> : null}
                         </div>
-                        {job.applications_count > 0 && (
-                          <span className="text-[11px] text-[var(--text-dim)] ml-1">{job.applications_count} applied</span>
-                        )}
+                        <p className="h text-[16px] font-bold text-[var(--text)] shrink-0">${pay.toFixed(0)}</p>
                       </div>
-                      {spots > 0 ? (
-                        <span className="text-[11px] text-[var(--accent)] font-medium">${pay.toFixed(0)}</span>
+                      {job.description ? <p className="text-[12px] text-[var(--text-dim)] line-clamp-2 mb-3">{job.description}</p> : null}
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-1">
+                          <div className="flex -space-x-1.5">
+                            {Array.from({ length: Math.min(job.applications_count, 3) }).map((_, i) => (
+                              <div key={i} className="w-5 h-5 rounded-full border-2 border-white text-[8px] font-bold text-white flex items-center justify-center"
+                                style={{ backgroundColor: avatarColor(`${job.id}-${i}`) }} />
+                            ))}
+                          </div>
+                          <span className="text-[11px] text-[var(--text-dim)] ml-1">{job.applications_count} applied</span>
+                        </div>
+                        <span className="text-[11px] text-[var(--text-dim)]">{spots > 0 ? `${spots} spots` : "Full"}</span>
+                      </div>
+                      {tester ? (
+                        hasApplied ? (
+                          <button disabled className="w-full py-2 rounded-lg border border-black/[0.06] text-[12px] font-medium text-[var(--text-dim)] cursor-default">Applied</button>
+                        ) : spots <= 0 ? (
+                          <button disabled className="w-full py-2 rounded-lg border border-black/[0.06] text-[12px] font-medium text-[var(--text-dim)] cursor-default">Full</button>
+                        ) : (
+                          <button onClick={() => applyToJob(job.id)} disabled={applying === job.id}
+                            className="w-full py-2 rounded-lg bg-black text-white text-[12px] font-semibold hover:bg-black/90 transition-colors disabled:opacity-50">
+                            {applying === job.id ? "Applying..." : "Apply"}
+                          </button>
+                        )
                       ) : (
-                        <span className="text-[11px] text-[var(--text-dim)]">Full</span>
+                        <Link href="/become-a-tester" className="block w-full py-2 rounded-lg bg-black text-white text-[12px] font-semibold text-center hover:bg-black/90 transition-colors">
+                          Sign up to apply
+                        </Link>
                       )}
                     </div>
-                  </button>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            </>
           )}
         </div>
       </main>

@@ -22,22 +22,9 @@ interface Tester {
   created_at: string;
 }
 
-interface Job {
-  id: number;
-  app_url: string;
-  app_type: string | null;
-  description: string | null;
-  testers_count: number;
-  price_per_tester_cents: number;
-  applications_count: number;
-  accepted_count: number;
-  created_at: string;
-}
-
 const NAV_ITEMS = [
   { key: "overview", label: "Overview", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
-  { key: "explore", label: "Explore", icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z", href: "/explore" },
-  { key: "jobs", label: "Browse Jobs", icon: "M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" },
+  { key: "explore", label: "Explore Jobs", icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z", href: "/explore" },
   { key: "payouts", label: "Payouts", icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
   { key: "profile", label: "Profile", icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" },
 ];
@@ -47,8 +34,6 @@ export default function Dashboard() {
   const [tester, setTester] = useState<Tester | null>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState("overview");
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const [jobsLoading, setJobsLoading] = useState(false);
   const [connectLoading, setConnectLoading] = useState(false);
   const [connectStatus, setConnectStatus] = useState<{ onboarded: boolean; hasAccount: boolean } | null>(null);
 
@@ -66,12 +51,7 @@ export default function Dashboard() {
     fetch("/api/connect/status").then(r => r.json()).then(d => setConnectStatus(d)).catch(() => {});
   }, [router]);
 
-  useEffect(() => {
-    if (tab === "jobs") {
-      setJobsLoading(true);
-      fetch("/api/orders").then(r => r.json()).then(d => { setJobs(d.jobs || []); setJobsLoading(false); });
-    }
-  }, [tab]);
+  // Jobs browsing moved to /explore
 
   const setupPayouts = async () => {
     setConnectLoading(true);
@@ -198,58 +178,15 @@ export default function Dashboard() {
 
             {/* Quick actions */}
             <div className="grid sm:grid-cols-2 gap-4">
-              <button onClick={() => setTab("jobs")} className="bg-white rounded-2xl border border-black/[0.04] p-6 text-left hover:border-black/[0.08] transition-colors">
-                <h3 className="h text-[14px] font-semibold text-[var(--text)] mb-1">Browse open jobs</h3>
+              <Link href="/explore" className="bg-white rounded-2xl border border-black/[0.04] p-6 text-left hover:border-black/[0.08] transition-colors block">
+                <h3 className="h text-[14px] font-semibold text-[var(--text)] mb-1">Explore jobs</h3>
                 <p className="text-[13px] text-[var(--text-muted)]">Find test jobs matched to your profile and start earning.</p>
-              </button>
+              </Link>
               <button onClick={() => setTab("profile")} className="bg-white rounded-2xl border border-black/[0.04] p-6 text-left hover:border-black/[0.08] transition-colors">
                 <h3 className="h text-[14px] font-semibold text-[var(--text)] mb-1">Update your profile</h3>
                 <p className="text-[13px] text-[var(--text-muted)]">Keep your info current to get matched to better jobs.</p>
               </button>
             </div>
-          </div>
-        )}
-
-        {tab === "jobs" && (
-          <div>
-            <h1 className="h text-xl font-bold text-[var(--text)] mb-6">Open test jobs</h1>
-            {jobsLoading ? (
-              <div className="space-y-3">
-                {[1, 2, 3].map(i => <div key={i} className="bg-white rounded-2xl border border-black/[0.04] p-6 animate-pulse"><div className="h-4 bg-black/[0.03] rounded w-1/3" /></div>)}
-              </div>
-            ) : jobs.length === 0 ? (
-              <div className="bg-white rounded-2xl border border-black/[0.04] p-10 text-center">
-                <p className="text-[var(--text-muted)]">No active jobs right now.</p>
-                <p className="text-[13px] text-[var(--text-dim)] mt-1">Check back soon — new jobs are posted daily.</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {jobs.map(job => {
-                  const perTester = (job.price_per_tester_cents || 0) / 100;
-                  const spotsLeft = job.testers_count - job.accepted_count;
-                  const domain = (() => { try { return new URL(job.app_url).hostname.replace("www.", ""); } catch { return job.app_url; } })();
-                  return (
-                    <div key={job.id} className="bg-white rounded-2xl border border-black/[0.04] p-6 hover:border-black/[0.08] transition-colors">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1 min-w-0">
-                          <h3 className="h text-[14px] font-semibold text-[var(--text)]">{domain}</h3>
-                          {job.app_type && <span className="text-[11px] text-[var(--text-dim)]">{job.app_type}</span>}
-                          {job.description && <p className="text-[13px] text-[var(--text-muted)] mt-1 line-clamp-2">{job.description}</p>}
-                          <div className="flex gap-3 mt-2 text-[11px] text-[var(--text-dim)]">
-                            <span>{job.applications_count} applied</span>
-                            <span>{spotsLeft > 0 ? `${spotsLeft} spots left` : "Full"}</span>
-                          </div>
-                        </div>
-                        <div className="text-right shrink-0">
-                          <p className="h text-lg font-bold text-[var(--text)]">${perTester}</p>
-                          <p className="text-[10px] text-[var(--text-dim)]">per test</p>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
           </div>
         )}
 

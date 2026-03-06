@@ -2,8 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 
 const COLS = [
-  { title: "For testers", links: [{ href: "/become-a-tester", label: "Sign up" }, { href: "/jobs", label: "Browse jobs" }, { href: "/dashboard", label: "Dashboard" }] },
-  { title: "For businesses", links: [{ href: "/submit", label: "Post a test" }, { href: "/how-it-works", label: "How it works" }] },
+  { title: "For testers", links: [{ href: "/become-a-tester", label: "Sign up" }, { href: "/explore", label: "Explore jobs" }, { href: "/referrals", label: "Referrals" }, { href: "/dashboard", label: "Dashboard" }] },
+  { title: "For businesses", links: [{ href: "/submit", label: "Post a test" }, { href: "/pricing", label: "Pricing" }, { href: "/how-it-works", label: "How it works" }] },
   { title: "Company", links: [{ href: "/about", label: "About" }, { href: "/contact", label: "Contact" }, { href: "/privacy", label: "Privacy" }, { href: "/terms", label: "Terms" }] },
 ];
 
