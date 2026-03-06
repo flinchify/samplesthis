@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
@@ -15,9 +15,19 @@ const SAMPLE_JOBS = [
   { app: "Recipe sharing mobile app", audience: "Home cooks, 30-55", testers: 5, budget: 10, time: "3h ago", applied: 9 },
 ];
 
-export default function Home() {
+export default function HomePage() {
+  return (
+    <Suspense fallback={null}>
+      <Home />
+    </Suspense>
+  );
+}
+
+function Home() {
   const router = useRouter();
-  const [authMode, setAuthMode] = useState<"tester" | "business" | null>(null);
+  const searchParams = useSearchParams();
+  const authParam = searchParams.get("auth") as "tester" | "business" | null;
+  const [authMode, setAuthMode] = useState<"tester" | "business" | null>(authParam);
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
@@ -48,7 +58,7 @@ export default function Home() {
       <main>
 
         {/* ═══ HERO ═══ */}
-        <section className="pt-28 sm:pt-32 pb-16 sm:pb-20 px-5 sm:px-6">
+        <section className="warm-gradient-hero pt-28 sm:pt-32 pb-16 sm:pb-20 px-5 sm:px-6">
           <div className="max-w-[800px] mx-auto text-center">
             {/* Stats — stack on mobile */}
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mb-8 sm:mb-10 hero-anim ha-1">
@@ -145,7 +155,7 @@ export default function Home() {
         </section>
 
         {/* ═══ TWO SIDES ═══ */}
-        <section className="py-16 sm:py-20 px-5 sm:px-6">
+        <section className="warm-gradient-down py-16 sm:py-20 px-5 sm:px-6">
           <div className="max-w-[1000px] mx-auto">
             <ScrollReveal>
               <h2 className="h text-[1.5rem] sm:text-2xl md:text-[2.5rem] font-bold tracking-[-0.03em] text-center mb-8 sm:mb-14 text-[var(--text)]">
@@ -326,7 +336,7 @@ export default function Home() {
         </section>
 
         {/* ═══ CTA ═══ */}
-        <section className="py-16 sm:py-24 px-5 sm:px-6 text-center">
+        <section className="warm-gradient-hero py-16 sm:py-24 px-5 sm:px-6 text-center">
           <ScrollReveal>
             <h2 className="h text-[1.5rem] sm:text-2xl md:text-[3rem] font-bold tracking-[-0.03em] leading-tight mb-4 sm:mb-5 text-[var(--text)]">
               Find the flinch.<br />Ship with confidence.

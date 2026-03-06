@@ -75,7 +75,7 @@ export default function ExplorePage() {
           </Link>
           <div className="flex items-center gap-3">
             <Link href="/" className="text-[13px] text-[var(--text-muted)] hover:text-[var(--text)] transition-colors font-medium">Home</Link>
-            <Link href="/become-a-tester" className="btn btn-accent text-[13px] !py-2 !px-5">Sign up</Link>
+            <Link href="/?auth=tester" className="btn btn-accent text-[13px] !py-2 !px-5">Sign up</Link>
           </div>
         </div>
       </header>
@@ -155,7 +155,7 @@ export default function ExplorePage() {
                     </div>
                     <span className="text-[11px] text-[var(--text-dim)]">{spots > 0 ? `${spots} spots` : "Full"}</span>
                   </div>
-                  <Link href="/become-a-tester" className="block w-full py-2 rounded-lg bg-black text-white text-[12px] font-semibold text-center hover:bg-black/90 transition-colors">
+                  <Link href="/?auth=tester" className="block w-full py-2 rounded-lg bg-black text-white text-[12px] font-semibold text-center hover:bg-black/90 transition-colors">
                     Sign up to apply
                   </Link>
                 </div>
@@ -168,7 +168,7 @@ export default function ExplorePage() {
         <div className="text-center mt-16 py-10 border-t border-black/[0.06]">
           <h2 className="h text-[18px] font-bold text-[var(--text)] mb-2">Ready to start earning?</h2>
           <p className="text-[14px] text-[var(--text-muted)] mb-4">Sign up as a tester and get paid for your feedback.</p>
-          <Link href="/become-a-tester" className="btn btn-primary">Become a tester</Link>
+          <Link href="/?auth=tester" className="btn btn-primary">Become a tester</Link>
         </div>
       </main>
     </div>

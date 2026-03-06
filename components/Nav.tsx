@@ -6,7 +6,7 @@ import { useState, useEffect, useRef } from "react";
 
 const TESTERS_MENU = [
   { href: "/explore", label: "Explore jobs", desc: "Browse open test opportunities" },
-  { href: "/become-a-tester", label: "Become a tester", desc: "Sign up and start earning" },
+  { href: "/?auth=tester", label: "Become a tester", desc: "Sign up and start earning" },
   { href: "/referrals", label: "Referrals", desc: "Invite friends, earn bonuses" },
   { href: "/dashboard", label: "Dashboard", desc: "Your tests, earnings & profile" },
 ];
@@ -160,7 +160,7 @@ export default function Nav() {
               </button>
             </>
           ) : (
-            <Link href="/become-a-tester" className="btn btn-accent text-[13px] !py-2 !px-5">Sign up</Link>
+            <Link href="/?auth=tester" className="btn btn-accent text-[13px] !py-2 !px-5">Sign up</Link>
           )}
         </div>
 
@@ -200,7 +200,7 @@ export default function Nav() {
                     className="btn btn-outline w-full !text-red-500 !border-red-200 hover:!bg-red-50">Sign out</button>
                 </>
               ) : (
-                <Link href="/become-a-tester" onClick={() => setOpen(false)} className="btn btn-accent w-full">Sign up</Link>
+                <Link href="/?auth=tester" onClick={() => setOpen(false)} className="btn btn-accent w-full">Sign up</Link>
               )}
             </div>
           </div>
