@@ -57,6 +57,11 @@ export async function ensureTables() {
     await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS price_per_tester_cents INTEGER`;
     await sql`ALTER TABLE testers ADD COLUMN IF NOT EXISTS auth_token VARCHAR(64)`;
     await sql`ALTER TABLE testers ADD COLUMN IF NOT EXISTS total_earned_cents INTEGER DEFAULT 0`;
+    await sql`ALTER TABLE testers ADD COLUMN IF NOT EXISTS stripe_account_id VARCHAR(255)`;
+    await sql`ALTER TABLE testers ADD COLUMN IF NOT EXISTS stripe_onboarded BOOLEAN DEFAULT false`;
+    await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS payout_cents INTEGER DEFAULT 0`;
+    await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS payout_transfer_id VARCHAR(255)`;
+    await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS completed_at TIMESTAMP`;
 
     migrated = true;
   } catch (e) {

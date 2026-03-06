@@ -60,6 +60,7 @@ export async function GET(req: NextRequest) {
     const apps = await sql`
       SELECT a.*, 
         t.name as tester_name, t.email as tester_email, t.location as tester_location,
+        t.stripe_account_id as tester_stripe, t.stripe_onboarded as tester_stripe_ready,
         o.app_url, o.description as job_description, o.price_per_tester_cents
       FROM applications a
       JOIN testers t ON a.tester_id = t.id

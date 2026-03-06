@@ -71,6 +71,21 @@ export default function AdminPanel() {
     load(tab);
   };
 
+  const payout = async (appId: unknown) => {
+    const id = `payout-${appId}`;
+    setBusy(id);
+    const r = await fetch("/api/connect/payout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-admin-key": authKey },
+      body: JSON.stringify({ application_id: appId }),
+    });
+    const d = await r.json();
+    setBusy("");
+    if (r.ok) { alert(`Paid! $${(d.payout_cents / 100).toFixed(2)} to tester (fee: $${(d.platform_fee_cents / 100).toFixed(2)})`); }
+    else { alert(`Payout failed: ${d.error}`); }
+    load(tab);
+  };
+
   const login = async () => {
     const r = await fetch("/api/admin?tab=overview", { headers: { "x-admin-key": key } });
     if (r.ok) { setAuthed(true); setAuthKey(key); } else { alert("Wrong key"); }
@@ -265,12 +280,14 @@ export default function AdminPanel() {
                     <p className="h text-[14px] font-bold shrink-0">${(n(a.price_per_tester_cents) / 100).toFixed(0)}</p>
                   </div>
                   {a.note ? <p className="text-[11px] text-[var(--text-muted)] mb-2 italic">{s(a.note)}</p> : null}
+                  {a.payout_transfer_id ? <p className="text-[10px] text-green-600 mb-2">Paid ${(n(a.payout_cents) / 100).toFixed(2)} · {s(a.payout_transfer_id)}</p> : null}
                   <div className="flex items-center gap-2 text-[11px]">
                     <div className="flex-1" />
                     {s(a.status) === "pending" && <>
                       <Btn onClick={() => act("PATCH", { type: "application", id: a.id, status: "accepted" })} color="bg-green-50 text-green-700 border-green-200">Accept</Btn>
                       <Btn onClick={() => act("PATCH", { type: "application", id: a.id, status: "rejected" })} color="bg-red-50 text-red-600 border-red-200">Reject</Btn>
                     </>}
+                    {s(a.status) === "accepted" && !a.payout_transfer_id ? <Btn onClick={() => { if (confirm("Complete & pay tester?")) payout(a.id); }} color="bg-green-50 text-green-700 border-green-200" id={`payout-${a.id}`}>Complete & Pay</Btn> : null}
                     <Btn onClick={() => { if (confirm("Delete?")) act("DELETE", { type: "application", id: a.id }); }} color="bg-red-50 text-red-600 border-red-200">Delete</Btn>
                   </div>
                 </div>
