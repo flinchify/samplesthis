@@ -43,10 +43,8 @@ export default function Nav() {
     }).catch(() => {});
   }, []);
 
-  const signOut = () => {
-    // Clear both cookies
-    document.cookie = "tester_token=; path=/; max-age=0";
-    document.cookie = "business_token=; path=/; max-age=0";
+  const signOut = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
     setUser(null);
     window.location.href = "/";
   };

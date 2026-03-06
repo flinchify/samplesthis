@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
         await sql`UPDATE testers SET auth_token = ${token} WHERE id = ${existing[0].id}`;
       }
       const res = NextResponse.json({ error: "You're already registered! Logging you in.", existing: true, id: existing[0].id }, { status: 200 });
-      res.cookies.set("tester_token", token, { httpOnly: true, secure: true, sameSite: "lax", maxAge: 60 * 60 * 24 * 365, path: "/" });
+      res.cookies.set("tester_token", token, { httpOnly: true, secure: true, sameSite: "lax", maxAge: 60 * 60 * 24 * 14, path: "/" });
       return res;
     }
 
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
     `;
 
     const res = NextResponse.json({ success: true, id: rows[0].id });
-    res.cookies.set("tester_token", token, { httpOnly: true, secure: true, sameSite: "lax", maxAge: 60 * 60 * 24 * 365, path: "/" });
+    res.cookies.set("tester_token", token, { httpOnly: true, secure: true, sameSite: "lax", maxAge: 60 * 60 * 24 * 14, path: "/" });
     return res;
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : "Registration failed";

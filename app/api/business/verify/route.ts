@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
     `;
 
     const res = NextResponse.json({ verified: true, id: biz.id });
-    res.cookies.set("business_token", token, { httpOnly: true, secure: true, sameSite: "lax", maxAge: 60 * 60 * 24 * 365, path: "/" });
+    res.cookies.set("business_token", token, { httpOnly: true, secure: true, sameSite: "lax", maxAge: 60 * 60 * 24 * 14, path: "/" });
     return res;
   }
 

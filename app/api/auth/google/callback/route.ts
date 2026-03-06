@@ -61,7 +61,7 @@ export async function GET(req: NextRequest) {
       } else {
         await sql`INSERT INTO businesses (email, company, verified, auth_token) VALUES (${email}, ${name}, true, ${token})`;
       }
-      res.cookies.set("business_token", token, { httpOnly: true, secure: true, sameSite: "lax", maxAge: 60 * 60 * 24 * 365, path: "/" });
+      res.cookies.set("business_token", token, { httpOnly: true, secure: true, sameSite: "lax", maxAge: 60 * 60 * 24 * 14, path: "/" });
       redirectPath = "/submit";
     } else {
       // Upsert tester
@@ -71,7 +71,7 @@ export async function GET(req: NextRequest) {
       } else {
         await sql`INSERT INTO testers (name, email, auth_token, devices, interests, other_links) VALUES (${name}, ${email}, ${token}, '[]', '[]', '[]')`;
       }
-      res.cookies.set("tester_token", token, { httpOnly: true, secure: true, sameSite: "lax", maxAge: 60 * 60 * 24 * 365, path: "/" });
+      res.cookies.set("tester_token", token, { httpOnly: true, secure: true, sameSite: "lax", maxAge: 60 * 60 * 24 * 14, path: "/" });
       redirectPath = "/dashboard";
     }
 
