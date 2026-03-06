@@ -41,7 +41,7 @@ body { background: var(--bg); color: var(--text); letter-spacing: -0.01em; }
   font-family: var(--font-sora), system-ui, sans-serif;
   font-weight: 600;
   font-size: 14px;
-  border-radius: 100px;
+  border-radius: 8px;
   padding: 10px 24px;
   transition: all 200ms ease;
   cursor: pointer;
@@ -100,7 +100,7 @@ body { background: var(--bg); color: var(--text); letter-spacing: -0.01em; }
   align-items: center;
   gap: 8px;
   padding: 6px 14px;
-  border-radius: 100px;
+  border-radius: 8px;
   font-size: 13px;
   font-weight: 500;
   background: var(--bg-2);
