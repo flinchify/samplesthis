@@ -29,11 +29,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Payment system not configured. Please try again later." }, { status: 503 });
     }
 
-    const body = await req.json();
-    const { email, company, app_url, app_type, description, target_audience, testers_count, price_per_tester } = body;
+    // Require verified business auth
+    const token = req.cookies.get("business_token")?.value;
+    if (!token) {
+      return NextResponse.json({ error: "Please verify your email first" }, { status: 401 });
+    }
+    const sql2 = getSql();
+    const [biz] = await sql2`SELECT id, email, company FROM businesses WHERE auth_token = ${token} AND verified = true`;
+    if (!biz) {
+      return NextResponse.json({ error: "Please verify your email first" }, { status: 401 });
+    }
 
-    if (!email || !app_url) {
-      return NextResponse.json({ error: "Email and app URL are required" }, { status: 400 });
+    const body = await req.json();
+    const { app_url, app_type, description, target_audience, testers_count, price_per_tester } = body;
+    const email = biz.email;
+    const company = body.company || biz.company;
+
+    if (!app_url) {
+      return NextResponse.json({ error: "App URL is required" }, { status: 400 });
     }
 
     const count = Math.max(1, Math.min(100, parseInt(testers_count) || 1));

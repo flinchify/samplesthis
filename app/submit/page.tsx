@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 
@@ -12,18 +12,35 @@ const SUGGESTED_BUDGETS = [
   { per: 20, label: "Priority", speed: "~1h pickup" },
 ];
 
+interface Biz {
+  id: number;
+  email: string;
+  company: string | null;
+}
+
 export default function SubmitPage() {
+  const [authed, setAuthed] = useState<boolean | null>(null);
+  const [biz, setBiz] = useState<Biz | null>(null);
+
+  // Auth flow
+  const [authEmail, setAuthEmail] = useState("");
+  const [authCompany, setAuthCompany] = useState("");
+  const [codeSent, setCodeSent] = useState(false);
+  const [code, setCode] = useState("");
+  const [authLoading, setAuthLoading] = useState(false);
+  const [authError, setAuthError] = useState("");
+
+  // Job flow
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState("");
   const [form, setForm] = useState({
-    email: "",
-    company: "",
     app_url: "",
     app_type: "",
     description: "",
     target_audience: "",
+    company: "",
     testers_count: 5,
     price_per_tester: 12,
     custom_price: "",
@@ -32,6 +49,57 @@ export default function SubmitPage() {
   const pricePerTester = form.custom_price ? Number(form.custom_price) : form.price_per_tester;
   const total = form.testers_count * pricePerTester;
   const isValidPrice = pricePerTester >= 5;
+
+  // Check if already authed
+  useEffect(() => {
+    fetch("/api/business/me").then(r => r.json()).then(d => {
+      if (d.authenticated) {
+        setBiz(d.business);
+        setAuthed(true);
+      } else {
+        setAuthed(false);
+      }
+    }).catch(() => setAuthed(false));
+  }, []);
+
+  const sendCode = async () => {
+    if (!authEmail) return;
+    setAuthLoading(true);
+    setAuthError("");
+    try {
+      const r = await fetch("/api/business/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "send", email: authEmail, company: authCompany }),
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error);
+      setCodeSent(true);
+    } catch (e: unknown) {
+      setAuthError(e instanceof Error ? e.message : "Failed to send code");
+    }
+    setAuthLoading(false);
+  };
+
+  const verifyCode = async () => {
+    if (!code) return;
+    setAuthLoading(true);
+    setAuthError("");
+    try {
+      const r = await fetch("/api/business/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "verify", email: authEmail, code, company: authCompany }),
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error);
+      setBiz({ id: d.id, email: authEmail, company: authCompany || null });
+      setAuthed(true);
+    } catch (e: unknown) {
+      setAuthError(e instanceof Error ? e.message : "Invalid code");
+    }
+    setAuthLoading(false);
+  };
 
   const submit = async () => {
     setError("");
@@ -48,7 +116,6 @@ export default function SubmitPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
-      // Redirect to Stripe if we get a checkout URL
       if (data.checkoutUrl) {
         window.location.href = data.checkoutUrl;
       } else {
@@ -60,6 +127,9 @@ export default function SubmitPage() {
       setSubmitting(false);
     }
   };
+
+  // Total steps: verify (0) + 3 job steps
+  const totalSteps = 3;
 
   return (
     <>
@@ -100,20 +170,77 @@ export default function SubmitPage() {
                 </div>
               </div>
             </div>
+          ) : authed === null ? (
+            <div className="py-20 text-center text-[var(--text-dim)]">Loading...</div>
+          ) : !authed ? (
+            /* ═══ EMAIL VERIFICATION ═══ */
+            <div>
+              <div className="text-center mb-10">
+                <h1 className="h text-2xl md:text-3xl font-bold mb-2 text-[var(--text)]">Post a test job</h1>
+                <p className="text-[15px] text-[var(--text-muted)]">
+                  Verify your email to get started. Takes 10 seconds.
+                </p>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-black/[0.06] p-6 md:p-8">
+                {!codeSent ? (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-1.5">Work email</label>
+                      <input className="input" type="email" placeholder="you@company.com" value={authEmail}
+                        onChange={e => setAuthEmail(e.target.value)} onKeyDown={e => e.key === "Enter" && sendCode()} />
+                    </div>
+                    <div>
+                      <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-1.5">Company name (optional)</label>
+                      <input className="input" placeholder="Your company" value={authCompany}
+                        onChange={e => setAuthCompany(e.target.value)} />
+                    </div>
+                    {authError && <p className="text-[13px] text-red-600">{authError}</p>}
+                    <button onClick={sendCode} disabled={authLoading || !authEmail}
+                      className="btn btn-primary w-full disabled:opacity-40">
+                      {authLoading ? "Sending..." : "Send verification code"}
+                    </button>
+                    <p className="text-[11px] text-[var(--text-dim)] text-center">We&apos;ll send a 6-digit code to your email.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="text-center mb-2">
+                      <p className="text-[13px] text-[var(--text-muted)]">Code sent to <span className="font-medium text-[var(--text)]">{authEmail}</span></p>
+                    </div>
+                    <div>
+                      <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-1.5">Verification code</label>
+                      <input className="input text-center text-xl tracking-[0.3em] font-mono" type="text" maxLength={6} placeholder="000000" value={code}
+                        onChange={e => setCode(e.target.value.replace(/\D/g, ""))} onKeyDown={e => e.key === "Enter" && verifyCode()} />
+                    </div>
+                    {authError && <p className="text-[13px] text-red-600">{authError}</p>}
+                    <button onClick={verifyCode} disabled={authLoading || code.length !== 6}
+                      className="btn btn-primary w-full disabled:opacity-40">
+                      {authLoading ? "Verifying..." : "Verify"}
+                    </button>
+                    <button onClick={() => { setCodeSent(false); setCode(""); setAuthError(""); }}
+                      className="text-[12px] text-[var(--text-dim)] hover:text-[var(--text)] transition-colors w-full text-center">
+                      Use a different email
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
           ) : (
+            /* ═══ JOB POSTING (authed) ═══ */
             <>
               <div className="text-center mb-10">
                 <h1 className="h text-2xl md:text-3xl font-bold mb-2 text-[var(--text)]">Post a test job</h1>
                 <p className="text-[15px] text-[var(--text-muted)]">
                   Set your own budget. Pay per tester. Results in hours.
                 </p>
+                <p className="text-[12px] text-[var(--text-dim)] mt-1">Posting as {biz?.email}</p>
               </div>
 
               {/* Progress */}
               <div className="flex items-center gap-2 mb-8">
-                {[1, 2, 3].map((s) => (
-                  <div key={s} className="flex-1 h-1.5 rounded-full overflow-hidden bg-black/[0.04]">
-                    <div className={`h-full rounded-full transition-all duration-500 ${step >= s ? "grad-warm-bg w-full" : "w-0"}`} />
+                {Array.from({ length: totalSteps }).map((_, i) => (
+                  <div key={i} className="flex-1 h-1.5 rounded-full overflow-hidden bg-black/[0.04]">
+                    <div className={`h-full rounded-full transition-all duration-500 ${step >= i + 1 ? "grad-warm-bg w-full" : "w-0"}`} />
                   </div>
                 ))}
               </div>
@@ -140,7 +267,7 @@ export default function SubmitPage() {
                 </div>
               )}
 
-              {/* Step 2: Audience + contact */}
+              {/* Step 2: Audience */}
               {step === 2 && (
                 <div className="space-y-4">
                   <div>
@@ -148,17 +275,9 @@ export default function SubmitPage() {
                     <textarea className="input min-h-[80px] resize-none" placeholder='E.g. "Women 25-40 who shop online" or "Active crypto traders"' value={form.target_audience} onChange={(e) => setForm({ ...form, target_audience: e.target.value })} />
                     <p className="text-[11px] text-[var(--text-dim)] mt-1">Leave blank for general audience.</p>
                   </div>
-                  <div>
-                    <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-1.5">Your email</label>
-                    <input className="input" type="email" placeholder="you@company.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-                  </div>
-                  <div>
-                    <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-1.5">Company (optional)</label>
-                    <input className="input" placeholder="Your company name" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
-                  </div>
                   <div className="flex gap-3">
                     <button onClick={() => setStep(1)} className="btn btn-outline flex-1">Back</button>
-                    <button onClick={() => { if (form.email) setStep(3); }} disabled={!form.email} className="btn btn-primary flex-1 disabled:opacity-40 disabled:cursor-not-allowed">Continue</button>
+                    <button onClick={() => setStep(3)} className="btn btn-primary flex-1">Continue</button>
                   </div>
                 </div>
               )}
@@ -166,55 +285,36 @@ export default function SubmitPage() {
               {/* Step 3: Budget */}
               {step === 3 && (
                 <div className="space-y-6">
-                  {/* Number of testers */}
                   <div>
                     <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-3">How many testers?</label>
                     <div className="flex items-center gap-4">
-                      <button
-                        onClick={() => setForm({ ...form, testers_count: Math.max(1, form.testers_count - 1) })}
-                        className="w-11 h-11 rounded-xl border border-black/[0.08] bg-white flex items-center justify-center text-[var(--text-muted)] hover:border-orange-200 transition-colors text-lg font-bold"
-                      >−</button>
+                      <button onClick={() => setForm({ ...form, testers_count: Math.max(1, form.testers_count - 1) })}
+                        className="w-11 h-11 rounded-xl border border-black/[0.08] bg-white flex items-center justify-center text-[var(--text-muted)] hover:border-orange-200 transition-colors text-lg font-bold">-</button>
                       <div className="flex-1 text-center">
-                        <input
-                          type="number"
-                          min={1}
-                          max={100}
-                          value={form.testers_count}
+                        <input type="number" min={1} max={100} value={form.testers_count}
                           onChange={(e) => setForm({ ...form, testers_count: Math.max(1, Math.min(100, parseInt(e.target.value) || 1)) })}
-                          className="h text-4xl font-bold text-[var(--text)] text-center bg-transparent outline-none w-20 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        />
+                          className="h text-4xl font-bold text-[var(--text)] text-center bg-transparent outline-none w-20 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
                         <p className="text-[11px] text-[var(--text-dim)] mt-0.5">tester{form.testers_count > 1 ? "s" : ""}</p>
                       </div>
-                      <button
-                        onClick={() => setForm({ ...form, testers_count: Math.min(100, form.testers_count + 1) })}
-                        className="w-11 h-11 rounded-xl border border-black/[0.08] bg-white flex items-center justify-center text-[var(--text-muted)] hover:border-orange-200 transition-colors text-lg font-bold"
-                      >+</button>
+                      <button onClick={() => setForm({ ...form, testers_count: Math.min(100, form.testers_count + 1) })}
+                        className="w-11 h-11 rounded-xl border border-black/[0.08] bg-white flex items-center justify-center text-[var(--text-muted)] hover:border-orange-200 transition-colors text-lg font-bold">+</button>
                     </div>
                     <div className="flex justify-center gap-2 mt-3">
                       {[3, 5, 10, 20].map((n) => (
                         <button key={n} onClick={() => setForm({ ...form, testers_count: n })}
                           className={`px-3 py-1 rounded-lg text-[12px] font-medium border transition-all ${
-                            form.testers_count === n
-                              ? "bg-orange-50 border-orange-300 text-orange-700"
-                              : "bg-white border-black/[0.06] text-[var(--text-dim)] hover:border-orange-200"
-                          }`}
-                        >{n}</button>
+                            form.testers_count === n ? "bg-orange-50 border-orange-300 text-orange-700" : "bg-white border-black/[0.06] text-[var(--text-dim)] hover:border-orange-200"
+                          }`}>{n}</button>
                       ))}
                     </div>
                   </div>
 
-                  {/* Price per tester */}
                   <div>
                     <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-3">Budget per tester</label>
                     <div className="grid grid-cols-3 gap-3 mb-3">
                       {SUGGESTED_BUDGETS.map((b) => (
                         <button key={b.per} onClick={() => setForm({ ...form, price_per_tester: b.per, custom_price: "" })}
-                          className={`card-light p-3 text-center ${
-                            !form.custom_price && form.price_per_tester === b.per
-                              ? "!border-orange-300 !bg-orange-50/50"
-                              : ""
-                          }`}
-                        >
+                          className={`card-light p-3 text-center ${!form.custom_price && form.price_per_tester === b.per ? "!border-orange-300 !bg-orange-50/50" : ""}`}>
                           <p className="h text-xl font-bold text-[var(--text)]">${b.per}</p>
                           <p className="text-[10px] text-[var(--text-dim)] mt-0.5">{b.label}</p>
                           <p className="text-[9px] text-[var(--text-dim)]">{b.speed}</p>
@@ -223,34 +323,21 @@ export default function SubmitPage() {
                     </div>
                     <div className="relative">
                       <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] font-medium">$</span>
-                      <input
-                        className="input !pl-8"
-                        type="number"
-                        min={5}
-                        placeholder="Or enter custom amount (min $5)"
-                        value={form.custom_price}
-                        onChange={(e) => setForm({ ...form, custom_price: e.target.value })}
-                      />
+                      <input className="input !pl-8" type="number" min={5} placeholder="Or enter custom amount (min $5)" value={form.custom_price}
+                        onChange={(e) => setForm({ ...form, custom_price: e.target.value })} />
                     </div>
                     {form.custom_price && Number(form.custom_price) < 5 && (
                       <p className="text-[11px] text-red-600 mt-1">Minimum $5 per tester</p>
                     )}
                   </div>
 
-                  {/* Order summary — always visible */}
                   <div className="card-light p-5 bg-[var(--bg-2)]">
                     <p className="h text-[11px] font-semibold text-[var(--text-dim)] uppercase tracking-wider mb-3">Order summary</p>
                     <div className="space-y-2 text-[13px]">
                       <div className="flex justify-between">
-                        <span className="text-[var(--text-muted)]">{form.testers_count} tester{form.testers_count > 1 ? "s" : ""} × ${pricePerTester}</span>
+                        <span className="text-[var(--text-muted)]">{form.testers_count} tester{form.testers_count > 1 ? "s" : ""} x ${pricePerTester}</span>
                         <span className="text-[var(--text)] font-medium">${total}</span>
                       </div>
-                      {form.target_audience && (
-                        <div className="flex justify-between">
-                          <span className="text-[var(--text-muted)]">Audience</span>
-                          <span className="text-[var(--text-muted)] text-right max-w-[200px] truncate">{form.target_audience}</span>
-                        </div>
-                      )}
                       <div className="border-t border-black/[0.05] pt-2 flex justify-between items-center">
                         <span className="h text-[14px] font-bold text-[var(--text)]">Total</span>
                         <span className="h text-2xl font-bold grad-warm">${total}</span>
@@ -258,9 +345,7 @@ export default function SubmitPage() {
                     </div>
                   </div>
 
-                  {error && (
-                    <div className="bg-red-50 border border-red-200 text-red-700 text-[13px] rounded-xl px-4 py-3">{error}</div>
-                  )}
+                  {error && <div className="bg-red-50 border border-red-200 text-red-700 text-[13px] rounded-xl px-4 py-3">{error}</div>}
 
                   <div className="flex gap-3">
                     <button onClick={() => setStep(2)} className="btn btn-outline flex-1">Back</button>

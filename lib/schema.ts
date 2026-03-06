@@ -53,6 +53,17 @@ export async function ensureTables() {
       UNIQUE(order_id, tester_id)
     )`;
 
+    await sql`CREATE TABLE IF NOT EXISTS businesses (
+      id SERIAL PRIMARY KEY,
+      email VARCHAR(255) UNIQUE NOT NULL,
+      company VARCHAR(255),
+      verified BOOLEAN DEFAULT false,
+      auth_token VARCHAR(64),
+      verify_code VARCHAR(10),
+      verify_expires TIMESTAMP,
+      created_at TIMESTAMP DEFAULT NOW()
+    )`;
+
     // Migration helpers for existing tables
     await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS price_per_tester_cents INTEGER`;
     await sql`ALTER TABLE testers ADD COLUMN IF NOT EXISTS auth_token VARCHAR(64)`;
