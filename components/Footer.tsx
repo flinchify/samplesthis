@@ -28,9 +28,14 @@ export default function Footer() {
           ))}
         </div>
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-6 border-t border-black/[0.04]">
-          <p className="text-[11px] text-[var(--text-dim)]">&copy; 2026 Flinchify</p>
+          <p className="text-[11px] text-[var(--text-dim)]">&copy; {new Date().getFullYear()} Flinchify. All rights reserved.</p>
           <p className="text-[11px] text-[var(--text-dim)]">Made in Australia</p>
         </div>
+        <p className="text-[10px] text-[var(--text-dim)]/50 text-center mt-4 leading-relaxed max-w-xl mx-auto">
+          Flinchify, the Flinchify logo, &quot;Find the flinch,&quot; and all associated marks, designs, and content 
+          are the exclusive property of Flinchify and may not be reproduced, distributed, or used without prior 
+          written permission. All third-party trademarks shown are property of their respective owners.
+        </p>
       </div>
     </footer>
   );
