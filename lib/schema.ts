@@ -69,6 +69,11 @@ export async function ensureTables() {
     await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS payout_cents INTEGER DEFAULT 0`;
     await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS payout_transfer_id VARCHAR(255)`;
     await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS completed_at TIMESTAMP`;
+    await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS feedback TEXT`;
+    await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS screen_recording_url VARCHAR(500)`;
+    await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS screenshots TEXT DEFAULT '[]'`;
+    await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS submitted_at TIMESTAMP`;
+    await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS payout_error TEXT`;
 
     migrated = true;
   } catch (e) {

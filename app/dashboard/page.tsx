@@ -22,8 +22,25 @@ interface Tester {
   created_at: string;
 }
 
+interface MyApp {
+  id: number;
+  order_id: number;
+  status: string;
+  app_url: string;
+  app_type: string | null;
+  job_description: string | null;
+  price_per_tester_cents: number;
+  feedback: string | null;
+  screen_recording_url: string | null;
+  payout_cents: number;
+  payout_transfer_id: string | null;
+  created_at: string;
+  submitted_at: string | null;
+}
+
 const NAV_ITEMS = [
   { key: "overview", label: "Overview", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
+  { key: "myjobs", label: "My Jobs", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" },
   { key: "explore", label: "Explore Jobs", icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z", href: "/explore" },
   { key: "payouts", label: "Payouts", icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
   { key: "profile", label: "Profile", icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" },
@@ -36,6 +53,10 @@ export default function Dashboard() {
   const [tab, setTab] = useState("overview");
   const [connectLoading, setConnectLoading] = useState(false);
   const [connectStatus, setConnectStatus] = useState<{ onboarded: boolean; hasAccount: boolean } | null>(null);
+  const [myApps, setMyApps] = useState<MyApp[]>([]);
+  const [myAppsLoading, setMyAppsLoading] = useState(false);
+  const [submitForm, setSubmitForm] = useState<{ id: number; feedback: string; recording: string } | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     fetch("/api/testers/me")
@@ -51,7 +72,42 @@ export default function Dashboard() {
     fetch("/api/connect/status").then(r => r.json()).then(d => setConnectStatus(d)).catch(() => {});
   }, [router]);
 
-  // Jobs browsing moved to /explore
+  useEffect(() => {
+    if (tab === "myjobs") {
+      setMyAppsLoading(true);
+      fetch("/api/applications/mine").then(r => r.json()).then(d => { setMyApps(d.applications || []); setMyAppsLoading(false); }).catch(() => setMyAppsLoading(false));
+    }
+  }, [tab]);
+
+  const submitResults = async () => {
+    if (!submitForm || !submitForm.feedback) return;
+    setSubmitting(true);
+    try {
+      const r = await fetch("/api/applications/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          application_id: submitForm.id,
+          feedback: submitForm.feedback,
+          screen_recording_url: submitForm.recording || null,
+        }),
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error);
+      setSubmitForm(null);
+      // Refresh
+      const apps = await fetch("/api/applications/mine").then(r2 => r2.json());
+      setMyApps(apps.applications || []);
+      if (d.payout?.paid) {
+        alert(`Submitted! You earned $${(d.payout.amount / 100).toFixed(2)}`);
+      } else {
+        alert("Submitted! " + (d.payout?.error || "Payout will process once you set up Stripe."));
+      }
+    } catch (e: unknown) {
+      alert(e instanceof Error ? e.message : "Failed to submit");
+    }
+    setSubmitting(false);
+  };
 
   const setupPayouts = async () => {
     setConnectLoading(true);
@@ -187,6 +243,100 @@ export default function Dashboard() {
                 <p className="text-[13px] text-[var(--text-muted)]">Keep your info current to get matched to better jobs.</p>
               </button>
             </div>
+          </div>
+        )}
+
+        {tab === "myjobs" && (
+          <div>
+            <h1 className="h text-xl font-bold text-[var(--text)] mb-6">My Jobs</h1>
+            {myAppsLoading ? (
+              <div className="space-y-3">{[1,2,3].map(i => <div key={i} className="bg-white rounded-2xl border border-black/[0.04] p-6 animate-pulse"><div className="h-4 bg-black/[0.03] rounded w-1/3" /></div>)}</div>
+            ) : myApps.length === 0 ? (
+              <div className="bg-white rounded-2xl border border-black/[0.04] p-10 text-center">
+                <p className="text-[var(--text-muted)]">No jobs yet.</p>
+                <p className="text-[13px] text-[var(--text-dim)] mt-1"><Link href="/explore" className="text-[var(--accent)] hover:underline">Explore jobs</Link> and apply to start earning.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {myApps.map(a => {
+                  const pay = (a.price_per_tester_cents || 0) / 100;
+                  const hostname = (() => { try { return new URL(a.app_url).hostname.replace("www.", ""); } catch { return a.app_url; } })();
+                  const statusColors: Record<string, string> = {
+                    pending: "bg-yellow-50 text-yellow-700 border-yellow-200",
+                    accepted: "bg-blue-50 text-blue-700 border-blue-200",
+                    submitted: "bg-purple-50 text-purple-700 border-purple-200",
+                    completed: "bg-green-50 text-green-700 border-green-200",
+                    rejected: "bg-red-50 text-red-700 border-red-200",
+                  };
+                  return (
+                    <div key={a.id} className="bg-white rounded-2xl border border-black/[0.04] p-6">
+                      <div className="flex items-start justify-between gap-3 mb-3">
+                        <div>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h3 className="h text-[14px] font-semibold text-[var(--text)]">{hostname}</h3>
+                            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${statusColors[a.status] || "bg-gray-50 text-gray-500 border-gray-200"}`}>{a.status}</span>
+                            {a.app_type ? <span className="text-[11px] text-[var(--text-dim)]">{a.app_type}</span> : null}
+                          </div>
+                          {a.job_description ? <p className="text-[12px] text-[var(--text-muted)] mt-1 line-clamp-2">{a.job_description}</p> : null}
+                        </div>
+                        <div className="text-right shrink-0">
+                          <p className="h text-[16px] font-bold">${pay.toFixed(0)}</p>
+                          {a.payout_cents > 0 ? <p className="text-[10px] text-green-600">Earned ${(a.payout_cents / 100).toFixed(2)}</p> : null}
+                        </div>
+                      </div>
+
+                      {/* Accepted = show submit button */}
+                      {a.status === "accepted" && !submitForm && (
+                        <button onClick={() => setSubmitForm({ id: a.id, feedback: "", recording: "" })}
+                          className="w-full py-2.5 rounded-xl bg-black text-white text-[13px] font-semibold hover:bg-black/90 transition-colors">
+                          Submit test results
+                        </button>
+                      )}
+
+                      {/* Submit form inline */}
+                      {submitForm && submitForm.id === a.id && (
+                        <div className="mt-3 space-y-3 border-t border-black/[0.04] pt-4">
+                          <div>
+                            <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-1.5">Your feedback *</label>
+                            <textarea className="w-full rounded-xl border border-black/[0.08] p-3 text-[13px] min-h-[120px] resize-none focus:outline-none focus:border-black/[0.15]"
+                              placeholder="What worked, what was confusing, what broke? Be specific — mention exact pages, buttons, flows..."
+                              value={submitForm.feedback}
+                              onChange={e => setSubmitForm({ ...submitForm, feedback: e.target.value })} />
+                          </div>
+                          <div>
+                            <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-1.5">Screen recording URL (optional)</label>
+                            <input className="w-full rounded-xl border border-black/[0.08] px-3 py-2.5 text-[13px] focus:outline-none focus:border-black/[0.15]"
+                              placeholder="Loom, YouTube, or any video link"
+                              value={submitForm.recording}
+                              onChange={e => setSubmitForm({ ...submitForm, recording: e.target.value })} />
+                          </div>
+                          <div className="flex gap-2">
+                            <button onClick={() => setSubmitForm(null)} className="flex-1 py-2.5 rounded-xl border border-black/[0.08] text-[13px] font-medium text-[var(--text-muted)] hover:bg-black/[0.02] transition-colors">Cancel</button>
+                            <button onClick={submitResults} disabled={submitting || submitForm.feedback.length < 20}
+                              className="flex-1 py-2.5 rounded-xl bg-black text-white text-[13px] font-semibold hover:bg-black/90 transition-colors disabled:opacity-40">
+                              {submitting ? "Submitting..." : "Submit & get paid"}
+                            </button>
+                          </div>
+                          <p className="text-[11px] text-[var(--text-dim)] text-center">Payment is automatic once you submit. Min 20 characters.</p>
+                        </div>
+                      )}
+
+                      {/* Already submitted */}
+                      {(a.status === "submitted" || a.status === "completed") && a.feedback ? (
+                        <div className="mt-3 bg-black/[0.02] rounded-xl p-3">
+                          <p className="text-[11px] font-medium text-[var(--text-dim)] mb-1">Your feedback</p>
+                          <p className="text-[12px] text-[var(--text-muted)] line-clamp-3">{a.feedback}</p>
+                        </div>
+                      ) : null}
+
+                      {a.status === "pending" && (
+                        <p className="text-[12px] text-[var(--text-dim)] mt-2">Waiting for review. You&apos;ll be notified when accepted.</p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 
