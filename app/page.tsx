@@ -1,9 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
+import AuthModal from "@/components/AuthModal";
 
 const SAMPLE_JOBS = [
   { app: "Fitness tracking app", audience: "Gym-goers, 25-40", testers: 5, budget: 12, time: "2h ago", applied: 8 },
@@ -13,9 +16,24 @@ const SAMPLE_JOBS = [
 ];
 
 export default function Home() {
+  const router = useRouter();
+  const [authMode, setAuthMode] = useState<"tester" | "business" | null>(null);
+
+  const handleAuthSuccess = (data: { type: "tester" | "business" }) => {
+    setAuthMode(null);
+    if (data.type === "tester") router.push("/dashboard");
+    else router.push("/submit");
+  };
+
   return (
     <>
       <Nav />
+      <AuthModal
+        mode={authMode || "tester"}
+        open={authMode !== null}
+        onClose={() => setAuthMode(null)}
+        onSuccess={handleAuthSuccess}
+      />
       <main>
 
         {/* ═══ HERO ═══ */}
@@ -45,8 +63,8 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 hero-anim ha-4">
-              <Link href="/become-a-tester" className="btn btn-primary btn-lg w-full sm:w-auto">Start testing</Link>
-              <Link href="/submit" className="btn btn-outline btn-lg w-full sm:w-auto">Post a job</Link>
+              <button onClick={() => setAuthMode("tester")} className="btn btn-primary btn-lg w-full sm:w-auto">Start testing</button>
+              <button onClick={() => setAuthMode("business")} className="btn btn-outline btn-lg w-full sm:w-auto">Post a job</button>
             </div>
           </div>
         </section>
@@ -81,7 +99,7 @@ export default function Home() {
                       </div>
                       <span className="text-[11px] sm:text-[12px] text-[var(--text-dim)]">{job.applied} applied</span>
                     </div>
-                    <Link href="/become-a-tester" className="text-[12px] font-medium text-[var(--accent)] hover:underline">Apply</Link>
+                    <button onClick={() => setAuthMode("tester")} className="text-[12px] font-medium text-[var(--accent)] hover:underline">Apply</button>
                   </div>
                 </div>
               ))}
@@ -117,7 +135,7 @@ export default function Home() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
               <ScrollReveal delay={100}>
-                <Link href="/submit" className="card block p-6 sm:p-8 group">
+                <button onClick={() => setAuthMode("business")} className="card block p-6 sm:p-8 group text-left w-full">
                   <div className="w-10 h-10 rounded-xl grad-warm-subtle flex items-center justify-center mb-4 sm:mb-5">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F97316" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
@@ -128,11 +146,11 @@ export default function Home() {
                     Post a test job with your budget. Describe your ideal user. Get screen recordings, bug reports, and every flinch moment.
                   </p>
                   <span className="text-[13px] font-medium text-[var(--accent)] group-hover:underline">Post a test job →</span>
-                </Link>
+                </button>
               </ScrollReveal>
 
               <ScrollReveal delay={200}>
-                <Link href="/become-a-tester" className="card block p-6 sm:p-8 group">
+                <button onClick={() => setAuthMode("tester")} className="card block p-6 sm:p-8 group text-left w-full">
                   <div className="w-10 h-10 rounded-xl grad-warm-subtle flex items-center justify-center mb-4 sm:mb-5">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F97316" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
@@ -143,7 +161,7 @@ export default function Home() {
                     Browse jobs matched to your profile. Use apps for 15 minutes, give honest feedback, get paid same day.
                   </p>
                   <span className="text-[13px] font-medium text-[var(--accent)] group-hover:underline">Sign up as a tester →</span>
-                </Link>
+                </button>
               </ScrollReveal>
             </div>
           </div>
@@ -297,8 +315,8 @@ export default function Home() {
               Real humans. Your audience. Every friction point.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Link href="/become-a-tester" className="btn btn-primary btn-lg w-full sm:w-auto">Start testing</Link>
-              <Link href="/submit" className="btn btn-outline btn-lg w-full sm:w-auto">Post a job</Link>
+              <button onClick={() => setAuthMode("tester")} className="btn btn-primary btn-lg w-full sm:w-auto">Start testing</button>
+              <button onClick={() => setAuthMode("business")} className="btn btn-outline btn-lg w-full sm:w-auto">Post a job</button>
             </div>
           </ScrollReveal>
         </section>
