@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSql } from "@/lib/db";
-import { ensureTables } from "@/lib/schema";
 
 export async function GET(req: NextRequest) {
-  await ensureTables();
   const sql = getSql();
 
   const token = req.cookies.get("business_token")?.value;

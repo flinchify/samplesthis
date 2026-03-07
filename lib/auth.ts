@@ -1,6 +1,5 @@
 import { cookies } from "next/headers";
 import { getSql } from "./db";
-import { ensureTables } from "./schema";
 import crypto from "crypto";
 
 export function generateToken() {
@@ -13,7 +12,6 @@ export async function getTester() {
     const token = cookieStore.get("tester_token")?.value;
     if (!token) return null;
 
-    await ensureTables();
     const sql = getSql();
     const rows = await sql`SELECT * FROM testers WHERE auth_token = ${token} LIMIT 1`;
     return rows[0] || null;

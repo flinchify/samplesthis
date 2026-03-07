@@ -28,23 +28,7 @@ export default function AuthModal({ mode, open, onClose, onSuccess }: AuthModalP
   const [bLoading, setBLoading] = useState(false);
   const [bError, setBError] = useState("");
 
-  // Check if already authenticated
-  const [checking, setChecking] = useState(true);
-  useEffect(() => {
-    if (!open) return;
-    setChecking(true);
-    if (mode === "tester") {
-      fetch("/api/testers/me").then(r => r.json()).then(d => {
-        if (d.id) onSuccess({ type: "tester" });
-        else setChecking(false);
-      }).catch(() => setChecking(false));
-    } else {
-      fetch("/api/business/me").then(r => r.json()).then(d => {
-        if (d.authenticated) onSuccess({ type: "business", email: d.business?.email });
-        else setChecking(false);
-      }).catch(() => setChecking(false));
-    }
-  }, [open, mode]);
+  const [checking] = useState(false);
 
   // Reset on close
   useEffect(() => {
