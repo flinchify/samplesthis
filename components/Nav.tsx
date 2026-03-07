@@ -106,15 +106,17 @@ export default function Nav() {
               </svg>
             </button>
             {dropdown === "testers" && (
-              <div className="absolute top-full left-0 mt-1 w-[280px] bg-white rounded-xl border border-black/[0.06] shadow-lg shadow-black/[0.04] py-2 animate-in"
+              <div className="absolute top-full left-0 pt-0 w-[280px]"
                 onMouseEnter={() => openMenu("testers")} onMouseLeave={closeMenu}>
-                {TESTERS_MENU.map(item => (
-                  <Link key={item.href} href={item.href} onClick={() => setDropdown(null)}
-                    className="flex flex-col px-4 py-2.5 hover:bg-black/[0.02] transition-colors">
-                    <span className="text-[13px] font-medium text-[var(--text)]">{item.label}</span>
-                    <span className="text-[11px] text-[var(--text-dim)]">{item.desc}</span>
-                  </Link>
-                ))}
+                <div className="bg-[var(--bg)] rounded-xl border border-black/[0.06] shadow-lg shadow-black/[0.06] py-2 animate-in">
+                  {TESTERS_MENU.map(item => (
+                    <Link key={item.href} href={item.href} onClick={() => setDropdown(null)}
+                      className="flex flex-col px-4 py-2.5 hover:bg-[var(--bg-2)] transition-colors">
+                      <span className="text-[13px] font-medium text-[var(--text)]">{item.label}</span>
+                      <span className="text-[11px] text-[var(--text-dim)]">{item.desc}</span>
+                    </Link>
+                  ))}
+                </div>
               </div>
             )}
           </div>
@@ -133,15 +135,17 @@ export default function Nav() {
               </svg>
             </button>
             {dropdown === "business" && (
-              <div className="absolute top-full left-0 mt-1 w-[280px] bg-white rounded-xl border border-black/[0.06] shadow-lg shadow-black/[0.04] py-2 animate-in"
+              <div className="absolute top-full left-0 pt-0 w-[280px]"
                 onMouseEnter={() => openMenu("business")} onMouseLeave={closeMenu}>
-                {BUSINESS_MENU.map(item => (
-                  <Link key={item.href} href={item.href} onClick={() => setDropdown(null)}
-                    className="flex flex-col px-4 py-2.5 hover:bg-black/[0.02] transition-colors">
-                    <span className="text-[13px] font-medium text-[var(--text)]">{item.label}</span>
-                    <span className="text-[11px] text-[var(--text-dim)]">{item.desc}</span>
-                  </Link>
-                ))}
+                <div className="bg-[var(--bg)] rounded-xl border border-black/[0.06] shadow-lg shadow-black/[0.06] py-2 animate-in">
+                  {BUSINESS_MENU.map(item => (
+                    <Link key={item.href} href={item.href} onClick={() => setDropdown(null)}
+                      className="flex flex-col px-4 py-2.5 hover:bg-[var(--bg-2)] transition-colors">
+                      <span className="text-[13px] font-medium text-[var(--text)]">{item.label}</span>
+                      <span className="text-[11px] text-[var(--text-dim)]">{item.desc}</span>
+                    </Link>
+                  ))}
+                </div>
               </div>
             )}
           </div>
