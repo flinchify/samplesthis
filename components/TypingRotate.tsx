@@ -2,11 +2,11 @@
 
 import { useState, useEffect, useRef } from "react";
 
-const WORDS = ["users", "customers", "managers", "agents", "testers", "clients", "investors", "developers"];
-const TYPE_SPEED = 90;
-const DELETE_SPEED = 50;
-const PAUSE_AFTER_TYPE = 2000;
-const PAUSE_AFTER_DELETE = 350;
+const WORDS = ["users", "clients", "testers", "agents", "bosses", "buyers", "players"];
+const TYPE_SPEED = 140;
+const DELETE_SPEED = 70;
+const PAUSE_AFTER_TYPE = 2400;
+const PAUSE_AFTER_DELETE = 500;
 
 type Phase = "typing" | "pausing" | "deleting" | "waiting";
 
