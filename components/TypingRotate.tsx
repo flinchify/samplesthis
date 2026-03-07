@@ -3,10 +3,10 @@
 import { useState, useEffect, useRef } from "react";
 
 const WORDS = ["users", "clients", "customers", "buyers", "players", "audience", "critics"];
-const TYPE_SPEED = 140;
-const DELETE_SPEED = 70;
-const PAUSE_AFTER_TYPE = 2400;
-const PAUSE_AFTER_DELETE = 500;
+const TYPE_SPEED = 160;
+const DELETE_SPEED = 80;
+const PAUSE_AFTER_TYPE = 2800;
+const PAUSE_AFTER_DELETE = 600;
 
 type Phase = "typing" | "pausing" | "deleting" | "waiting";
 

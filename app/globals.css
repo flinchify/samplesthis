@@ -213,7 +213,8 @@ body { background: var(--bg); color: var(--text); letter-spacing: -0.01em; }
 
 /* ─── Typing rotation ─── */
 .typing-rotate-wrapper {
-  display: inline;
+  display: inline-flex;
+  align-items: baseline;
   position: relative;
 }
 .typing-word {
@@ -225,10 +226,7 @@ body { background: var(--bg); color: var(--text); letter-spacing: -0.01em; }
 .typing-cursor {
   color: var(--accent);
   font-weight: 300;
-  margin-left: 0;
-  width: 0;
-  display: inline-block;
-  overflow: visible;
+  margin-left: 1px;
   transition: opacity 0.1s;
   -webkit-text-fill-color: var(--accent);
 }
