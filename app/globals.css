@@ -262,6 +262,16 @@ body { background: var(--bg); color: var(--text); letter-spacing: -0.01em; }
 }
 .float-anim { animation: gentle-float 4s ease-in-out infinite; }
 
+/* ─── Step items stagger ─── */
+@keyframes step-fade-in {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.step-item {
+  opacity: 0;
+  animation: step-fade-in 0.5s ease forwards;
+}
+
 /* ─── Scrollbar ─── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }

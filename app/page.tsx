@@ -218,79 +218,128 @@ function Home() {
         </section>
 
         {/* ═══ HOW IT WORKS ═══ */}
-        <section className="warm-section py-16 sm:py-20 px-5 sm:px-6">
-          <div className="max-w-[800px] mx-auto">
+        <section className="warm-section py-16 sm:py-24 px-5 sm:px-6">
+          <div className="max-w-[1100px] mx-auto">
             <ScrollReveal>
-              <h2 className="h text-[1.5rem] sm:text-2xl md:text-[2.5rem] font-bold tracking-[-0.03em] text-center mb-10 sm:mb-16 text-[var(--text)]">
+              <h2 className="h text-[1.5rem] sm:text-2xl md:text-[2.5rem] font-bold tracking-[-0.03em] text-center mb-4 text-[var(--text)]">
                 How it works
               </h2>
+              <p className="text-[14px] sm:text-[15px] text-[var(--text-muted)] text-center max-w-lg mx-auto mb-12 sm:mb-16">
+                Whether you're shipping a product or earning as a tester, you're three steps away.
+              </p>
             </ScrollReveal>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 sm:gap-14">
-              <div>
-                <p className="h text-[12px] font-semibold text-[var(--accent)] uppercase tracking-[0.15em] mb-5 sm:mb-6">For businesses</p>
-                {[
-                  { t: "Paste your URL", d: "Drop your app link and tell us what to test." },
-                  { t: "Describe your user", d: "\"Women 25-40 who shop online\" — we match from our pool." },
-                  { t: "Set your budget", d: "Pay what you want per tester. No fixed plans." },
-                  { t: "Get your flinch report", d: "Screen recordings, bug reports, friction notes — in your inbox." },
-                ].map((s, i) => (
-                  <ScrollReveal key={s.t} delay={i * 80}>
-                    <div className="flex gap-3 sm:gap-4 mb-5 sm:mb-6">
-                      <span className="h text-[12px] font-bold text-[var(--text-dim)] mt-0.5 shrink-0">{String(i + 1).padStart(2, "0")}</span>
-                      <div>
-                        <h4 className="h text-[13px] sm:text-[14px] font-semibold mb-0.5 text-[var(--text)]">{s.t}</h4>
-                        <p className="text-[12px] sm:text-[13px] text-[var(--text-muted)] leading-relaxed">{s.d}</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+              {/* For Businesses */}
+              <ScrollReveal delay={100} animation="left">
+                <div className="card card-hover-lift p-6 sm:p-8 h-full relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-1 grad-warm-bg" />
+                  <p className="h text-[11px] sm:text-[12px] font-bold text-[var(--accent)] uppercase tracking-[0.15em] mb-6 sm:mb-8">For businesses</p>
+                  <div className="space-y-5 sm:space-y-6">
+                    {[
+                      { icon: "M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101", t: "Paste your URL", d: "Drop your app link, landing page, or prototype. Tell us what flows to test and what matters most." },
+                      { icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z", t: "Describe your ideal tester", d: "\"Women 25-40 who shop online\" or \"Developers who use React\" — we match from our pool of vetted testers." },
+                      { icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z", t: "Set your budget", d: "Pay $5-$20+ per tester. No subscriptions, no hidden fees. Higher budgets attract testers faster." },
+                      { icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z", t: "Get your flinch report", d: "Screen recordings, timestamped bug reports, friction notes, and a flinch score — delivered to your inbox within hours." },
+                    ].map((s, i) => (
+                      <div key={s.t} className="flex gap-3 sm:gap-4 step-item" style={{ animationDelay: `${i * 100}ms` }}>
+                        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl grad-warm-subtle flex items-center justify-center shrink-0 mt-0.5">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F97316" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={s.icon} /></svg>
+                        </div>
+                        <div>
+                          <h4 className="h text-[13px] sm:text-[14px] font-semibold mb-1 text-[var(--text)]">
+                            <span className="text-[var(--text-dim)] mr-1.5">{String(i + 1).padStart(2, "0")}</span>
+                            {s.t}
+                          </h4>
+                          <p className="text-[12px] sm:text-[13px] text-[var(--text-muted)] leading-[1.65]">{s.d}</p>
+                        </div>
                       </div>
-                    </div>
-                  </ScrollReveal>
-                ))}
-              </div>
+                    ))}
+                  </div>
+                </div>
+              </ScrollReveal>
 
-              <div>
-                <p className="h text-[12px] font-semibold text-[#EF4444] uppercase tracking-[0.15em] mb-5 sm:mb-6">For testers</p>
-                {[
-                  { t: "Tell us about you", d: "Age, interests, devices. 60 seconds, no interviews." },
-                  { t: "Browse jobs", d: "We match you to test jobs that fit your profile." },
-                  { t: "Use the app for 15 min", d: "Record your screen, note what feels off." },
-                  { t: "Get paid same day", d: "$5-20+ per test via PayPal or bank transfer." },
-                ].map((s, i) => (
-                  <ScrollReveal key={s.t} delay={i * 80}>
-                    <div className="flex gap-3 sm:gap-4 mb-5 sm:mb-6">
-                      <span className="h text-[12px] font-bold text-[var(--text-dim)] mt-0.5 shrink-0">{String(i + 1).padStart(2, "0")}</span>
-                      <div>
-                        <h4 className="h text-[13px] sm:text-[14px] font-semibold mb-0.5 text-[var(--text)]">{s.t}</h4>
-                        <p className="text-[12px] sm:text-[13px] text-[var(--text-muted)] leading-relaxed">{s.d}</p>
+              {/* For Testers */}
+              <ScrollReveal delay={200} animation="right">
+                <div className="card card-hover-lift p-6 sm:p-8 h-full relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#EF4444] to-[#F97316]" />
+                  <p className="h text-[11px] sm:text-[12px] font-bold text-[#EF4444] uppercase tracking-[0.15em] mb-6 sm:mb-8">For testers</p>
+                  <div className="space-y-5 sm:space-y-6">
+                    {[
+                      { icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z", t: "Create your profile", d: "Age, interests, devices, tech comfort. Takes 60 seconds — no interviews, no resume needed." },
+                      { icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z", t: "Browse matched jobs", d: "We surface test jobs that match your profile. Filter by budget, app type, or audience fit." },
+                      { icon: "M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z", t: "Test for 15 minutes", d: "Use the app naturally. Record your screen, note what confuses you, flag bugs — just be honest." },
+                      { icon: "M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z", t: "Get paid same day", d: "$5-$20+ per test via Stripe Connect. Direct deposit to your bank — no invoicing, no waiting." },
+                    ].map((s, i) => (
+                      <div key={s.t} className="flex gap-3 sm:gap-4 step-item" style={{ animationDelay: `${i * 100}ms` }}>
+                        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-red-50 to-orange-50 flex items-center justify-center shrink-0 mt-0.5">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={s.icon} /></svg>
+                        </div>
+                        <div>
+                          <h4 className="h text-[13px] sm:text-[14px] font-semibold mb-1 text-[var(--text)]">
+                            <span className="text-[var(--text-dim)] mr-1.5">{String(i + 1).padStart(2, "0")}</span>
+                            {s.t}
+                          </h4>
+                          <p className="text-[12px] sm:text-[13px] text-[var(--text-muted)] leading-[1.65]">{s.d}</p>
+                        </div>
                       </div>
-                    </div>
-                  </ScrollReveal>
-                ))}
-              </div>
+                    ))}
+                  </div>
+                </div>
+              </ScrollReveal>
             </div>
           </div>
         </section>
 
-        {/* ═══ DELIVERABLES ═══ */}
-        <section className="py-16 sm:py-20 px-5 sm:px-6">
+        {/* ═══ WHAT YOU GET ═══ */}
+        <section className="py-16 sm:py-24 px-5 sm:px-6">
           <div className="max-w-[1100px] mx-auto">
             <ScrollReveal>
-              <h2 className="h text-[1.5rem] sm:text-2xl md:text-[2.5rem] font-bold tracking-[-0.03em] text-center mb-8 sm:mb-12 text-[var(--text)]">
+              <h2 className="h text-[1.5rem] sm:text-2xl md:text-[2.5rem] font-bold tracking-[-0.03em] text-center mb-4 text-[var(--text)]">
                 What you get
               </h2>
+              <p className="text-[14px] sm:text-[15px] text-[var(--text-muted)] text-center max-w-lg mx-auto mb-10 sm:mb-14">
+                Every test delivers a complete flinch report. No fluff — just actionable feedback you can ship on.
+              </p>
             </ScrollReveal>
 
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
               {[
-                { icon: "M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664zM21 12a9 9 0 11-18 0 9 9 0 0118 0z", title: "Screen recordings", desc: "Full sessions. See where users flinch." },
-                { icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4", title: "Bug reports", desc: "Steps to reproduce, severity, device." },
-                { icon: "M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z", title: "Friction notes", desc: "What felt awkward or confusing." },
-                { icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z", title: "Flinch score", desc: "Ship when you hit zero." },
+                {
+                  icon: "M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664zM21 12a9 9 0 11-18 0 9 9 0 0118 0z",
+                  title: "Screen recordings",
+                  desc: "Full session recordings with audio commentary. See exactly where users hesitate, get confused, or give up. Timestamped highlights included.",
+                  tag: "Video",
+                },
+                {
+                  icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4",
+                  title: "Bug reports",
+                  desc: "Structured reports with steps to reproduce, expected vs actual behavior, severity rating, browser info, and screenshots of every issue found.",
+                  tag: "Structured",
+                },
+                {
+                  icon: "M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z",
+                  title: "Friction notes",
+                  desc: "Written observations on confusing copy, unclear navigation, missing affordances, and moments of doubt. The stuff analytics can't capture.",
+                  tag: "Qualitative",
+                },
+                {
+                  icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z",
+                  title: "Flinch score",
+                  desc: "A 0-100 score based on friction frequency, severity, and task completion rate. Track improvement across tests. Ship when you hit zero.",
+                  tag: "Metric",
+                },
               ].map((d, i) => (
-                <ScrollReveal key={d.title} delay={i * 60}>
-                  <div className="card p-4 sm:p-5 h-full">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F97316" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mb-3 sm:mb-4 opacity-60"><path d={d.icon} /></svg>
-                    <h3 className="h text-[13px] sm:text-[14px] font-semibold mb-1 text-[var(--text)]">{d.title}</h3>
-                    <p className="text-[11px] sm:text-[12px] text-[var(--text-muted)] leading-[1.6]">{d.desc}</p>
+                <ScrollReveal key={d.title} delay={i * 80}>
+                  <div className="card card-hover-lift p-5 sm:p-6 h-full relative overflow-hidden group">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="w-10 h-10 rounded-xl grad-warm-subtle flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F97316" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={d.icon} /></svg>
+                      </div>
+                      <span className="h text-[10px] font-semibold text-[var(--accent)] uppercase tracking-[0.1em] bg-orange-50 px-2.5 py-1 rounded-full">{d.tag}</span>
+                    </div>
+                    <h3 className="h text-[14px] sm:text-[15px] font-semibold mb-2 text-[var(--text)]">{d.title}</h3>
+                    <p className="text-[12px] sm:text-[13px] text-[var(--text-muted)] leading-[1.7]">{d.desc}</p>
                   </div>
                 </ScrollReveal>
               ))}
