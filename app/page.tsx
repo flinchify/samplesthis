@@ -63,18 +63,30 @@ function Home() {
         {/* ═══ HERO ═══ */}
         <section className="warm-gradient-hero pt-28 sm:pt-32 pb-16 sm:pb-20 px-5 sm:px-6">
           <div className="max-w-[800px] mx-auto text-center">
-            {/* Stats — stack on mobile */}
-            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mb-8 sm:mb-10 hero-anim ha-1">
-              {[
-                { label: "Avg delivery", value: "4hr" },
-                { label: "Satisfaction", value: "98%" },
-                { label: "Avg per tester", value: "$8" },
-              ].map((s) => (
-                <div key={s.label} className="flex items-center gap-1.5">
-                  <span className="text-[12px] sm:text-[13px] text-[var(--text-dim)]">{s.label}</span>
-                  <span className="h text-[12px] sm:text-[13px] font-bold text-[var(--text)]">{s.value}</span>
-                </div>
-              ))}
+            {/* Marquee — built for makers */}
+            <div className="mb-8 sm:mb-10 hero-anim ha-1 overflow-hidden">
+              <p className="h text-[9px] sm:text-[10px] font-medium text-[var(--text-dim)] uppercase tracking-[0.25em] mb-3 sm:mb-4">Built for makers who ship with</p>
+              <div className="flex items-center justify-center marquee-hero whitespace-nowrap">
+                {[...Array(2)].flatMap((_, setIdx) =>
+                  [
+                    { name: "Cursor", file: "cursor" },
+                    { name: "Bolt", file: "bolt" },
+                    { name: "Replit", file: "replit" },
+                    { name: "Lovable", file: "lovable" },
+                    { name: "v0", file: "v0" },
+                    { name: "Windsurf", file: "windsurf" },
+                    { name: "Claude", file: "claude" },
+                    { name: "ChatGPT", file: "chatgpt" },
+                    { name: "Vercel", file: "vercel" },
+                    { name: "Supabase", file: "supabase" },
+                  ].map((brand, i) => (
+                    <div key={`hero-${brand.name}-${setIdx}-${i}`} className="mx-4 sm:mx-6 flex items-center gap-2 shrink-0">
+                      <img src={`/brands/${brand.file}.svg`} alt={brand.name} className="h-4 w-4 sm:h-5 sm:w-5" />
+                      <span className="h text-[11px] sm:text-[12px] font-semibold text-[var(--text-2)] tracking-[0.02em]">{brand.name}</span>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
 
             <h1 className="h text-[2rem] sm:text-[clamp(2.6rem,6.5vw,4.5rem)] font-bold leading-[1.1] tracking-[-0.035em] mb-5 sm:mb-6 hero-anim ha-2">
@@ -317,31 +329,7 @@ function Home() {
           </div>
         </section>
 
-        {/* ═══ MARQUEE ═══ */}
-        <section className="py-8 sm:py-12 overflow-hidden border-b border-black/[0.04]">
-          <p className="h text-[9px] sm:text-[10px] font-medium text-[var(--text-dim)] text-center uppercase tracking-[0.25em] mb-4 sm:mb-5">Built for makers who ship with</p>
-          <div className="flex items-center marquee whitespace-nowrap">
-            {[...Array(2)].flatMap((_, setIdx) =>
-              [
-                { name: "Cursor", file: "cursor" },
-                { name: "Bolt", file: "bolt" },
-                { name: "Replit", file: "replit" },
-                { name: "Lovable", file: "lovable" },
-                { name: "v0", file: "v0" },
-                { name: "Windsurf", file: "windsurf" },
-                { name: "Claude", file: "claude" },
-                { name: "ChatGPT", file: "chatgpt" },
-                { name: "Vercel", file: "vercel" },
-                { name: "Supabase", file: "supabase" },
-              ].map((brand, i) => (
-                <div key={`${brand.name}-${setIdx}-${i}`} className="mx-5 sm:mx-8 flex items-center gap-2.5 shrink-0">
-                  <img src={`/brands/${brand.file}.svg`} alt={brand.name} className="h-5 w-5 sm:h-6 sm:w-6" />
-                  <span className="h text-[12px] sm:text-[13px] font-semibold text-[var(--text-2)] tracking-[0.02em]">{brand.name}</span>
-                </div>
-              ))
-            )}
-          </div>
-        </section>
+
 
         {/* ═══ CTA ═══ */}
         <section className="warm-gradient-hero py-16 sm:py-24 px-5 sm:px-6 text-center">
