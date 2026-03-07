@@ -213,10 +213,8 @@ body { background: var(--bg); color: var(--text); letter-spacing: -0.01em; }
 
 /* ─── Typing rotation ─── */
 .typing-rotate-wrapper {
-  display: inline-flex;
-  align-items: baseline;
+  display: inline;
   position: relative;
-  min-width: 2ch;
 }
 .typing-word {
   background: linear-gradient(135deg, #F97316, #EF4444, #F59E0B);
@@ -227,7 +225,10 @@ body { background: var(--bg); color: var(--text); letter-spacing: -0.01em; }
 .typing-cursor {
   color: var(--accent);
   font-weight: 300;
-  margin-left: 1px;
+  margin-left: 0;
+  width: 0;
+  display: inline-block;
+  overflow: visible;
   transition: opacity 0.1s;
   -webkit-text-fill-color: var(--accent);
 }

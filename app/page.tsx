@@ -102,7 +102,7 @@ function Home() {
 
             <h1 className="h text-[2rem] sm:text-[clamp(2.6rem,6.5vw,4.5rem)] font-bold leading-[1.1] tracking-[-0.035em] mb-5 sm:mb-6 hero-anim ha-2">
               Find the flinch before<br className="sm:hidden" />{" "}
-              <span className="whitespace-nowrap">your <span className="grad-warm inline"><TypingRotate /></span> do</span>
+              <span className="whitespace-nowrap">your <span className="grad-warm inline"><TypingRotate /></span>{" "}do</span>
             </h1>
 
             <p className="text-[15px] sm:text-[17px] text-[var(--text-muted)] max-w-[480px] mx-auto mb-8 sm:mb-10 leading-[1.6] hero-anim ha-3 px-2">
