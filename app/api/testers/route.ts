@@ -2,9 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSql } from "@/lib/db";
 import { ensureTables } from "@/lib/schema";
 import { generateToken } from "@/lib/auth";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+    const { ok } = rateLimit(`register:${ip}`, 3, 60_000); // 3 signups per minute per IP
+    if (!ok) return NextResponse.json({ error: "Too many attempts. Try again in a minute." }, { status: 429 });
+
     await ensureTables();
     const body = await req.json();
     const { name, email, age_range, location, devices, interests, tech_comfort, bio, ref, linkedin, portfolio, twitter, github, other_links } = body;

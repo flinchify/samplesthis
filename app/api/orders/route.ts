@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSql } from "@/lib/db";
 import { ensureTables } from "@/lib/schema";
+import { sanitize, isValidUrl } from "@/lib/sanitize";
 
 export async function GET() {
   try {
@@ -41,11 +42,15 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { app_url, app_type, description, target_audience, testers_count, price_per_tester } = body;
+    const app_url = sanitize(body.app_url);
+    const app_type = sanitize(body.app_type);
+    const description = sanitize(body.description);
+    const target_audience = sanitize(body.target_audience);
+    const { testers_count, price_per_tester } = body;
     const email = biz.email;
     const company = body.company || biz.company;
 
-    if (!app_url) {
+    if (!app_url || !isValidUrl(app_url)) {
       return NextResponse.json({ error: "App URL is required" }, { status: 400 });
     }
 

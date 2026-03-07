@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSql } from "@/lib/db";
 import { ensureTables } from "@/lib/schema";
+import { rateLimit } from "@/lib/rate-limit";
 import crypto from "crypto";
 
 // POST: send verification code or verify code
 export async function POST(req: NextRequest) {
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+  const { ok } = rateLimit(`biz-verify:${ip}`, 5, 60_000);
+  if (!ok) return NextResponse.json({ error: "Too many attempts. Try again in a minute." }, { status: 429 });
+
   await ensureTables();
   const sql = getSql();
   const { action, email, code, company } = await req.json();

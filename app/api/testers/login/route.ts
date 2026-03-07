@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSql } from "@/lib/db";
 import { generateToken } from "@/lib/auth";
+import { rateLimit } from "@/lib/rate-limit";
 import crypto from "crypto";
 
 export async function POST(req: NextRequest) {
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+  const { ok } = rateLimit(`login:${ip}`, 5, 60_000); // 5 attempts per minute
+  if (!ok) return NextResponse.json({ error: "Too many attempts. Try again in a minute." }, { status: 429 });
+
   const sql = getSql();
   const { action, email, code } = await req.json();
 
