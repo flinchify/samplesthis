@@ -7,9 +7,10 @@ interface AuthModalProps {
   open: boolean;
   onClose: () => void;
   onSuccess: (data: { type: "tester" | "business"; email?: string }) => void;
+  onSwitchMode?: (mode: "tester" | "business" | "login") => void;
 }
 
-export default function AuthModal({ mode, open, onClose, onSuccess }: AuthModalProps) {
+export default function AuthModal({ mode, open, onClose, onSuccess, onSwitchMode }: AuthModalProps) {
   // Tester fields
   const [tStep, setTStep] = useState(1);
   const [tForm, setTForm] = useState({
@@ -241,6 +242,13 @@ export default function AuthModal({ mode, open, onClose, onSuccess }: AuthModalP
                 </button>
               </div>
             )}
+
+            <div className="mt-5 pt-4 border-t border-black/[0.06] text-center">
+              <p className="text-[12px] text-[var(--text-dim)]">
+                Don't have an account?{" "}
+                <button onClick={() => onSwitchMode?.("tester")} className="text-[var(--accent)] font-medium hover:underline">Sign up</button>
+              </p>
+            </div>
           </div>
         ) : mode === "business" ? (
           /* ═══ BUSINESS AUTH ═══ */
@@ -304,6 +312,13 @@ export default function AuthModal({ mode, open, onClose, onSuccess }: AuthModalP
                 </button>
               </div>
             )}
+
+            <div className="mt-5 pt-4 border-t border-black/[0.06] text-center">
+              <p className="text-[12px] text-[var(--text-dim)]">
+                Already have an account?{" "}
+                <button onClick={() => onSwitchMode?.("login")} className="text-[var(--accent)] font-medium hover:underline">Log in</button>
+              </p>
+            </div>
           </div>
         ) : (
           /* ═══ TESTER SIGNUP ═══ */
@@ -425,6 +440,13 @@ export default function AuthModal({ mode, open, onClose, onSuccess }: AuthModalP
                 </div>
               </div>
             )}
+
+            <div className="mt-5 pt-4 border-t border-black/[0.06] text-center">
+              <p className="text-[12px] text-[var(--text-dim)]">
+                Already have an account?{" "}
+                <button onClick={() => onSwitchMode?.("login")} className="text-[var(--accent)] font-medium hover:underline">Log in</button>
+              </p>
+            </div>
           </div>
         )}
       </div>

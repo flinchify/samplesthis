@@ -63,10 +63,11 @@ function Home() {
     <>
       <Nav />
       <AuthModal
-        mode={authMode || "tester"}
+        mode={authMode || "login"}
         open={authMode !== null}
         onClose={() => setAuthMode(null)}
         onSuccess={handleAuthSuccess}
+        onSwitchMode={(m) => setAuthMode(m)}
       />
       <main>
 
