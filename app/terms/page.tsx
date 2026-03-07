@@ -7,58 +7,88 @@ export default function TermsPage() {
       <Nav />
       <main className="pt-16 min-h-screen">
         <div className="max-w-2xl mx-auto px-5 py-16 md:py-24">
-          <h1 className="text-3xl font-bold tracking-tight mb-2">Terms of Service</h1>
+          <h1 className="text-3xl font-bold tracking-tight mb-2 text-[var(--text)]">Terms of Service</h1>
           <p className="text-[13px] text-[var(--text-dim)] mb-10">Last updated: March 2026</p>
 
           <div className="space-y-8 text-[14px] text-[var(--text-muted)] leading-relaxed">
             <section>
-              <h2 className="text-[16px] font-semibold text-white mb-2">1. Service Description</h2>
-              <p>Flinchify is a marketplace connecting businesses that need user testing with real human testers. We facilitate the matching, payment, and delivery of testing results.</p>
+              <h2 className="text-[16px] font-semibold text-[var(--text)] mb-2">1. Service Description</h2>
+              <p>Flinchify (&quot;the Platform&quot;) is a marketplace that connects businesses seeking user testing with independent human testers. Flinchify facilitates the matching, payment processing, and delivery of testing results. Flinchify acts solely as an intermediary and does not perform testing services directly.</p>
             </section>
 
             <section>
-              <h2 className="text-[16px] font-semibold text-white mb-2">2. For Businesses</h2>
-              <p>By submitting an order, you agree to pay the listed price for your chosen plan. Results are delivered within the stated turnaround time. If we cannot match testers to your audience, you will receive a full refund. Test results are provided as-is and represent the honest feedback of matched testers.</p>
+              <h2 className="text-[16px] font-semibold text-[var(--text)] mb-2">2. Platform Role &amp; Disclaimer</h2>
+              <p>Flinchify is a platform provider, not a party to the testing arrangement between businesses and testers. We do not guarantee the quality, accuracy, or completeness of any test results, feedback, screen recordings, or deliverables. Businesses and testers engage with each other at their own risk. Flinchify does not endorse, verify, or take responsibility for any app, product, or service submitted for testing.</p>
             </section>
 
             <section>
-              <h2 className="text-[16px] font-semibold text-white mb-2">3. For Testers</h2>
-              <p>By registering, you agree to provide honest, genuine feedback when assigned a test. You must be a real human — automated testing, bot-generated feedback, or AI-assisted responses will result in immediate removal and forfeiture of payment. Payment is made upon satisfactory completion of assigned tests.</p>
+              <h2 className="text-[16px] font-semibold text-[var(--text)] mb-2">3. For Businesses</h2>
+              <p>By posting a job, you agree to pay the total amount (number of testers × price per tester) upfront via Stripe. You define the tasks testers must complete and the time limit for completion. You are responsible for reviewing and approving or rejecting tester submissions. Payment to testers is released only upon your approval. If no testers complete your job within 7 days, you are eligible for a full refund.</p>
+              <p className="mt-2">Test results and feedback represent the honest, subjective opinions of individual testers. Flinchify makes no warranty that feedback will be comprehensive, technically accurate, or actionable. You should not rely solely on Flinchify testing as a substitute for professional QA, security auditing, or accessibility testing.</p>
             </section>
 
             <section>
-              <h2 className="text-[16px] font-semibold text-white mb-2">4. Human Verification</h2>
-              <p>We employ behavioural analysis to verify that testers are genuine humans. By using the platform, you consent to this analysis. We reserve the right to remove any tester we reasonably believe is not a genuine human user.</p>
+              <h2 className="text-[16px] font-semibold text-[var(--text)] mb-2">4. For Testers</h2>
+              <p>By registering as a tester, you represent that you are a real human, at least 18 years of age, and eligible to receive payments in your country of residence. You agree to provide honest, genuine feedback based on your real experience using the app. Automated testing, AI-generated feedback, plagiarised content, or fraudulent submissions will result in immediate account termination and forfeiture of pending payments.</p>
+              <p className="mt-2">Testers are independent contractors, not employees or agents of Flinchify. You are solely responsible for your own tax obligations, including reporting income earned through the Platform. Flinchify does not withhold taxes on your behalf.</p>
             </section>
 
             <section>
-              <h2 className="text-[16px] font-semibold text-white mb-2">5. Intellectual Property</h2>
-              <p>Apps submitted for testing remain the intellectual property of the submitting business. Testers agree not to copy, redistribute, or publicly disclose details of apps they test. Screen recordings and feedback become the property of the business who ordered the test.</p>
+              <h2 className="text-[16px] font-semibold text-[var(--text)] mb-2">5. Payments &amp; Payouts</h2>
+              <p>All payments are processed through Stripe. Business payments are in USD. Tester payouts are made via Stripe Connect to the tester&apos;s connected bank account upon business approval of their submission. Flinchify retains a platform fee (currently 20%) from each approved test.</p>
+              <p className="mt-2">Flinchify is not responsible for payment delays, failures, or errors caused by Stripe, banks, or incorrect account details provided by the user. Refund requests outside of the standard 7-day no-match policy are handled on a case-by-case basis.</p>
             </section>
 
             <section>
-              <h2 className="text-[16px] font-semibold text-white mb-2">6. Payments</h2>
-              <p>All payments are processed through Stripe. Prices are in USD. Refunds are available if we cannot fulfil your order. Tester payments are made within 24 hours of test completion approval.</p>
+              <h2 className="text-[16px] font-semibold text-[var(--text)] mb-2">6. Intellectual Property</h2>
+              <p>Apps, products, and URLs submitted for testing remain the sole intellectual property of the submitting business. Testers agree not to copy, reverse-engineer, redistribute, or publicly disclose details of apps they test without the business&apos;s written consent. Screen recordings, bug reports, and feedback deliverables become the property of the business upon payment.</p>
             </section>
 
             <section>
-              <h2 className="text-[16px] font-semibold text-white mb-2">7. Limitation of Liability</h2>
-              <p>Flinchify provides a marketplace service. We are not responsible for the quality of apps submitted for testing or the completeness of tester feedback beyond our verification processes. Our liability is limited to the amount paid for the specific service.</p>
+              <h2 className="text-[16px] font-semibold text-[var(--text)] mb-2">7. Prohibited Use</h2>
+              <p>You may not use the Platform to: (a) submit illegal, harmful, or malicious software for testing; (b) collect personal data from testers beyond what is provided through the Platform; (c) harass, threaten, or discriminate against any user; (d) manipulate reviews, ratings, or feedback; (e) circumvent the Platform to arrange direct payments between businesses and testers.</p>
             </section>
 
             <section>
-              <h2 className="text-[16px] font-semibold text-white mb-2">8. Governing Law</h2>
-              <p>These terms are governed by the laws of New South Wales, Australia. Any disputes shall be resolved in the courts of New South Wales.</p>
+              <h2 className="text-[16px] font-semibold text-[var(--text)] mb-2">8. Limitation of Liability</h2>
+              <p>To the maximum extent permitted by law, Flinchify, its owners, directors, employees, and affiliates shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of profits, data, business opportunities, or goodwill, arising from your use of the Platform.</p>
+              <p className="mt-2">Flinchify&apos;s total aggregate liability for any claim arising from or related to the Platform shall not exceed the amount you paid to Flinchify in the 12 months preceding the claim.</p>
+              <p className="mt-2">Flinchify is not liable for: (a) the conduct, actions, or omissions of any tester or business; (b) any damage to your app, product, or reputation resulting from tester feedback; (c) any loss resulting from unauthorised access to your account; (d) service interruptions or data loss.</p>
             </section>
 
             <section>
-              <h2 className="text-[16px] font-semibold text-white mb-2">9. Changes</h2>
-              <p>We may update these terms at any time. Continued use of the service after changes constitutes acceptance. We will notify registered users of material changes via email.</p>
+              <h2 className="text-[16px] font-semibold text-[var(--text)] mb-2">9. Indemnification</h2>
+              <p>You agree to indemnify and hold harmless Flinchify and its owners, directors, employees, and affiliates from any claims, damages, losses, or expenses (including legal fees) arising from: (a) your use of the Platform; (b) your violation of these Terms; (c) any dispute between you and another user; (d) any content you submit to the Platform.</p>
             </section>
 
             <section>
-              <h2 className="text-[16px] font-semibold text-white mb-2">10. Contact</h2>
-              <p>For questions about these terms: hello@Flinchify.dev</p>
+              <h2 className="text-[16px] font-semibold text-[var(--text)] mb-2">10. Dispute Resolution</h2>
+              <p>Disputes between businesses and testers should first be resolved through the Platform&apos;s review and approval process. If a dispute cannot be resolved, Flinchify may mediate at its discretion but is not obligated to do so. Flinchify&apos;s decision in any dispute mediation is final.</p>
+            </section>
+
+            <section>
+              <h2 className="text-[16px] font-semibold text-[var(--text)] mb-2">11. Account Termination</h2>
+              <p>Flinchify reserves the right to suspend or terminate any account at its sole discretion, with or without notice, for any reason, including but not limited to violation of these Terms, fraudulent activity, or abusive behaviour. Upon termination, pending payouts for legitimately completed work will still be processed.</p>
+            </section>
+
+            <section>
+              <h2 className="text-[16px] font-semibold text-[var(--text)] mb-2">12. No Warranty</h2>
+              <p>The Platform is provided &quot;as is&quot; and &quot;as available&quot; without warranties of any kind, either express or implied, including but not limited to implied warranties of merchantability, fitness for a particular purpose, and non-infringement. Flinchify does not warrant that the Platform will be uninterrupted, secure, or error-free.</p>
+            </section>
+
+            <section>
+              <h2 className="text-[16px] font-semibold text-[var(--text)] mb-2">13. Governing Law</h2>
+              <p>These Terms are governed by and construed in accordance with the laws of New South Wales, Australia. You irrevocably submit to the exclusive jurisdiction of the courts of New South Wales for any disputes arising under these Terms.</p>
+            </section>
+
+            <section>
+              <h2 className="text-[16px] font-semibold text-[var(--text)] mb-2">14. Changes to Terms</h2>
+              <p>We may update these Terms at any time by posting the revised version on the Platform. Continued use of the Platform after changes constitutes acceptance of the updated Terms. We will notify registered users of material changes via email where practicable.</p>
+            </section>
+
+            <section>
+              <h2 className="text-[16px] font-semibold text-[var(--text)] mb-2">15. Contact</h2>
+              <p>For questions about these Terms: hello@flinchify.com</p>
             </section>
           </div>
         </div>
@@ -67,4 +97,3 @@ export default function TermsPage() {
     </>
   );
 }
-
