@@ -357,30 +357,62 @@ function Home() {
           </div>
         </section>
 
-        {/* ═══ BUDGET GUIDE ═══ */}
+        {/* ═══ PRICING ═══ */}
         <section className="dark-section py-16 sm:py-20 px-5 sm:px-6">
-          <div className="max-w-[800px] mx-auto text-center">
+          <div className="max-w-[900px] mx-auto">
             <ScrollReveal>
-              <h2 className="h text-[1.5rem] sm:text-2xl md:text-[2.5rem] font-bold tracking-[-0.03em] mb-3 text-white">
-                You set the price
-              </h2>
-              <p className="text-[13px] sm:text-[15px] text-white/40 mb-8 sm:mb-12 max-w-md mx-auto">
-                No fixed plans. Higher budgets attract testers faster.
-              </p>
+              <div className="text-center mb-10 sm:mb-14">
+                <h2 className="h text-[1.5rem] sm:text-2xl md:text-[2.5rem] font-bold tracking-[-0.03em] mb-3 text-white">
+                  Simple math. No surprises.
+                </h2>
+                <p className="text-[13px] sm:text-[15px] text-white/40 max-w-lg mx-auto">
+                  Post a job, set the number of testers and what you'll pay each one. Define the tasks they need to complete. That's your total.
+                </p>
+              </div>
             </ScrollReveal>
 
-            <div className="grid grid-cols-3 gap-3 sm:gap-4">
+            {/* Formula */}
+            <ScrollReveal delay={100}>
+              <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 sm:p-8 text-center mb-6 sm:mb-8">
+                <p className="h text-xl sm:text-3xl font-bold text-white">
+                  Testers <span className="text-orange-400 mx-1">×</span> Your price <span className="text-orange-400 mx-1">=</span> Total
+                </p>
+                <p className="text-[12px] sm:text-[13px] text-white/30 mt-2">$5 minimum per tester. No platform fee. No subscriptions.</p>
+              </div>
+            </ScrollReveal>
+
+            {/* Example jobs */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
               {[
-                { range: "$5–8", speed: "~24h", label: "Economy" },
-                { range: "$10–15", speed: "~4h", label: "Standard", pop: true },
-                { range: "$20+", speed: "~1h", label: "Priority" },
-              ].map((t, i) => (
-                <ScrollReveal key={t.label} delay={i * 80}>
-                  <div className={`rounded-xl sm:rounded-2xl border p-4 sm:p-6 text-center ${t.pop ? "border-orange-500/20 bg-white/[0.04]" : "border-white/[0.06] bg-white/[0.02]"}`}>
-                    {t.pop && <span className="h inline-block text-orange-400 text-[9px] sm:text-[10px] font-bold mb-1 sm:mb-2 uppercase tracking-wider">Best</span>}
-                    <p className="h text-lg sm:text-2xl font-bold text-white mb-0.5 sm:mb-1">{t.range}</p>
-                    <p className="text-[10px] sm:text-[12px] text-white/30 mb-0.5">per tester</p>
-                    <p className="text-[10px] sm:text-[12px] text-orange-400/70">{t.speed}</p>
+                { title: "Quick check", testers: 2, price: 5, tasks: "Sign up + report friction", time: "15 min", total: 10 },
+                { title: "Full audit", testers: 5, price: 12, tasks: "Complete onboarding, log every flinch", time: "30 min", total: 60, pop: true },
+                { title: "Deep dive", testers: 10, price: 20, tasks: "3-day usage, daily friction logs", time: "3 days", total: 200 },
+              ].map((ex, i) => (
+                <ScrollReveal key={ex.title} delay={i * 80}>
+                  <div className={`rounded-xl sm:rounded-2xl border p-4 sm:p-6 ${ex.pop ? "border-orange-500/20 bg-white/[0.06]" : "border-white/[0.06] bg-white/[0.02]"}`}>
+                    {ex.pop && <span className="h inline-block text-orange-400 text-[9px] sm:text-[10px] font-bold mb-2 uppercase tracking-wider">Most common</span>}
+                    <p className="h text-[14px] sm:text-[15px] font-semibold text-white mb-3">{ex.title}</p>
+                    <div className="space-y-2 mb-4">
+                      <div className="flex justify-between text-[12px] sm:text-[13px]">
+                        <span className="text-white/40">Testers</span>
+                        <span className="text-white font-medium">{ex.testers}</span>
+                      </div>
+                      <div className="flex justify-between text-[12px] sm:text-[13px]">
+                        <span className="text-white/40">Per tester</span>
+                        <span className="text-white font-medium">${ex.price}</span>
+                      </div>
+                      <div className="flex justify-between text-[12px] sm:text-[13px]">
+                        <span className="text-white/40">Time limit</span>
+                        <span className="text-white font-medium">{ex.time}</span>
+                      </div>
+                    </div>
+                    <div className="border-t border-white/[0.06] pt-3 mb-3">
+                      <div className="flex justify-between text-[13px] sm:text-[14px]">
+                        <span className="text-white/40">Total</span>
+                        <span className="h text-white font-bold">${ex.total}</span>
+                      </div>
+                    </div>
+                    <p className="text-[10px] sm:text-[11px] text-white/25 leading-[1.5]">{ex.tasks}</p>
                   </div>
                 </ScrollReveal>
               ))}
