@@ -23,16 +23,26 @@ export async function POST(req: NextRequest) {
     let accountId = tester.stripe_account_id;
 
     if (!accountId) {
-      const account = await stripe.accounts.create({
-        type: "express",
-        email: tester.email,
-        metadata: { tester_id: String(tester.id) },
-        capabilities: {
-          transfers: { requested: true },
-        },
-      });
-      accountId = account.id;
-      await sql`UPDATE testers SET stripe_account_id = ${accountId} WHERE id = ${tester.id}`;
+      try {
+        const account = await stripe.accounts.create({
+          type: "express",
+          country: "AU",
+          email: tester.email,
+          metadata: { tester_id: String(tester.id) },
+          capabilities: {
+            transfers: { requested: true },
+          },
+        });
+        accountId = account.id;
+        await sql`UPDATE testers SET stripe_account_id = ${accountId} WHERE id = ${tester.id}`;
+      } catch (stripeErr: unknown) {
+        const msg = stripeErr instanceof Error ? stripeErr.message : "Unknown Stripe error";
+        console.error("Stripe Connect account creation failed:", stripeErr);
+        return NextResponse.json({ 
+          error: msg,
+          hint: "Make sure Connect is enabled at dashboard.stripe.com/connect and the API key matches that account."
+        }, { status: 500 });
+      }
     }
 
     // Create onboarding link
