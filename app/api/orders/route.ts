@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
       payment_method_types: ["card"],
       line_items: [{
         price_data: {
-          currency: "usd",
+          currency: "aud",
           product_data: {
             name: `Flinchify — ${count} tester${count > 1 ? "s" : ""}`,
             description: `${count} human tester${count > 1 ? "s" : ""} at $${perTester}/each for ${app_url}`,
@@ -102,7 +102,8 @@ export async function POST(req: NextRequest) {
         quantity: count,
       }],
       mode: "payment",
-      success_url: `${baseUrl}/submit/success?order=${orderId}`,
+      billing_address_collection: "auto",
+      success_url: `${baseUrl}/submit/success?order=${orderId}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/submit?cancelled=true`,
       customer_email: email.toLowerCase(),
       metadata: { order_id: String(orderId) },

@@ -2,13 +2,22 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 
 function SuccessContent() {
   const params = useSearchParams();
   const orderId = params.get("order");
+  const sessionId = params.get("session_id");
+
+  // Fallback: verify payment via API in case webhook didn't fire
+  useEffect(() => {
+    if (orderId && sessionId) {
+      fetch(`/api/orders/verify?order=${orderId}&session_id=${sessionId}`)
+        .catch(() => {});
+    }
+  }, [orderId, sessionId]);
 
   return (
     <div className="text-center">
