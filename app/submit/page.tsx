@@ -34,6 +34,7 @@ export default function SubmitPage() {
     testers_count: 5,
     price_per_tester: 12,
     custom_price: "",
+    time_limit_hours: 24,
   });
 
   const pricePerTester = form.custom_price ? Number(form.custom_price) : form.price_per_tester;
@@ -152,6 +153,25 @@ export default function SubmitPage() {
                     <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-1.5">Who is your ideal tester?</label>
                     <textarea className="input min-h-[80px] resize-none" placeholder='E.g. "Women 25-40 who shop online" or "Active crypto traders"' value={form.target_audience} onChange={(e) => setForm({ ...form, target_audience: e.target.value })} />
                     <p className="text-[11px] text-[var(--text-dim)] mt-1">Leave blank for general audience.</p>
+                  </div>
+                  <div>
+                    <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-2">Time limit for testers</label>
+                    <div className="flex flex-wrap gap-2">
+                      {[
+                        { h: 4, label: "4 hours" },
+                        { h: 12, label: "12 hours" },
+                        { h: 24, label: "24 hours" },
+                        { h: 48, label: "2 days" },
+                        { h: 72, label: "3 days" },
+                        { h: 168, label: "7 days" },
+                      ].map(t => (
+                        <button key={t.h} type="button" onClick={() => setForm({ ...form, time_limit_hours: t.h })}
+                          className={`px-3 py-1.5 rounded-lg text-[12px] font-medium border transition-all ${
+                            form.time_limit_hours === t.h ? "bg-orange-50 border-orange-300 text-orange-700" : "bg-white border-black/[0.06] text-[var(--text-dim)] hover:border-orange-200"
+                          }`}>{t.label}</button>
+                      ))}
+                    </div>
+                    <p className="text-[11px] text-[var(--text-dim)] mt-1">Timer starts when accepted. Spot reopens if they don&apos;t submit in time.</p>
                   </div>
                   <div className="flex gap-3">
                     <button onClick={() => setStep(1)} className="btn btn-outline flex-1">Back</button>

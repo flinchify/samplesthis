@@ -15,6 +15,11 @@ export async function POST(req: NextRequest) {
   const [tester] = await sql`SELECT * FROM testers WHERE auth_token = ${token}`;
   if (!tester) return NextResponse.json({ error: "Tester not found" }, { status: 404 });
 
+  // Require Stripe Connect to submit results
+  if (!tester.stripe_onboarded || !tester.stripe_account_id) {
+    return NextResponse.json({ error: "Set up payouts before submitting results. Go to Dashboard → Payouts to connect your bank account." }, { status: 400 });
+  }
+
   const { application_id, feedback, screen_recording_url, screenshots } = await req.json();
   if (!application_id) return NextResponse.json({ error: "application_id required" }, { status: 400 });
   if (!feedback || feedback.trim().length < 20) return NextResponse.json({ error: "Feedback must be at least 20 characters" }, { status: 400 });
@@ -30,6 +35,12 @@ export async function POST(req: NextRequest) {
   if (!app) return NextResponse.json({ error: "Application not found" }, { status: 404 });
   if (app.status !== "accepted") return NextResponse.json({ error: `Cannot submit: status is ${app.status}` }, { status: 400 });
   if (app.payout_transfer_id) return NextResponse.json({ error: "Already submitted and paid" }, { status: 400 });
+  
+  // Check deadline
+  if (app.deadline_at && new Date(app.deadline_at) < new Date()) {
+    await sql`UPDATE applications SET status = 'expired' WHERE id = ${application_id}`;
+    return NextResponse.json({ error: "Deadline has passed. The spot has been reopened." }, { status: 400 });
+  }
 
   // Save the submission
   await sql`

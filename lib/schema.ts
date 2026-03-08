@@ -90,6 +90,8 @@ export async function ensureTables() {
     await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS screenshots TEXT DEFAULT '[]'`;
     await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS submitted_at TIMESTAMP`;
     await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS payout_error TEXT`;
+    await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS deadline_at TIMESTAMP`;
+    await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS accepted_at TIMESTAMP`;
 
     // Bookings system
     await sql`CREATE TABLE IF NOT EXISTS bookings (
@@ -108,6 +110,7 @@ export async function ensureTables() {
       confirmed_at TIMESTAMP,
       completed_at TIMESTAMP
     )`;
+    await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS time_limit_hours INTEGER DEFAULT 24`;
     await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS booking_required BOOLEAN DEFAULT false`;
     await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS booking_deadline TIMESTAMP`;
 

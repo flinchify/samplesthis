@@ -460,7 +460,7 @@ function Dashboard() {
                           ) : (
                             <div className="space-y-3">
                               <p className="text-[12px] font-semibold text-[var(--text-dim)] uppercase tracking-wider">Applicants ({jobApplicants.length})</p>
-                              {jobApplicants.map((a: { id: number; tester_id: number; name: string; email: string; location: string | null; country: string | null; bio: string | null; tests_completed: number; avg_rating: number; status: string; note: string | null; feedback: string | null; submitted_at: string | null; linkedin: string | null; portfolio: string | null; twitter: string | null; github: string | null; devices: string; interests: string }) => (
+                              {jobApplicants.map((a: { id: number; tester_id: number; name: string; email: string; location: string | null; country: string | null; bio: string | null; tests_completed: number; avg_rating: number; status: string; note: string | null; feedback: string | null; submitted_at: string | null; linkedin: string | null; portfolio: string | null; twitter: string | null; github: string | null; devices: string; interests: string; deadline_at: string | null; accepted_at: string | null }) => (
                                 <div key={a.id} className="bg-[var(--bg-2)] rounded-xl p-4">
                                   <div className="flex items-start justify-between gap-3">
                                     <div className="flex items-center gap-3">
@@ -483,6 +483,16 @@ function Dashboard() {
                                   </div>
                                   {a.bio && <p className="text-[12px] text-[var(--text-muted)] mt-2 line-clamp-2">{a.bio}</p>}
                                   {a.note && <p className="text-[12px] text-[var(--text-muted)] mt-1 italic">&quot;{a.note}&quot;</p>}
+                                  {/* Deadline */}
+                                  {a.status === "accepted" && a.deadline_at && (() => {
+                                    const expired = new Date(a.deadline_at) < new Date();
+                                    const fmt = new Date(a.deadline_at).toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" });
+                                    return (
+                                      <p className={`text-[11px] mt-1.5 font-medium ${expired ? "text-red-600" : "text-orange-600"}`}>
+                                        {expired ? "Deadline passed" : `Due: ${fmt}`}
+                                      </p>
+                                    );
+                                  })()}
                                   {/* Links */}
                                   <div className="flex gap-2 mt-2 flex-wrap">
                                     {a.linkedin && <a href={a.linkedin} target="_blank" rel="noopener noreferrer" className="text-[11px] text-blue-600 hover:underline">LinkedIn</a>}

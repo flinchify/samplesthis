@@ -16,11 +16,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     // Verify this order belongs to the user
-    const [order] = await sql`SELECT id, email, testers_count FROM orders WHERE id = ${orderId}`;
+    const [order] = await sql`SELECT id, email, testers_count, time_limit_hours FROM orders WHERE id = ${orderId}`;
     if (!order || order.email !== user.email) return NextResponse.json({ error: "Not your job" }, { status: 403 });
 
     const applicants = await sql`
       SELECT a.id, a.status, a.note, a.created_at, a.feedback, a.screen_recording_url, a.submitted_at, a.payout_cents,
+             a.deadline_at, a.accepted_at,
              t.id as tester_id, t.name, t.email, t.location, t.country, t.bio, t.devices, t.interests,
              t.tests_completed, t.avg_rating, t.linkedin, t.portfolio, t.twitter, t.github
       FROM applications a
@@ -49,7 +50,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     const [user] = await sql`SELECT id, email FROM testers WHERE auth_token = ${token}`;
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const [order] = await sql`SELECT id, email, testers_count FROM orders WHERE id = ${orderId}`;
+    const [order] = await sql`SELECT id, email, testers_count, time_limit_hours FROM orders WHERE id = ${orderId}`;
     if (!order || order.email !== user.email) return NextResponse.json({ error: "Not your job" }, { status: 403 });
 
     const { application_id, action } = await req.json();
@@ -61,12 +62,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (!app) return NextResponse.json({ error: "Application not found" }, { status: 404 });
 
     if (action === "accept") {
-      // Check if already at capacity
       const [{ count }] = await sql`SELECT COUNT(*)::int as count FROM applications WHERE order_id = ${orderId} AND status = 'accepted'`;
       if (count >= order.testers_count) {
         return NextResponse.json({ error: "All tester spots are filled" }, { status: 400 });
       }
-      await sql`UPDATE applications SET status = 'accepted' WHERE id = ${application_id}`;
+      // Set deadline based on order's time_limit_hours
+      const timeLimitHours = order.time_limit_hours || 24;
+      const deadlineAt = new Date(Date.now() + timeLimitHours * 60 * 60 * 1000);
+      await sql`UPDATE applications SET status = 'accepted', accepted_at = NOW(), deadline_at = ${deadlineAt.toISOString()} WHERE id = ${application_id}`;
 
       // Notify tester
       const [tester] = await sql`SELECT email, name FROM testers WHERE id = ${app.tester_id}`;

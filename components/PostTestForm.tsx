@@ -17,6 +17,7 @@ export default function PostTestForm() {
     testers_count: 5,
     price_per_tester: 12,
     custom_price: "",
+    time_limit_hours: 24,
     booking_enabled: false,
     booking_date: "",
     booking_time: "",
@@ -41,6 +42,7 @@ export default function PostTestForm() {
           target_audience: form.target_audience,
           testers_count: form.testers_count,
           price_per_tester: pricePerTester,
+          time_limit_hours: form.time_limit_hours,
           ...(form.booking_enabled && {
             booking: {
               scheduled_date: form.booking_date,
@@ -114,6 +116,26 @@ export default function PostTestForm() {
             <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-1">Target audience (optional)</label>
             <input className="input" placeholder="E.g. Women 25-40 who shop online" value={form.target_audience}
               onChange={e => setForm({ ...form, target_audience: e.target.value })} />
+          </div>
+
+          <div>
+            <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-2">Time limit for testers</label>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { h: 4, label: "4 hours" },
+                { h: 12, label: "12 hours" },
+                { h: 24, label: "24 hours" },
+                { h: 48, label: "2 days" },
+                { h: 72, label: "3 days" },
+                { h: 168, label: "7 days" },
+              ].map(t => (
+                <button key={t.h} type="button" onClick={() => setForm({ ...form, time_limit_hours: t.h })}
+                  className={`px-3 py-1.5 rounded-lg text-[12px] font-medium border transition-all ${
+                    form.time_limit_hours === t.h ? "bg-orange-50 border-orange-300 text-orange-700" : "bg-white border-black/[0.06] text-[var(--text-dim)] hover:border-orange-200"
+                  }`}>{t.label}</button>
+              ))}
+            </div>
+            <p className="text-[11px] text-[var(--text-dim)] mt-1">Timer starts when a tester is accepted. They must submit before it expires or the spot reopens.</p>
           </div>
 
           {/* Schedule a test session */}
