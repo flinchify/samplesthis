@@ -3,12 +3,12 @@ import { getSql } from "@/lib/db";
 
 export async function GET(req: NextRequest) {
   try {
-    const bizToken = req.cookies.get("business_token")?.value;
-    if (!bizToken) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const token = req.cookies.get("tester_token")?.value;
+    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const sql = getSql();
-    const [biz] = await sql`SELECT id, email FROM businesses WHERE auth_token = ${bizToken} AND verified = true`;
-    if (!biz) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const [user] = await sql`SELECT id, email FROM testers WHERE auth_token = ${token}`;
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const deadlines = await sql`
       SELECT b.id, b.order_id, b.scheduled_date, b.scheduled_time, b.timezone,
@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
       FROM bookings b
       JOIN orders o ON o.id = b.order_id
       LEFT JOIN testers t ON t.id = b.tester_id
-      WHERE o.email = ${biz.email}
+      WHERE o.email = ${user.email}
         AND b.status IN ('pending', 'confirmed')
         AND b.scheduled_date >= CURRENT_DATE
       ORDER BY b.app_ready_deadline ASC
