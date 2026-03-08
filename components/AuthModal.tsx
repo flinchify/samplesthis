@@ -14,7 +14,7 @@ export default function AuthModal({ mode, open, onClose, onSuccess, onSwitchMode
   // Tester fields
   const [tStep, setTStep] = useState(1);
   const [tForm, setTForm] = useState({
-    name: "", email: "", age: "", gender: "",
+    name: "", email: "", age: "", gender: "", country: "",
     devices: [] as string[], interests: [] as string[],
     linkedin: "", portfolio: "", twitter: "", github: "",
   });
@@ -64,7 +64,7 @@ export default function AuthModal({ mode, open, onClose, onSuccess, onSwitchMode
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: tForm.name, email: tForm.email, age: tForm.age, gender: tForm.gender,
-          devices: tForm.devices, interests: tForm.interests,
+          country: tForm.country, devices: tForm.devices, interests: tForm.interests,
           linkedin: tForm.linkedin, portfolio: tForm.portfolio,
           twitter: tForm.twitter, github: tForm.github,
         }),
@@ -377,6 +377,13 @@ export default function AuthModal({ mode, open, onClose, onSuccess, onSwitchMode
                       {["Male", "Female", "Non-binary", "Prefer not to say"].map(g => <option key={g} value={g}>{g}</option>)}
                     </select>
                   </div>
+                </div>
+                <div>
+                  <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-1">Country</label>
+                  <select className="select" value={tForm.country} onChange={e => setTForm({ ...tForm, country: e.target.value })}>
+                    <option value="">Select country</option>
+                    {["Australia","United States","United Kingdom","Canada","New Zealand","Germany","France","India","Brazil","Japan","South Korea","Singapore","Netherlands","Sweden","Ireland","Other"].map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
                 </div>
                 <button onClick={() => { if (tForm.name && tForm.email) setTStep(2); }}
                   disabled={!tForm.name || !tForm.email}

@@ -37,6 +37,8 @@ export async function GET() {
         total_earned_cents: user.total_earned_cents,
         avg_rating: user.avg_rating,
         stripe_onboarded: user.stripe_onboarded,
+        country: user.country,
+        currency: user.currency || "usd",
         created_at: user.created_at,
       },
     });

@@ -4,6 +4,17 @@ import { ensureTables } from "@/lib/schema";
 import { generateToken } from "@/lib/auth";
 import { rateLimit } from "@/lib/rate-limit";
 
+const COUNTRY_CURRENCY: Record<string, string> = {
+  "Australia": "aud", "United States": "usd", "United Kingdom": "gbp",
+  "Canada": "cad", "New Zealand": "nzd", "Germany": "eur", "France": "eur",
+  "India": "inr", "Brazil": "brl", "Japan": "jpy", "South Korea": "krw",
+  "Singapore": "sgd", "Netherlands": "eur", "Sweden": "sek", "Ireland": "eur",
+};
+function countryToCurrency(country: string | null): string {
+  if (!country) return "usd";
+  return COUNTRY_CURRENCY[country] || "usd";
+}
+
 export async function POST(req: NextRequest) {
   try {
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
@@ -12,7 +23,7 @@ export async function POST(req: NextRequest) {
 
     await ensureTables();
     const body = await req.json();
-    const { name, email, age_range, location, devices, interests, tech_comfort, bio, ref, linkedin, portfolio, twitter, github, other_links } = body;
+    const { name, email, age_range, location, country, devices, interests, tech_comfort, bio, ref, linkedin, portfolio, twitter, github, other_links } = body;
 
     if (!name || !email) {
       return NextResponse.json({ error: "Name and email are required" }, { status: 400 });
@@ -46,9 +57,9 @@ export async function POST(req: NextRequest) {
 
     const token = generateToken();
     const rows = await sql`
-      INSERT INTO testers (name, email, age_range, location, devices, interests, tech_comfort, bio, auth_token, referred_by, linkedin, portfolio, twitter, github, other_links)
+      INSERT INTO testers (name, email, age_range, location, country, currency, devices, interests, tech_comfort, bio, auth_token, referred_by, linkedin, portfolio, twitter, github, other_links)
       VALUES (
-        ${name}, ${email.toLowerCase()}, ${age_range || null}, ${location || null},
+        ${name}, ${email.toLowerCase()}, ${age_range || null}, ${location || null}, ${country || null}, ${countryToCurrency(country)},
         ${JSON.stringify(devices || [])}, ${JSON.stringify(interests || [])},
         ${tech_comfort || 3}, ${bio || null}, ${token}, ${referredBy},
         ${linkedin || null}, ${portfolio || null}, ${twitter || null}, ${github || null},

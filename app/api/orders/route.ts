@@ -36,12 +36,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Please log in first" }, { status: 401 });
     }
     const sql2 = getSql();
-    const [user] = await sql2`SELECT id, email, name FROM testers WHERE auth_token = ${token}`;
+    const [user] = await sql2`SELECT id, email, name, currency FROM testers WHERE auth_token = ${token}`;
     if (!user) {
       return NextResponse.json({ error: "Please log in first" }, { status: 401 });
     }
     const userEmail = user.email;
     const userCompany = user.name;
+    const userCurrency = user.currency || "usd";
 
     const body = await req.json();
     const app_url = sanitize(body.app_url);
@@ -83,7 +84,7 @@ export async function POST(req: NextRequest) {
       payment_method_types: ["card"],
       line_items: [{
         price_data: {
-          currency: "aud",
+          currency: userCurrency,
           product_data: {
             name: `Flinchify — ${count} tester${count > 1 ? "s" : ""}`,
             description: `${count} human tester${count > 1 ? "s" : ""} at $${perTester}/each for ${app_url}`,
