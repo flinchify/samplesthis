@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
+import PostTestForm from "@/components/PostTestForm";
 
 interface Tester {
   id: number;
@@ -42,7 +43,11 @@ const NAV_ITEMS = [
   { key: "overview", label: "Overview", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
   { key: "explore", label: "Explore Jobs", icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" },
   { key: "myjobs", label: "My Jobs", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" },
+  { key: "posttest", label: "Post a Test", icon: "M12 4v16m8-8H4" },
   { key: "payouts", label: "Payouts", icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
+  { key: "referrals", label: "Referrals", icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" },
+  { key: "howit", label: "How it Works", icon: "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
+  { key: "pricing", label: "Pricing", icon: "M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z" },
   { key: "profile", label: "Profile", icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" },
 ];
 
@@ -571,6 +576,16 @@ function Dashboard() {
                   <p className="text-[14px] text-[var(--text-muted)] leading-relaxed">{tester.bio}</p>
                 </div>
               )}
+
+              {/* Sign out */}
+              <div className="mt-8 pt-6 border-t border-black/[0.04]">
+                <button onClick={async () => {
+                  await fetch("/api/auth/logout", { method: "POST" });
+                  window.location.href = "/";
+                }} className="text-[13px] text-red-500 hover:text-red-600 font-medium transition-colors">
+                  Sign out
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -626,7 +641,192 @@ function Dashboard() {
             )}
           </div>
         )}
+        {/* ═══ POST A TEST ═══ */}
+        {tab === "posttest" && (
+          <div>
+            <h1 className="h text-xl font-bold text-[var(--text)] mb-2">Post a Test</h1>
+            <p className="text-[13px] text-[var(--text-muted)] mb-6">Get real humans to test your app. Set your budget, define tasks, and get results.</p>
+
+            <div className="bg-white rounded-2xl border border-black/[0.04] p-6 sm:p-8">
+              <PostTestForm />
+            </div>
+          </div>
+        )}
+
+        {/* ═══ REFERRALS ═══ */}
+        {tab === "referrals" && (
+          <div>
+            <h1 className="h text-xl font-bold text-[var(--text)] mb-2">Referrals</h1>
+            <p className="text-[13px] text-[var(--text-muted)] mb-6">Invite friends to Flinchify and earn bonus rewards when they complete tests.</p>
+
+            <div className="bg-white rounded-2xl border border-black/[0.04] p-6 sm:p-8 text-center mb-6">
+              <div className="w-16 h-16 rounded-full bg-orange-50 flex items-center justify-center mx-auto mb-4">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#F97316" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <h2 className="h text-[16px] font-bold text-[var(--text)] mb-2">Your referral link</h2>
+              <div className="bg-[var(--bg-2)] rounded-xl p-3 mb-4 max-w-md mx-auto">
+                <code className="text-[13px] text-[var(--text)] select-all break-all">
+                  {typeof window !== "undefined" ? `${window.location.origin}/become-a-tester?ref=${tester?.id}` : ""}
+                </code>
+              </div>
+              <button 
+                onClick={() => {
+                  navigator.clipboard.writeText(`${window.location.origin}/become-a-tester?ref=${tester?.id}`);
+                  alert("Copied!");
+                }}
+                className="px-5 py-2.5 rounded-xl bg-black text-white text-[13px] font-semibold hover:bg-black/90 transition-colors">
+                Copy link
+              </button>
+            </div>
+
+            <div className="grid sm:grid-cols-3 gap-4">
+              {[
+                { icon: "M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z", title: "Share your link", desc: "Send your unique referral link to friends, share on social media, or post in communities." },
+                { icon: "M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z", title: "They sign up & test", desc: "When someone signs up with your link and completes their first test, you both benefit." },
+                { icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z", title: "Earn bonuses", desc: "Get a bonus added to your earnings for every successful referral. More referrals = more money." },
+              ].map(s => (
+                <div key={s.title} className="bg-white rounded-2xl border border-black/[0.04] p-5">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F97316" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mb-3"><path d={s.icon} /></svg>
+                  <h3 className="h text-[13px] font-semibold text-[var(--text)] mb-1">{s.title}</h3>
+                  <p className="text-[12px] text-[var(--text-muted)] leading-[1.6]">{s.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ═══ HOW IT WORKS ═══ */}
+        {tab === "howit" && (
+          <div>
+            <h1 className="h text-xl font-bold text-[var(--text)] mb-6">How it Works</h1>
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="bg-white rounded-2xl border border-black/[0.04] p-6 sm:p-8">
+                <div className="h-1 grad-warm-bg rounded-full mb-6 w-full" />
+                <h2 className="h text-[15px] font-bold text-[var(--accent)] uppercase tracking-wider mb-6">For Businesses</h2>
+                <div className="space-y-5">
+                  {[
+                    { n: "01", t: "Post your job", d: "Describe your app, paste the URL, set the tasks testers need to complete, and define a time limit." },
+                    { n: "02", t: "Set your budget", d: "Choose how many testers and how much you'll pay each one. Minimum $5/tester, no ceiling." },
+                    { n: "03", t: "Testers apply & test", d: "Matched testers apply to your job. They use your app, record their screen, and note every friction point." },
+                    { n: "04", t: "Review & approve", d: "You review each submission. Accept good work (tester gets paid), reject lazy submissions." },
+                  ].map(s => (
+                    <div key={s.n} className="flex gap-3">
+                      <span className="h text-[12px] font-bold text-[var(--text-dim)] mt-0.5 shrink-0">{s.n}</span>
+                      <div>
+                        <h4 className="h text-[13px] font-semibold text-[var(--text)] mb-0.5">{s.t}</h4>
+                        <p className="text-[12px] text-[var(--text-muted)] leading-[1.6]">{s.d}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-black/[0.04] p-6 sm:p-8">
+                <div className="h-1 bg-gradient-to-r from-red-400 to-orange-400 rounded-full mb-6 w-full" />
+                <h2 className="h text-[15px] font-bold text-[#EF4444] uppercase tracking-wider mb-6">For Testers</h2>
+                <div className="space-y-5">
+                  {[
+                    { n: "01", t: "Create your profile", d: "Sign up with your devices, interests, and experience. Takes 60 seconds." },
+                    { n: "02", t: "Browse & apply", d: "Find jobs that match your profile. Filter by budget, app type, or time limit." },
+                    { n: "03", t: "Complete the tasks", d: "Use the app for the specified time. Record your screen, note bugs, and log every friction point." },
+                    { n: "04", t: "Get paid", d: "Business approves your work → money hits your bank via Stripe. 80% goes to you." },
+                  ].map(s => (
+                    <div key={s.n} className="flex gap-3">
+                      <span className="h text-[12px] font-bold text-[var(--text-dim)] mt-0.5 shrink-0">{s.n}</span>
+                      <div>
+                        <h4 className="h text-[13px] font-semibold text-[var(--text)] mb-0.5">{s.t}</h4>
+                        <p className="text-[12px] text-[var(--text-muted)] leading-[1.6]">{s.d}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-black/[0.04] p-6 mt-6">
+              <h3 className="h text-[14px] font-semibold text-[var(--text)] mb-3">What you deliver as a tester</h3>
+              <div className="grid sm:grid-cols-4 gap-4">
+                {[
+                  { t: "Screen recordings", d: "Full session with audio commentary" },
+                  { t: "Bug reports", d: "Steps to reproduce, severity, screenshots" },
+                  { t: "Friction notes", d: "What confused you, what felt off" },
+                  { t: "Flinch score", d: "Overall usability rating 0-100" },
+                ].map(d => (
+                  <div key={d.t} className="bg-[var(--bg-2)] rounded-xl p-4">
+                    <p className="h text-[12px] font-semibold text-[var(--text)] mb-1">{d.t}</p>
+                    <p className="text-[11px] text-[var(--text-muted)]">{d.d}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ═══ PRICING ═══ */}
+        {tab === "pricing" && (
+          <div>
+            <h1 className="h text-xl font-bold text-[var(--text)] mb-2">Pricing</h1>
+            <p className="text-[13px] text-[var(--text-muted)] mb-6">No subscriptions, no tiers. You set the price per tester and the tasks they must complete.</p>
+
+            <div className="bg-[var(--dark)] rounded-2xl p-6 sm:p-8 text-center mb-6">
+              <p className="h text-xl sm:text-2xl font-bold text-white">
+                Testers <span className="text-orange-400">×</span> Your price <span className="text-orange-400">=</span> Total
+              </p>
+              <p className="text-[13px] text-white/40 mt-2">$5 minimum per tester. No platform fee. No surprises.</p>
+            </div>
+
+            <div className="grid sm:grid-cols-3 gap-4 mb-6">
+              {[
+                { title: "Quick check", testers: 2, price: 5, tasks: "Sign up + report friction", time: "15 min", total: 10 },
+                { title: "Full audit", testers: 5, price: 12, tasks: "Complete onboarding, log every flinch", time: "30 min", total: 60, pop: true },
+                { title: "Deep dive", testers: 10, price: 20, tasks: "3-day usage, daily friction logs", time: "3 days", total: 200 },
+              ].map(ex => (
+                <div key={ex.title} className={`bg-white rounded-2xl border p-5 ${ex.pop ? "border-[var(--accent)] ring-1 ring-orange-100" : "border-black/[0.04]"}`}>
+                  {ex.pop && <span className="h text-[10px] font-bold text-[var(--accent)] uppercase tracking-wider">Most common</span>}
+                  <p className="h text-[14px] font-semibold text-[var(--text)] mb-3 mt-1">{ex.title}</p>
+                  <div className="space-y-2 text-[13px] mb-3">
+                    <div className="flex justify-between"><span className="text-[var(--text-muted)]">Testers</span><span className="font-medium text-[var(--text)]">{ex.testers}</span></div>
+                    <div className="flex justify-between"><span className="text-[var(--text-muted)]">Per tester</span><span className="font-medium text-[var(--text)]">${ex.price}</span></div>
+                    <div className="flex justify-between"><span className="text-[var(--text-muted)]">Time limit</span><span className="font-medium text-[var(--text)]">{ex.time}</span></div>
+                  </div>
+                  <div className="border-t border-black/[0.04] pt-3">
+                    <div className="flex justify-between text-[14px]"><span className="text-[var(--text-muted)]">Total</span><span className="h font-bold text-[var(--text)]">${ex.total}</span></div>
+                  </div>
+                  <p className="text-[11px] text-[var(--text-dim)] mt-3">{ex.tasks}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="bg-white rounded-2xl border border-black/[0.04] p-6">
+              <h3 className="h text-[14px] font-semibold text-[var(--text)] mb-4">Tester earnings breakdown</h3>
+              <div className="grid sm:grid-cols-3 gap-4">
+                <div className="bg-[var(--bg-2)] rounded-xl p-4 text-center">
+                  <p className="h text-2xl font-bold text-[var(--text)]">80%</p>
+                  <p className="text-[12px] text-[var(--text-muted)] mt-1">Goes to you</p>
+                </div>
+                <div className="bg-[var(--bg-2)] rounded-xl p-4 text-center">
+                  <p className="h text-2xl font-bold text-[var(--text-dim)]">20%</p>
+                  <p className="text-[12px] text-[var(--text-muted)] mt-1">Platform fee</p>
+                </div>
+                <div className="bg-[var(--bg-2)] rounded-xl p-4 text-center">
+                  <p className="h text-2xl font-bold text-[var(--accent)]">Same day</p>
+                  <p className="text-[12px] text-[var(--text-muted)] mt-1">Payout speed</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 text-center">
+              <button onClick={() => setTab("posttest")} className="px-6 py-3 rounded-xl bg-black text-white text-[14px] font-semibold hover:bg-black/90 transition-colors">
+                Post a test job
+              </button>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
 }
+
