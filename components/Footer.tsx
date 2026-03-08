@@ -2,8 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 const COLS = [
-  { title: "For testers", links: [{ href: "/become-a-tester", label: "Sign up" }, { href: "/explore", label: "Explore jobs" }, { href: "/referrals", label: "Referrals" }, { href: "/dashboard", label: "Dashboard" }] },
-  { title: "For businesses", links: [{ href: "/submit", label: "Post a test" }, { href: "/pricing", label: "Pricing" }, { href: "/how-it-works", label: "How it works" }] },
+  { title: "Product", links: [{ href: "/explore", label: "Explore" }, { href: "/submit", label: "Post a Test" }, { href: "/how-it-works", label: "How it Works" }, { href: "/pricing", label: "Pricing" }] },
   { title: "Company", links: [{ href: "/about", label: "About" }, { href: "/contact", label: "Contact" }, { href: "/privacy", label: "Privacy" }, { href: "/terms", label: "Terms" }] },
 ];
 
@@ -11,7 +10,7 @@ export default function Footer() {
   return (
     <footer className="border-t border-black/[0.04]">
       <div className="max-w-[1200px] mx-auto px-5 sm:px-6 py-10 sm:py-14">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 mb-10 sm:mb-12">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 mb-10 sm:mb-12">
           <div className="col-span-2 sm:col-span-1">
             <Image src="/logo.png" alt="Flinchify" width={28} height={28} className="mb-3" />
             <p className="text-[12px] text-[var(--text-dim)] leading-[1.6]">Find the flinch before<br />your users do.</p>
@@ -37,8 +36,8 @@ export default function Footer() {
           </div>
         </div>
         <p className="text-[10px] text-[var(--text-dim)]/50 text-center mt-4 leading-relaxed max-w-xl mx-auto">
-          Flinchify, the Flinchify logo, &quot;Find the flinch,&quot; and all associated marks, designs, and content 
-          are the exclusive property of Flinchify and may not be reproduced, distributed, or used without prior 
+          Flinchify, the Flinchify logo, &quot;Find the flinch,&quot; and all associated marks, designs, and content
+          are the exclusive property of Flinchify and may not be reproduced, distributed, or used without prior
           written permission. All third-party trademarks shown are property of their respective owners.
         </p>
       </div>

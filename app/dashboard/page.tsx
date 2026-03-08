@@ -312,71 +312,54 @@ function Dashboard() {
   const memberSince = new Date(tester.created_at).toLocaleDateString("en-AU", { month: "long", year: "numeric" });
 
   return (
-    <div className="min-h-screen bg-[var(--bg-2)] flex">
-      {/* Sidebar */}
-      <aside className="hidden md:flex flex-col w-[240px] bg-white border-r border-black/[0.04] p-6 shrink-0">
-        <Link href="/" className="flex items-center gap-2 mb-8">
-          <Image src="/logo.png" alt="Flinchify" width={28} height={28} />
-          <span className="h text-[15px] font-bold text-[var(--text)]">Flinchify</span>
-        </Link>
-
-        {/* Tester identity */}
-        <div className="mb-8">
-          <div className="w-12 h-12 rounded-full grad-warm-bg flex items-center justify-center text-white text-[18px] font-bold mb-3">
-            {tester.name.charAt(0).toUpperCase()}
+    <div className="min-h-screen bg-[var(--bg-2)]">
+      {/* Horizontal header */}
+      <header className="sticky top-0 z-50 bg-white border-b border-black/[0.06]">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 h-[56px] sm:h-[60px] flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2 shrink-0">
+            <Image src="/logo.png" alt="Flinchify" width={28} height={28} className="sm:w-8 sm:h-8" />
+            <span className="h text-[15px] font-bold text-[var(--text)] hidden sm:block">Flinchify</span>
+          </Link>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center text-white text-[13px] font-bold">
+                {tester.name.charAt(0).toUpperCase()}
+              </div>
+              <div className="hidden sm:block">
+                <p className="text-[13px] font-semibold text-[var(--text)] leading-tight">{tester.name}</p>
+                <p className="text-[11px] text-[var(--text-dim)] leading-tight">{tester.email}</p>
+              </div>
+            </div>
+            <button onClick={async () => {
+              await fetch("/api/auth/logout", { method: "POST" });
+              window.location.href = "/";
+            }} className="text-[12px] font-medium text-[var(--text-dim)] hover:text-[var(--text)] transition-colors px-3 py-1.5 rounded-lg border border-black/[0.06] hover:border-black/[0.12]">
+              Sign out
+            </button>
           </div>
-          <p className="h text-[14px] font-semibold text-[var(--text)]">{tester.name}</p>
-          <p className="text-[12px] text-[var(--text-dim)]">{tester.email}</p>
-          {tester.location && <p className="text-[12px] text-[var(--text-dim)] mt-0.5">{tester.location}</p>}
         </div>
 
-        <nav className="space-y-1 flex-1">
-          {NAV_ITEMS.map(item => (
-            "href" in item && item.href ? (
-              <Link key={item.key} href={item.href}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-black/[0.02] transition-colors">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={item.icon} /></svg>
-                {item.label}
-              </Link>
-            ) : (
-              <button key={item.key} onClick={() => setTab(item.key)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-colors ${
-                  tab === item.key ? "bg-black/[0.04] text-[var(--text)]" : "text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-black/[0.02]"
-                }`}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={item.icon} /></svg>
-                {item.label}
-              </button>
-            )
-          ))}
-        </nav>
-
-        <Link href="/" className="text-[12px] text-[var(--text-dim)] hover:text-[var(--text)] transition-colors mt-4">← Back to site</Link>
-      </aside>
-
-      {/* Mobile header */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-black/[0.04] px-4 h-[56px] flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <Image src="/logo.png" alt="Flinchify" width={24} height={24} />
-          <span className="h text-[14px] font-bold">Flinchify</span>
-        </Link>
-        <div className="flex gap-1">
-          {NAV_ITEMS.map(item => (
-            "href" in item && item.href ? (
-              <Link key={item.key} href={item.href} className="p-2 rounded-lg">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="1.5"><path d={item.icon} /></svg>
-              </Link>
-            ) : (
-              <button key={item.key} onClick={() => setTab(item.key)}
-                className={`p-2 rounded-lg ${tab === item.key ? "bg-black/[0.04]" : ""}`}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={tab === item.key ? "#111" : "#999"} strokeWidth="1.5"><path d={item.icon} /></svg>
-              </button>
-            )
-          ))}
+        {/* Horizontal pill tabs */}
+        <div className="border-t border-black/[0.04]">
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
+            <div className="flex gap-1 py-2 overflow-x-auto scrollbar-hide snap-x snap-mandatory" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
+              {NAV_ITEMS.map(item => (
+                <button key={item.key} onClick={() => setTab(item.key)}
+                  className={`shrink-0 snap-start px-4 py-2 rounded-full text-[13px] font-medium transition-all whitespace-nowrap ${
+                    tab === item.key
+                      ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-sm shadow-orange-200"
+                      : "text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-black/[0.03]"
+                  }`}>
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
+      </header>
 
       {/* Main */}
-      <main className="flex-1 p-6 md:p-10 pt-20 md:pt-10 overflow-y-auto">
+      <main className="max-w-[1200px] mx-auto p-4 sm:p-6 md:p-10">
         {tab === "overview" && (
           <div>
             <h1 className="h text-xl font-bold text-[var(--text)] mb-6">Welcome back, {tester.name}</h1>

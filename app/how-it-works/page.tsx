@@ -75,7 +75,7 @@ export default function HowItWorksPage() {
               ))}
             </div>
             <div className="mt-8">
-              <Link href="/become-a-tester" className="btn btn-primary !bg-emerald-600 hover:!bg-emerald-700">Sign up as a tester</Link>
+              <Link href="/become-a-tester" className="btn btn-primary !bg-emerald-600 hover:!bg-emerald-700">Get started</Link>
             </div>
           </div>
 

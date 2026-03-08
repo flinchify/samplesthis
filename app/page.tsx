@@ -11,7 +11,7 @@ import TypingRotate from "@/components/TypingRotate";
 const SAMPLE_JOBS = [
   { app: "Fitness tracking app", audience: "Gym-goers, 25-40", testers: 5, budget: 12, time: "2h ago", applied: 8 },
   { app: "SaaS onboarding flow", audience: "Small business owners", testers: 3, budget: 15, time: "45m ago", applied: 5 },
-  { app: "Crypto portfolio tracker", audience: "Active traders", testers: 8, budget: 8, time: "1h ago", applied: 12 },
+  { app: "Budget tracking app", audience: "Active traders", testers: 8, budget: 8, time: "1h ago", applied: 12 },
   { app: "Recipe sharing mobile app", audience: "Home cooks, 30-55", testers: 5, budget: 10, time: "3h ago", applied: 9 },
   { app: "E-commerce checkout redesign", audience: "Online shoppers, 20-45", testers: 4, budget: 18, time: "30m ago", applied: 6 },
   { app: "AI writing assistant", audience: "Content creators", testers: 6, budget: 14, time: "1.5h ago", applied: 11 },
@@ -87,7 +87,7 @@ function Home() {
                 </>
               ) : (
                 <>
-                  <button onClick={() => window.dispatchEvent(new CustomEvent("open-auth", { detail: "tester" }))} className="btn btn-primary btn-lg w-full sm:w-auto">Become a tester</button>
+                  <button onClick={() => window.dispatchEvent(new CustomEvent("open-auth", { detail: "tester" }))} className="btn btn-primary btn-lg w-full sm:w-auto">Get started</button>
                   <button onClick={() => window.dispatchEvent(new CustomEvent("open-auth", { detail: "tester" }))} className="btn btn-outline btn-lg w-full sm:w-auto">List a job</button>
                 </>
               )}
@@ -190,7 +190,7 @@ function Home() {
                   <p className="text-[13px] sm:text-[14px] text-[var(--text-muted)] leading-[1.7] mb-4 sm:mb-5">
                     Browse jobs matched to your profile. Use apps for 15 minutes, give honest feedback, get paid same day.
                   </p>
-                  <span className="text-[13px] font-medium text-[var(--accent)] group-hover:underline">Sign up as a tester →</span>
+                  <span className="text-[13px] font-medium text-[var(--accent)] group-hover:underline">Sign up →</span>
                 </button>
               </ScrollReveal>
             </div>
@@ -390,8 +390,6 @@ function Home() {
           </div>
         </section>
 
-
-
         {/* ═══ CTA ═══ */}
         <section className="warm-gradient-hero py-16 sm:py-24 px-5 sm:px-6 text-center">
           <ScrollReveal>
@@ -409,7 +407,7 @@ function Home() {
                 </>
               ) : (
                 <>
-                  <button onClick={() => window.dispatchEvent(new CustomEvent("open-auth", { detail: "tester" }))} className="btn btn-primary btn-lg w-full sm:w-auto">Become a tester</button>
+                  <button onClick={() => window.dispatchEvent(new CustomEvent("open-auth", { detail: "tester" }))} className="btn btn-primary btn-lg w-full sm:w-auto">Get started</button>
                   <button onClick={() => window.dispatchEvent(new CustomEvent("open-auth", { detail: "tester" }))} className="btn btn-outline btn-lg w-full sm:w-auto">List a job</button>
                 </>
               )}

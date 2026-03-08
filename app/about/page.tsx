@@ -33,7 +33,7 @@ export default function AboutPage() {
 
           <div className="flex gap-3 mt-10">
             <Link href="/submit" className="btn btn-primary">Get testers</Link>
-            <Link href="/become-a-tester" className="btn btn-secondary">Become a tester</Link>
+            <Link href="/become-a-tester" className="btn btn-secondary">Sign up</Link>
           </div>
         </div>
       </main>

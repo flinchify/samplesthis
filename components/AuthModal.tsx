@@ -323,7 +323,7 @@ export default function AuthModal({ mode, open, onClose, onSuccess, onSwitchMode
         ) : (
           /* ═══ TESTER SIGNUP ═══ */
           <div className="p-6 sm:p-8">
-            <h2 className="h text-xl font-bold text-[var(--text)] mb-1">Become a tester</h2>
+            <h2 className="h text-xl font-bold text-[var(--text)] mb-1">Sign up</h2>
             <p className="text-[13px] text-[var(--text-muted)] mb-5">
               {tStep === 1 ? "Sign up to start earning." :
                tStep === 2 ? "What devices do you use?" :

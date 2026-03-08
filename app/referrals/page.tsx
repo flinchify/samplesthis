@@ -103,7 +103,7 @@ export default function ReferralsPage() {
               <h2 className="h text-[16px] font-bold text-[var(--text)] mb-2">Sign up to start referring</h2>
               <p className="text-[13px] text-[var(--text-muted)] mb-6">Create a tester account to get your unique referral link.</p>
               <Link href="/become-a-tester" className="inline-flex px-6 py-3 rounded-xl bg-black text-white text-[14px] font-semibold hover:bg-black/90 transition-colors">
-                Become a tester
+                Sign up
               </Link>
             </div>
           )}
