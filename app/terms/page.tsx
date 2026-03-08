@@ -23,7 +23,8 @@ export default function TermsPage() {
 
             <section>
               <h2 className="text-[16px] font-semibold text-[var(--text)] mb-2">3. For Businesses</h2>
-              <p>By posting a job, you agree to pay the total amount (number of testers × price per tester) upfront via Stripe. You define the tasks testers must complete and the time limit for completion. You are responsible for reviewing and approving or rejecting tester submissions. Payment to testers is released only upon your approval. If no testers complete your job within 7 days, you are eligible for a full refund.</p>
+              <p>By posting a job, you agree to pay the total amount (number of testers × price per tester) upfront via Stripe. You define the tasks testers must complete and the time limit for completion. You are responsible for reviewing applicants and accepting or denying them. Payment to testers is released only upon your approval of their submission.</p>
+              <p className="mt-2"><strong>Cancellation policy:</strong> You may cancel a job at any time before testers have submitted work. Cancelled jobs receive platform credit equal to the amount paid — <strong>no cash refunds</strong>. Credit can be applied to future job postings and does not expire. Once a tester has submitted work, the job cannot be cancelled.</p>
               <p className="mt-2">Test results and feedback represent the honest, subjective opinions of individual testers. Flinchify makes no warranty that feedback will be comprehensive, technically accurate, or actionable. You should not rely solely on Flinchify testing as a substitute for professional QA, security auditing, or accessibility testing.</p>
             </section>
 
@@ -35,8 +36,8 @@ export default function TermsPage() {
 
             <section>
               <h2 className="text-[16px] font-semibold text-[var(--text)] mb-2">5. Payments &amp; Payouts</h2>
-              <p>All payments are processed through Stripe. Business payments are in USD. Tester payouts are made via Stripe Connect to the tester&apos;s connected bank account upon business approval of their submission. Flinchify retains a platform fee (currently 20%) from each approved test.</p>
-              <p className="mt-2">Flinchify is not responsible for payment delays, failures, or errors caused by Stripe, banks, or incorrect account details provided by the user. Refund requests outside of the standard 7-day no-match policy are handled on a case-by-case basis.</p>
+              <p>All payments are processed through Stripe in the user&apos;s local currency. Tester payouts are made via Stripe Connect to the tester&apos;s connected bank account upon approval of their submission. Flinchify retains a platform fee (currently 20%) from each approved test.</p>
+              <p className="mt-2"><strong>No cash refunds.</strong> All cancellations result in platform credit only. Flinchify is not responsible for payment delays, failures, or errors caused by Stripe, banks, or incorrect account details provided by the user.</p>
             </section>
 
             <section>

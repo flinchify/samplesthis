@@ -259,7 +259,7 @@ export default function PostTestForm() {
               {submitting ? "Processing..." : `Pay $${total} & post`}
             </button>
           </div>
-          <p className="text-[11px] text-[var(--text-dim)] text-center">Secure payment via Stripe. You'll be redirected to checkout.</p>
+          <p className="text-[11px] text-[var(--text-dim)] text-center">Secure payment via Stripe. Cancellations receive platform credit only — no cash refunds. <a href="/terms" className="underline">Terms</a></p>
         </div>
       )}
     </div>

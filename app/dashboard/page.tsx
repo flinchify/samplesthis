@@ -139,6 +139,13 @@ function Dashboard() {
   // My posted jobs
   const [postedJobs, setPostedJobs] = useState<ExploreJob[]>([]);
   const [postedLoading, setPostedLoading] = useState(false);
+  // Job management
+  const [managingJob, setManagingJob] = useState<number | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [jobApplicants, setJobApplicants] = useState<any[]>([]);
+  const [applicantsLoading, setApplicantsLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState<number | null>(null);
+  const [cancellingJob, setCancellingJob] = useState(false);
 
   useEffect(() => {
     fetch("/api/testers/me")
@@ -231,6 +238,48 @@ function Dashboard() {
       alert(e instanceof Error ? e.message : "Action failed");
     }
     setBookingAction(null);
+  };
+
+  const loadApplicants = async (orderId: number) => {
+    setManagingJob(orderId);
+    setApplicantsLoading(true);
+    try {
+      const r = await fetch(`/api/orders/${orderId}/applicants`);
+      const d = await r.json();
+      setJobApplicants(d.applicants || []);
+    } catch { setJobApplicants([]); }
+    setApplicantsLoading(false);
+  };
+
+  const handleApplicant = async (orderId: number, applicationId: number, action: "accept" | "deny") => {
+    setActionLoading(applicationId);
+    try {
+      const r = await fetch(`/api/orders/${orderId}/applicants`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ application_id: applicationId, action }),
+      });
+      const d = await r.json();
+      if (!r.ok) { alert(d.error); setActionLoading(null); return; }
+      // Refresh
+      await loadApplicants(orderId);
+    } catch { alert("Action failed"); }
+    setActionLoading(null);
+  };
+
+  const cancelJob = async (orderId: number) => {
+    if (!confirm("Cancel this job? You'll receive credit (no cash refund). This cannot be undone.")) return;
+    setCancellingJob(true);
+    try {
+      const r = await fetch(`/api/orders/${orderId}/cancel`, { method: "POST" });
+      const d = await r.json();
+      if (!r.ok) { alert(d.error); setCancellingJob(false); return; }
+      alert(d.message);
+      setManagingJob(null);
+      // Refresh posted jobs
+      fetch("/api/orders/mine").then(r2 => r2.json()).then(d2 => setPostedJobs(d2.orders || []));
+    } catch { alert("Cancel failed"); }
+    setCancellingJob(false);
   };
 
   const setupPayouts = async () => {
@@ -387,14 +436,99 @@ function Dashboard() {
                           {job.description && <p className="text-[13px] text-[var(--text-muted)] mt-2 line-clamp-2">{job.description}</p>}
                         </div>
                         <span className={`shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-semibold ${
-                          job.status === "paid" ? "bg-green-50 text-green-700" : "bg-yellow-50 text-yellow-700"
-                        }`}>{job.status === "paid" ? "Live" : job.status}</span>
+                          job.status === "paid" ? "bg-green-50 text-green-700" : job.status === "cancelled" ? "bg-red-50 text-red-700" : "bg-yellow-50 text-yellow-700"
+                        }`}>{job.status === "paid" ? "Live" : job.status === "cancelled" ? "Cancelled" : job.status}</span>
                       </div>
-                      <div className="flex gap-4 mt-3 text-[12px] text-[var(--text-dim)]">
-                        <span>{job.applications_count || 0} application{(job.applications_count || 0) !== 1 ? "s" : ""}</span>
-                        <span>{job.accepted_count || 0} accepted</span>
-                        <span>${((job.price_per_tester_cents || 0) / 100).toFixed(0)}/tester · {job.testers_count} spots</span>
+                      <div className="flex items-center gap-4 mt-3">
+                        <span className="text-[12px] text-[var(--text-dim)]">{job.applications_count || 0} application{(job.applications_count || 0) !== 1 ? "s" : ""}</span>
+                        <span className="text-[12px] text-[var(--text-dim)]">{job.accepted_count || 0}/{job.testers_count} accepted</span>
+                        <span className="text-[12px] text-[var(--text-dim)]">${((job.price_per_tester_cents || 0) / 100).toFixed(0)}/tester</span>
+                        {job.status === "paid" && (
+                          <button onClick={() => loadApplicants(job.id)} className="ml-auto text-[12px] font-semibold text-orange-600 hover:text-orange-700">
+                            Manage →
+                          </button>
+                        )}
                       </div>
+
+                      {/* Applicant management panel */}
+                      {managingJob === job.id && (
+                        <div className="mt-4 pt-4 border-t border-black/[0.06]">
+                          {applicantsLoading ? (
+                            <p className="text-[13px] text-[var(--text-dim)]">Loading applicants...</p>
+                          ) : jobApplicants.length === 0 ? (
+                            <p className="text-[13px] text-[var(--text-muted)]">No applicants yet. Testers will apply as they discover your job.</p>
+                          ) : (
+                            <div className="space-y-3">
+                              <p className="text-[12px] font-semibold text-[var(--text-dim)] uppercase tracking-wider">Applicants ({jobApplicants.length})</p>
+                              {jobApplicants.map((a: { id: number; tester_id: number; name: string; email: string; location: string | null; country: string | null; bio: string | null; tests_completed: number; avg_rating: number; status: string; note: string | null; feedback: string | null; submitted_at: string | null; linkedin: string | null; portfolio: string | null; twitter: string | null; github: string | null; devices: string; interests: string }) => (
+                                <div key={a.id} className="bg-[var(--bg-2)] rounded-xl p-4">
+                                  <div className="flex items-start justify-between gap-3">
+                                    <div className="flex items-center gap-3">
+                                      <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-[14px] font-bold shrink-0" style={{ backgroundColor: avatarColor(a.name) }}>
+                                        {a.name.charAt(0).toUpperCase()}
+                                      </div>
+                                      <div>
+                                        <p className="text-[14px] font-semibold text-[var(--text)]">{a.name}</p>
+                                        <p className="text-[11px] text-[var(--text-dim)]">
+                                          {a.location || a.country || "Unknown location"} · {a.tests_completed} tests · {a.avg_rating > 0 ? `${a.avg_rating}/5` : "New"}
+                                        </p>
+                                      </div>
+                                    </div>
+                                    <span className={`shrink-0 px-2 py-0.5 rounded-md text-[10px] font-semibold ${
+                                      a.status === "accepted" ? "bg-green-50 text-green-700" :
+                                      a.status === "rejected" ? "bg-red-50 text-red-700" :
+                                      a.status === "submitted" ? "bg-blue-50 text-blue-700" :
+                                      "bg-yellow-50 text-yellow-700"
+                                    }`}>{a.status}</span>
+                                  </div>
+                                  {a.bio && <p className="text-[12px] text-[var(--text-muted)] mt-2 line-clamp-2">{a.bio}</p>}
+                                  {a.note && <p className="text-[12px] text-[var(--text-muted)] mt-1 italic">&quot;{a.note}&quot;</p>}
+                                  {/* Links */}
+                                  <div className="flex gap-2 mt-2 flex-wrap">
+                                    {a.linkedin && <a href={a.linkedin} target="_blank" rel="noopener noreferrer" className="text-[11px] text-blue-600 hover:underline">LinkedIn</a>}
+                                    {a.portfolio && <a href={a.portfolio} target="_blank" rel="noopener noreferrer" className="text-[11px] text-blue-600 hover:underline">Portfolio</a>}
+                                    {a.twitter && <a href={`https://x.com/${a.twitter}`} target="_blank" rel="noopener noreferrer" className="text-[11px] text-blue-600 hover:underline">X</a>}
+                                    {a.github && <a href={`https://github.com/${a.github}`} target="_blank" rel="noopener noreferrer" className="text-[11px] text-blue-600 hover:underline">GitHub</a>}
+                                  </div>
+                                  {/* Submitted feedback */}
+                                  {a.feedback && (
+                                    <div className="mt-2 p-3 bg-white rounded-lg border border-black/[0.04]">
+                                      <p className="text-[11px] font-semibold text-[var(--text-dim)] mb-1">Feedback</p>
+                                      <p className="text-[13px] text-[var(--text)]">{a.feedback}</p>
+                                    </div>
+                                  )}
+                                  {/* Actions */}
+                                  {a.status === "pending" && (
+                                    <div className="flex gap-2 mt-3">
+                                      <button onClick={() => handleApplicant(job.id, a.id, "accept")}
+                                        disabled={actionLoading === a.id}
+                                        className="px-3 py-1.5 rounded-lg bg-green-600 text-white text-[12px] font-semibold hover:bg-green-700 disabled:opacity-50">
+                                        {actionLoading === a.id ? "..." : "Accept"}
+                                      </button>
+                                      <button onClick={() => handleApplicant(job.id, a.id, "deny")}
+                                        disabled={actionLoading === a.id}
+                                        className="px-3 py-1.5 rounded-lg bg-red-50 text-red-600 text-[12px] font-semibold hover:bg-red-100 disabled:opacity-50">
+                                        {actionLoading === a.id ? "..." : "Deny"}
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          {/* Cancel job */}
+                          <div className="mt-4 pt-3 border-t border-black/[0.06] flex items-center justify-between">
+                            <p className="text-[11px] text-[var(--text-dim)]">Cancel for credit (no cash refund)</p>
+                            <button onClick={() => cancelJob(job.id)} disabled={cancellingJob}
+                              className="text-[12px] text-red-500 hover:text-red-600 font-medium disabled:opacity-50">
+                              {cancellingJob ? "Cancelling..." : "Cancel job"}
+                            </button>
+                          </div>
+                          <button onClick={() => setManagingJob(null)} className="mt-2 text-[12px] text-[var(--text-dim)] hover:text-[var(--text)]">
+                            ← Close
+                          </button>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

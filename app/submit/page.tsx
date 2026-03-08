@@ -232,7 +232,7 @@ export default function SubmitPage() {
                     </button>
                   </div>
                   <p className="text-[11px] text-[var(--text-dim)] text-center">
-                    Secure payment via Stripe. Full refund if we can&apos;t match testers.
+                    Secure payment via Stripe. Cancellations receive platform credit only — no cash refunds. <a href="/terms" className="underline">Terms</a>
                   </p>
                 </div>
               )}

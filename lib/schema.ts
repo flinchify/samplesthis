@@ -81,6 +81,7 @@ export async function ensureTables() {
     await sql`ALTER TABLE testers ADD COLUMN IF NOT EXISTS verify_expires TIMESTAMP`;
     await sql`ALTER TABLE testers ADD COLUMN IF NOT EXISTS country VARCHAR(100)`;
     await sql`ALTER TABLE testers ADD COLUMN IF NOT EXISTS currency VARCHAR(10) DEFAULT 'usd'`;
+    await sql`ALTER TABLE testers ADD COLUMN IF NOT EXISTS credit_cents INTEGER DEFAULT 0`;
     await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS payout_cents INTEGER DEFAULT 0`;
     await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS payout_transfer_id VARCHAR(255)`;
     await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS completed_at TIMESTAMP`;
