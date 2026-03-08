@@ -27,11 +27,14 @@ export const metadata: Metadata = {
   keywords: ["user testing", "app testing", "beta testing", "human testers", "QA testing", "flinch moments", "UX feedback"],
 };
 
+import GlobalAuth from "@/components/GlobalAuth";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${body.variable} ${sora.variable}`}>
       <body className="font-[family-name:var(--font-body)] antialiased overflow-x-hidden">
         {children}
+        <GlobalAuth />
       </body>
     </html>
   );

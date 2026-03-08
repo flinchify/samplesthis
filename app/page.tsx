@@ -2,11 +2,10 @@
 
 import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
-import AuthModal from "@/components/AuthModal";
 import TypingRotate from "@/components/TypingRotate";
 
 const SAMPLE_JOBS = [
@@ -28,47 +27,17 @@ export default function HomePage() {
 
 function Home() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const authParam = searchParams.get("auth") as "tester" | "business" | null;
-  const [authMode, setAuthMode] = useState<"tester" | "business" | "login" | null>(authParam);
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
-    // Check if user is logged in (either tester or business)
-    Promise.all([
-      fetch("/api/testers/me").then(r => r.json()).catch(() => ({})),
-      fetch("/api/business/me").then(r => r.json()).catch(() => ({})),
-    ]).then(([tester, biz]) => {
-      if (tester?.id || biz?.authenticated) setLoggedIn(true);
-    });
+    fetch("/api/testers/me").then(r => r.json()).then(d => {
+      if (d?.id) setLoggedIn(true);
+    }).catch(() => {});
   }, []);
-
-  // Listen for auth modal events from Nav
-  useEffect(() => {
-    const handler = (e: Event) => {
-      const detail = (e as CustomEvent).detail as "tester" | "business";
-      setAuthMode(detail || "tester");
-    };
-    window.addEventListener("open-auth", handler);
-    return () => window.removeEventListener("open-auth", handler);
-  }, []);
-
-  const handleAuthSuccess = (data: { type: "tester" | "business" | "login" }) => {
-    setAuthMode(null);
-    if (data.type === "tester") router.push("/dashboard");
-    else router.push("/submit");
-  };
 
   return (
     <>
       <Nav />
-      <AuthModal
-        mode={authMode || "login"}
-        open={authMode !== null}
-        onClose={() => setAuthMode(null)}
-        onSuccess={handleAuthSuccess}
-        onSwitchMode={(m) => setAuthMode(m)}
-      />
       <main>
 
         {/* ═══ HERO ═══ */}
@@ -118,8 +87,8 @@ function Home() {
                 </>
               ) : (
                 <>
-                  <button onClick={() => setAuthMode("tester")} className="btn btn-primary btn-lg w-full sm:w-auto">Become a tester</button>
-                  <button onClick={() => setAuthMode("business")} className="btn btn-outline btn-lg w-full sm:w-auto">List a job</button>
+                  <button onClick={() => window.dispatchEvent(new CustomEvent("open-auth", { detail: "tester" }))} className="btn btn-primary btn-lg w-full sm:w-auto">Become a tester</button>
+                  <button onClick={() => window.dispatchEvent(new CustomEvent("open-auth", { detail: "tester" }))} className="btn btn-outline btn-lg w-full sm:w-auto">List a job</button>
                 </>
               )}
             </div>
@@ -157,7 +126,7 @@ function Home() {
                         </div>
                         <span className="text-[11px] sm:text-[12px] text-[var(--text-dim)]">{job.applied} applied</span>
                       </div>
-                      <button onClick={() => setAuthMode("tester")} className="text-[12px] font-medium text-[var(--accent)] hover:underline">Apply</button>
+                      <button onClick={() => window.dispatchEvent(new CustomEvent("open-auth", { detail: "tester" }))} className="text-[12px] font-medium text-[var(--accent)] hover:underline">Apply</button>
                     </div>
                   </div>
                 </ScrollReveal>
@@ -196,7 +165,7 @@ function Home() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
               <ScrollReveal delay={100}>
-                <button onClick={() => setAuthMode("business")} className="card block p-6 sm:p-8 group text-left w-full">
+                <button onClick={() => window.dispatchEvent(new CustomEvent("open-auth", { detail: "tester" }))} className="card block p-6 sm:p-8 group text-left w-full">
                   <div className="w-10 h-10 rounded-xl grad-warm-subtle flex items-center justify-center mb-4 sm:mb-5">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F97316" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
@@ -211,7 +180,7 @@ function Home() {
               </ScrollReveal>
 
               <ScrollReveal delay={200}>
-                <button onClick={() => setAuthMode("tester")} className="card block p-6 sm:p-8 group text-left w-full">
+                <button onClick={() => window.dispatchEvent(new CustomEvent("open-auth", { detail: "tester" }))} className="card block p-6 sm:p-8 group text-left w-full">
                   <div className="w-10 h-10 rounded-xl grad-warm-subtle flex items-center justify-center mb-4 sm:mb-5">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F97316" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
@@ -440,8 +409,8 @@ function Home() {
                 </>
               ) : (
                 <>
-                  <button onClick={() => setAuthMode("tester")} className="btn btn-primary btn-lg w-full sm:w-auto">Become a tester</button>
-                  <button onClick={() => setAuthMode("business")} className="btn btn-outline btn-lg w-full sm:w-auto">List a job</button>
+                  <button onClick={() => window.dispatchEvent(new CustomEvent("open-auth", { detail: "tester" }))} className="btn btn-primary btn-lg w-full sm:w-auto">Become a tester</button>
+                  <button onClick={() => window.dispatchEvent(new CustomEvent("open-auth", { detail: "tester" }))} className="btn btn-outline btn-lg w-full sm:w-auto">List a job</button>
                 </>
               )}
             </div>
