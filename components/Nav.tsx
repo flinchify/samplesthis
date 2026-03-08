@@ -33,13 +33,8 @@ export default function Nav() {
 
   // Check auth on mount
   useEffect(() => {
-    // Check tester auth
     fetch("/api/testers/me").then(r => r.json()).then(d => {
       if (d.id) setUser({ type: "tester", name: d.name, email: d.email });
-    }).catch(() => {});
-    // Check business auth
-    fetch("/api/business/me").then(r => r.json()).then(d => {
-      if (d.authenticated) setUser(prev => prev || { type: "business", email: d.business?.email, name: d.business?.company });
     }).catch(() => {});
   }, []);
 
@@ -158,7 +153,7 @@ export default function Nav() {
           {user ? (
             <>
               <Link href="/dashboard" className="text-[13px] text-[var(--text-muted)] hover:text-[var(--text)] transition-colors font-medium">Dashboard</Link>
-              <Link href="/submit" className="btn btn-accent text-[13px] !py-2 !px-5">Post a test</Link>
+              <button onClick={signOut} className="btn btn-outline text-[13px] !py-2 !px-5">Sign out</button>
             </>
           ) : (
             <>
@@ -210,7 +205,10 @@ export default function Nav() {
             ))}
             <div className="pt-4 space-y-2">
               {user ? (
-                <Link href="/dashboard" onClick={() => setOpen(false)} className="btn btn-accent w-full">Dashboard</Link>
+                <>
+                  <Link href="/dashboard" onClick={() => setOpen(false)} className="btn btn-accent w-full">Dashboard</Link>
+                  <button onClick={() => { setOpen(false); signOut(); }} className="btn btn-outline w-full">Sign out</button>
+                </>
               ) : (
                 <button onClick={() => {
                   setOpen(false);
