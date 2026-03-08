@@ -46,7 +46,7 @@ const NAV_ITEMS = [
   { key: "bookings", label: "Bookings", icon: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" },
   { key: "posttest", label: "Post a Test", icon: "M12 4v16m8-8H4" },
   { key: "payouts", label: "Payouts", icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
-  { key: "referrals", label: "Referrals", icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" },
+
   { key: "howit", label: "How it Works", icon: "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
   { key: "pricing", label: "Pricing", icon: "M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z" },
   { key: "profile", label: "Profile", icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" },
@@ -974,50 +974,6 @@ function Dashboard() {
 
             <div className="bg-white rounded-2xl border border-black/[0.04] p-6 sm:p-8">
               <PostTestForm />
-            </div>
-          </div>
-        )}
-
-        {/* ═══ REFERRALS ═══ */}
-        {tab === "referrals" && (
-          <div>
-            <h1 className="h text-xl font-bold text-[var(--text)] mb-2">Referrals</h1>
-            <p className="text-[13px] text-[var(--text-muted)] mb-6">Invite friends to Flinchify and earn bonus rewards when they complete tests.</p>
-
-            <div className="bg-white rounded-2xl border border-black/[0.04] p-6 sm:p-8 text-center mb-6">
-              <div className="w-16 h-16 rounded-full bg-orange-50 flex items-center justify-center mx-auto mb-4">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#F97316" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              </div>
-              <h2 className="h text-[16px] font-bold text-[var(--text)] mb-2">Your referral link</h2>
-              <div className="bg-[var(--bg-2)] rounded-xl p-3 mb-4 max-w-md mx-auto">
-                <code className="text-[13px] text-[var(--text)] select-all break-all">
-                  {typeof window !== "undefined" ? `${window.location.origin}/become-a-tester?ref=${tester?.id}` : ""}
-                </code>
-              </div>
-              <button 
-                onClick={() => {
-                  navigator.clipboard.writeText(`${window.location.origin}/become-a-tester?ref=${tester?.id}`);
-                  alert("Copied!");
-                }}
-                className="px-5 py-2.5 rounded-xl bg-black text-white text-[13px] font-semibold hover:bg-black/90 transition-colors">
-                Copy link
-              </button>
-            </div>
-
-            <div className="grid sm:grid-cols-3 gap-4">
-              {[
-                { icon: "M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z", title: "Share your link", desc: "Send your unique referral link to friends, share on social media, or post in communities." },
-                { icon: "M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z", title: "They sign up & test", desc: "When someone signs up with your link and completes their first test, you both benefit." },
-                { icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z", title: "Earn bonuses", desc: "Get a bonus added to your earnings for every successful referral. More referrals = more money." },
-              ].map(s => (
-                <div key={s.title} className="bg-white rounded-2xl border border-black/[0.04] p-5">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F97316" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mb-3"><path d={s.icon} /></svg>
-                  <h3 className="h text-[13px] font-semibold text-[var(--text)] mb-1">{s.title}</h3>
-                  <p className="text-[12px] text-[var(--text-muted)] leading-[1.6]">{s.desc}</p>
-                </div>
-              ))}
             </div>
           </div>
         )}

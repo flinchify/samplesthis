@@ -7,7 +7,7 @@ import { useState, useEffect, useRef } from "react";
 const TESTERS_MENU = [
   { href: "/explore", label: "Explore jobs", desc: "Browse open test opportunities" },
   { href: "/?auth=tester", label: "Become a tester", desc: "Sign up and start earning" },
-  { href: "/referrals", label: "Referrals", desc: "Invite friends, earn bonuses" },
+
   { href: "/dashboard", label: "Dashboard", desc: "Your tests, earnings & profile" },
 ];
 
