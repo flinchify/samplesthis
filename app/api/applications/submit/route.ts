@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Set up payouts before submitting results. Go to Dashboard → Payouts to connect your bank account." }, { status: 400 });
   }
 
-  const { application_id, feedback, screen_recording_url, screenshots } = await req.json();
+  const { application_id, feedback, screen_recording_url, screenshots, task_responses } = await req.json();
   if (!application_id) return NextResponse.json({ error: "application_id required" }, { status: 400 });
   if (!feedback || feedback.trim().length < 20) return NextResponse.json({ error: "Feedback must be at least 20 characters" }, { status: 400 });
 
@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
       feedback = ${feedback},
       screen_recording_url = ${screen_recording_url || null},
       screenshots = ${JSON.stringify(screenshots || [])},
+      task_responses = ${JSON.stringify(task_responses || [])},
       submitted_at = NOW(),
       status = 'submitted'
     WHERE id = ${application_id}

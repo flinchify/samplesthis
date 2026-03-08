@@ -61,15 +61,17 @@ export async function POST(req: NextRequest) {
     const perTester = Math.max(5, parseFloat(price_per_tester) || 5);
     const totalCents = Math.round(count * perTester * 100);
     const timeLimitHours = Math.max(1, Math.min(168, parseInt(body.time_limit_hours) || 24));
+    const testMode = body.test_mode === "tasks" ? "tasks" : "freeuse";
+    const tasks = Array.isArray(body.tasks) ? body.tasks.filter((t: string) => t?.trim()).map((t: string) => sanitize(t)) : [];
 
     const sql = getSql();
 
     const rows = await sql`
-      INSERT INTO orders (email, company, app_url, app_type, description, target_audience, plan, testers_count, price_cents, price_per_tester_cents, time_limit_hours, status)
+      INSERT INTO orders (email, company, app_url, app_type, description, target_audience, plan, testers_count, price_cents, price_per_tester_cents, time_limit_hours, test_mode, tasks, status)
       VALUES (
         ${email.toLowerCase()}, ${company || null}, ${app_url}, ${app_type || null},
         ${description || null}, ${target_audience || null}, ${'custom'}, ${count},
-        ${totalCents}, ${Math.round(perTester * 100)}, ${timeLimitHours}, ${'pending_payment'}
+        ${totalCents}, ${Math.round(perTester * 100)}, ${timeLimitHours}, ${testMode}, ${JSON.stringify(tasks)}, ${'pending_payment'}
       )
       RETURNING id
     `;

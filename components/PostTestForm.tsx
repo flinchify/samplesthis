@@ -18,6 +18,8 @@ export default function PostTestForm() {
     price_per_tester: 12,
     custom_price: "",
     time_limit_hours: 24,
+    test_mode: "tasks" as "tasks" | "freeuse",
+    tasks: [""] as string[],
     booking_enabled: false,
     booking_date: "",
     booking_time: "",
@@ -38,11 +40,13 @@ export default function PostTestForm() {
         body: JSON.stringify({
           app_url: form.app_url,
           app_type: form.app_type,
-          description: form.description,
           target_audience: form.target_audience,
           testers_count: form.testers_count,
           price_per_tester: pricePerTester,
           time_limit_hours: form.time_limit_hours,
+          test_mode: form.test_mode,
+          tasks: form.test_mode === "tasks" ? form.tasks.filter(t => t.trim()) : [],
+          description: form.test_mode === "freeuse" ? form.description : form.tasks.filter(t => t.trim()).join(" → "),
           ...(form.booking_enabled && {
             booking: {
               scheduled_date: form.booking_date,
@@ -108,9 +112,53 @@ export default function PostTestForm() {
             </div>
           </div>
           <div>
-            <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-1">What should testers do?</label>
-            <textarea className="input min-h-[100px] resize-y" placeholder="E.g. Sign up, complete onboarding, try to make a purchase. Note anything confusing or broken."
-              value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} />
+            <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-2">What should testers do?</label>
+            <div className="flex gap-2 mb-3">
+              <button type="button" onClick={() => setForm({ ...form, test_mode: "tasks" })}
+                className={`flex-1 px-3 py-2 rounded-lg text-[12px] font-medium border transition-all text-center ${
+                  form.test_mode === "tasks" ? "bg-orange-50 border-orange-300 text-orange-700" : "bg-white border-black/[0.06] text-[var(--text-dim)] hover:border-orange-200"
+                }`}>Specific tasks</button>
+              <button type="button" onClick={() => setForm({ ...form, test_mode: "freeuse" })}
+                className={`flex-1 px-3 py-2 rounded-lg text-[12px] font-medium border transition-all text-center ${
+                  form.test_mode === "freeuse" ? "bg-orange-50 border-orange-300 text-orange-700" : "bg-white border-black/[0.06] text-[var(--text-dim)] hover:border-orange-200"
+                }`}>Free use</button>
+            </div>
+
+            {form.test_mode === "tasks" ? (
+              <div className="space-y-2">
+                {form.tasks.map((task, i) => (
+                  <div key={i} className="flex gap-2">
+                    <span className="shrink-0 w-6 h-9 flex items-center justify-center text-[11px] font-bold text-[var(--text-dim)]">{i + 1}.</span>
+                    <input className="input flex-1" placeholder={i === 0 ? "E.g. Sign up with email" : i === 1 ? "E.g. Complete onboarding" : "Add another task..."} 
+                      value={task} onChange={e => {
+                        const tasks = [...form.tasks];
+                        tasks[i] = e.target.value;
+                        setForm({ ...form, tasks });
+                      }} />
+                    {form.tasks.length > 1 && (
+                      <button type="button" onClick={() => setForm({ ...form, tasks: form.tasks.filter((_, j) => j !== i) })}
+                        className="shrink-0 w-9 h-9 flex items-center justify-center rounded-lg text-[var(--text-dim)] hover:text-red-500 hover:bg-red-50 transition-colors">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
+                      </button>
+                    )}
+                  </div>
+                ))}
+                {form.tasks.length < 10 && (
+                  <button type="button" onClick={() => setForm({ ...form, tasks: [...form.tasks, ""] })}
+                    className="text-[12px] font-medium text-orange-600 hover:text-orange-700 transition-colors flex items-center gap-1 pl-8">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14M5 12h14" /></svg>
+                    Add task
+                  </button>
+                )}
+                <p className="text-[11px] text-[var(--text-dim)] pl-8">Testers will complete each task and upload feedback per step.</p>
+              </div>
+            ) : (
+              <div>
+                <textarea className="input min-h-[80px] resize-y" placeholder="E.g. Use the app naturally for 15 minutes. Note anything confusing, broken, or frustrating."
+                  value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} />
+                <p className="text-[11px] text-[var(--text-dim)] mt-1">Testers will explore your product freely and give general feedback.</p>
+              </div>
+            )}
           </div>
           <div>
             <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-1">Target audience (optional)</label>
@@ -177,8 +225,11 @@ export default function PostTestForm() {
             )}
           </div>
 
-          <button onClick={() => { if (form.app_url && form.description && (!form.booking_enabled || (form.booking_date && form.booking_time))) setStep(2); }}
-            disabled={!form.app_url || !form.description || (form.booking_enabled && (!form.booking_date || !form.booking_time))}
+          <button onClick={() => {
+              const hasContent = form.test_mode === "tasks" ? form.tasks.some(t => t.trim()) : !!form.description;
+              if (form.app_url && hasContent && (!form.booking_enabled || (form.booking_date && form.booking_time))) setStep(2);
+            }}
+            disabled={!form.app_url || (form.test_mode === "tasks" ? !form.tasks.some(t => t.trim()) : !form.description) || (form.booking_enabled && (!form.booking_date || !form.booking_time))}
             className="btn btn-primary w-full disabled:opacity-40">Continue</button>
         </div>
       )}
@@ -253,8 +304,14 @@ export default function PostTestForm() {
               </div>
             </div>
             <div className="bg-[var(--bg-2)] rounded-xl p-4">
-              <span className="text-[12px] text-[var(--text-dim)]">Tasks</span>
-              <p className="text-[13px] text-[var(--text)] mt-1">{form.description}</p>
+              <span className="text-[12px] text-[var(--text-dim)]">{form.test_mode === "tasks" ? "Task list" : "Instructions"}</span>
+              {form.test_mode === "tasks" ? (
+                <ol className="text-[13px] text-[var(--text)] mt-1 space-y-1 list-decimal list-inside">
+                  {form.tasks.filter(t => t.trim()).map((t, i) => <li key={i}>{t}</li>)}
+                </ol>
+              ) : (
+                <p className="text-[13px] text-[var(--text)] mt-1">{form.description}</p>
+              )}
             </div>
             {form.booking_enabled && form.booking_date && (
               <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">

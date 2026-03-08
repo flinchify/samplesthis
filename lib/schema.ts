@@ -92,6 +92,7 @@ export async function ensureTables() {
     await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS payout_error TEXT`;
     await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS deadline_at TIMESTAMP`;
     await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS accepted_at TIMESTAMP`;
+    await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS task_responses JSONB DEFAULT '[]'`;
 
     // Bookings system
     await sql`CREATE TABLE IF NOT EXISTS bookings (
@@ -111,6 +112,8 @@ export async function ensureTables() {
       completed_at TIMESTAMP
     )`;
     await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS time_limit_hours INTEGER DEFAULT 24`;
+    await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS test_mode VARCHAR(20) DEFAULT 'freeuse'`;
+    await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS tasks JSONB DEFAULT '[]'`;
     await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS booking_required BOOLEAN DEFAULT false`;
     await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS booking_deadline TIMESTAMP`;
 

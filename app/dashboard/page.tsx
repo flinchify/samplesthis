@@ -20,6 +20,7 @@ interface Tester {
   total_earned_cents: number;
   avg_rating: number;
   stripe_onboarded: boolean;
+  credit_cents: number;
   created_at: string;
 }
 
@@ -383,8 +384,8 @@ function Dashboard() {
               {[
                 { label: "Tests Completed", value: tester.tests_completed, color: "text-[var(--text)]" },
                 { label: "Total Earned", value: `$${earned}`, color: "text-[var(--accent)]" },
+                { label: "Credit", value: tester.credit_cents > 0 ? `$${(tester.credit_cents / 100).toFixed(2)}` : "$0", color: tester.credit_cents > 0 ? "text-green-600" : "text-[var(--text)]" },
                 { label: "Avg Rating", value: tester.avg_rating > 0 ? `${tester.avg_rating}/5` : "—", color: "text-[var(--text)]" },
-                { label: "Member Since", value: memberSince, color: "text-[var(--text)]" },
               ].map(s => (
                 <div key={s.label} className="bg-white rounded-2xl border border-black/[0.04] p-5">
                   <p className="text-[11px] text-[var(--text-dim)] uppercase tracking-wider mb-1 font-medium">{s.label}</p>

@@ -39,6 +39,7 @@ export async function GET() {
         stripe_onboarded: user.stripe_onboarded,
         country: user.country,
         currency: user.currency || "usd",
+        credit_cents: user.credit_cents || 0,
         created_at: user.created_at,
       },
     });
