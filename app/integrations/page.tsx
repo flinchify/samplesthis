@@ -22,7 +22,7 @@ const INTEGRATIONS = [
   {
     name: "Claude Desktop",
     desc: "MCP server integration. Claude can create tests, check results, and manage credits — all through natural conversation.",
-    setup: 'Add to claude_desktop_config.json:\n{\n  "mcpServers": {\n    "flinchify": {\n      "command": "npx",\n      "args": ["@flinchify/mcp-server"],\n      "env": { "FLINCHIFY_API_KEY": "fk_..." }\n    }\n  }\n}',
+    setup: 'npm install -g flinchify-mcp\n\nAdd to claude_desktop_config.json:\n{\n  "mcpServers": {\n    "flinchify": {\n      "command": "npx",\n      "args": ["flinchify-mcp"],\n      "env": { "FLINCHIFY_API_KEY": "fk_..." }\n    }\n  }\n}',
     icon: (
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="6" fill="#D4A06A"/><path d="M8 8h8M8 12h6M8 16h4" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>
     ),
@@ -32,7 +32,7 @@ const INTEGRATIONS = [
   {
     name: "Cursor",
     desc: "MCP integration for Cursor IDE. Your coding agent requests human testing mid-workflow and reads structured results to fix issues.",
-    setup: 'Add to .cursor/mcp.json:\n{\n  "mcpServers": {\n    "flinchify": {\n      "command": "npx",\n      "args": ["@flinchify/mcp-server"],\n      "env": { "FLINCHIFY_API_KEY": "fk_..." }\n    }\n  }\n}',
+    setup: 'Add to .cursor/mcp.json:\n{\n  "mcpServers": {\n    "flinchify": {\n      "command": "npx",\n      "args": ["flinchify-mcp"],\n      "env": { "FLINCHIFY_API_KEY": "fk_..." }\n    }\n  }\n}',
     icon: (
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="6" fill="#000"/><path d="M7 7l10 5-10 5V7z" fill="white"/></svg>
     ),
@@ -108,6 +108,11 @@ export default function IntegrationsPage() {
             <p className="text-[14px] text-[var(--text-muted)]">
               All integrations use the same API key. Get yours from the dashboard.
             </p>
+            <div className="flex items-center justify-center gap-4 text-[12px] text-[var(--text-dim)]">
+              <a href="https://www.npmjs.com/package/flinchify" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--text-muted)] transition-colors">npm: flinchify</a>
+              <span>·</span>
+              <a href="https://www.npmjs.com/package/flinchify-mcp" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--text-muted)] transition-colors">npm: flinchify-mcp</a>
+            </div>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link href="/dashboard?tab=api" className="btn btn-accent text-[14px] !py-3 !px-6">
                 Get API Key

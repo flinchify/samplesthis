@@ -1,5 +1,5 @@
 {
-  "name": "@flinchify/mcp-server",
+  "name": "flinchify-mcp",
   "version": "0.1.0",
   "description": "Flinchify MCP server — human usability testing for AI agents",
   "type": "module",
