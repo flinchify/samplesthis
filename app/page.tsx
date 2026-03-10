@@ -381,6 +381,129 @@ function Home() {
           </div>
         </section>
 
+        {/* ═══ FOR BUILDERS: API & CLI ═══ */}
+        <section className="py-16 sm:py-24 px-5 sm:px-6">
+          <div className="max-w-[1100px] mx-auto">
+            <ScrollReveal>
+              <p className="h text-[11px] sm:text-[12px] font-bold text-[var(--accent)] uppercase tracking-[0.15em] text-center mb-3">For builders and AI agents</p>
+              <h2 className="h text-[1.5rem] sm:text-2xl md:text-[2.5rem] font-bold tracking-[-0.03em] text-center mb-4 text-[var(--text)]">
+                Test from your terminal
+              </h2>
+              <p className="text-[14px] sm:text-[15px] text-[var(--text-muted)] text-center max-w-lg mx-auto mb-12 sm:mb-16">
+                Your AI agent builds the app. Flinchify gets real humans to test it. No browser needed — one command, real feedback.
+              </p>
+            </ScrollReveal>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+              {/* Terminal mockup */}
+              <ScrollReveal delay={100} animation="left">
+                <div className="rounded-2xl overflow-hidden border border-black/[0.08] shadow-lg">
+                  {/* Terminal header */}
+                  <div className="bg-[#1E1E1E] px-4 py-3 flex items-center gap-2">
+                    <div className="flex gap-1.5">
+                      <div className="w-3 h-3 rounded-full bg-[#FF5F57]" />
+                      <div className="w-3 h-3 rounded-full bg-[#FEBC2E]" />
+                      <div className="w-3 h-3 rounded-full bg-[#28C840]" />
+                    </div>
+                    <p className="text-[11px] text-white/40 ml-2 font-mono">terminal</p>
+                  </div>
+                  {/* Terminal body */}
+                  <div className="bg-[#1E1E1E] p-5 sm:p-6 font-mono text-[12px] sm:text-[13px] leading-[1.8] overflow-x-auto">
+                    <p className="text-white/40">{"# Install the Flinchify CLI"}</p>
+                    <p className="text-white">$ <span className="text-[#98C379]">npm install -g flinchify</span></p>
+                    <p className="text-white/20 my-2">&nbsp;</p>
+                    <p className="text-white/40">{"# Your AI agent requests human testing"}</p>
+                    <p className="text-white">$ <span className="text-[#98C379]">flinchify test</span> <span className="text-[#E5C07B]">https://myapp.com</span> \</p>
+                    <p className="text-white pl-4">--flow <span className="text-[#98C379]">&quot;sign up, create a project, invite a teammate&quot;</span> \</p>
+                    <p className="text-white pl-4">--testers <span className="text-[#D19A66]">5</span> --budget <span className="text-[#D19A66]">10</span></p>
+                    <p className="text-white/20 my-2">&nbsp;</p>
+                    <p className="text-[#98C379]">{"✓ Test created!"}</p>
+                    <p className="text-white/70">{"  ID:       ft_127"}</p>
+                    <p className="text-white/70">{"  Status:   "}<span className="text-[#98C379]">paid (credits)</span></p>
+                    <p className="text-white/70">{"  Total:    $50 AUD"}</p>
+                    <p className="text-[#98C379]">{"  ✓ Paid with credits. $50 used, $150 remaining."}</p>
+                    <p className="text-white/20 my-2">&nbsp;</p>
+                    <p className="text-white/40">{"# Check results later"}</p>
+                    <p className="text-white">$ <span className="text-[#98C379]">flinchify results</span> <span className="text-[#E5C07B]">ft_127</span></p>
+                    <p className="text-white/20 my-2">&nbsp;</p>
+                    <p className="text-white/70">{"  Testers: 5/5 completed"}</p>
+                    <p className="text-[#E5C07B]">{"  [high]   Signup button unresponsive on Safari mobile"}</p>
+                    <p className="text-[#E5C07B]">{"  [medium] Users confused by empty dashboard state"}</p>
+                    <p className="text-[#E5C07B]">{"  [low]    Typo on pricing page — '$10/mo' vs '$10/month'"}</p>
+                  </div>
+                </div>
+              </ScrollReveal>
+
+              {/* Explanation cards */}
+              <ScrollReveal delay={200} animation="right">
+                <div className="space-y-4">
+                  <div className="card p-5 sm:p-6">
+                    <div className="flex gap-3 items-start">
+                      <div className="w-9 h-9 rounded-xl grad-warm-subtle flex items-center justify-center shrink-0">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F97316" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                      </div>
+                      <div>
+                        <h4 className="h text-[14px] font-semibold text-[var(--text)] mb-1">One command, real humans</h4>
+                        <p className="text-[13px] text-[var(--text-muted)] leading-[1.6]">
+                          Install the CLI, connect your API key, and create test jobs from your terminal. Your AI agent can do it automatically.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="card p-5 sm:p-6">
+                    <div className="flex gap-3 items-start">
+                      <div className="w-9 h-9 rounded-xl grad-warm-subtle flex items-center justify-center shrink-0">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F97316" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                      </div>
+                      <div>
+                        <h4 className="h text-[14px] font-semibold text-[var(--text)] mb-1">Pre-purchased credits</h4>
+                        <p className="text-[13px] text-[var(--text-muted)] leading-[1.6]">
+                          Buy non-refundable credits upfront. Your agent spends them automatically — no checkout interruptions, no human bottleneck.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="card p-5 sm:p-6">
+                    <div className="flex gap-3 items-start">
+                      <div className="w-9 h-9 rounded-xl grad-warm-subtle flex items-center justify-center shrink-0">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F97316" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                      </div>
+                      <div>
+                        <h4 className="h text-[14px] font-semibold text-[var(--text)] mb-1">Structured JSON results</h4>
+                        <p className="text-[13px] text-[var(--text-muted)] leading-[1.6]">
+                          Results come back as JSON your agent can parse — severity-ranked issues, screen recordings, and tester feedback. The agent reads the report and fixes the bugs.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="card p-5 sm:p-6">
+                    <div className="flex gap-3 items-start">
+                      <div className="w-9 h-9 rounded-xl grad-warm-subtle flex items-center justify-center shrink-0">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F97316" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                      </div>
+                      <div>
+                        <h4 className="h text-[14px] font-semibold text-[var(--text)] mb-1">Works with any AI agent</h4>
+                        <p className="text-[13px] text-[var(--text-muted)] leading-[1.6]">
+                          Cursor, Claude Code, Codex, Replit Agent, or your custom setup. If it can run a shell command, it can request human testing.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-4">
+                    <code className="text-[12px] text-[var(--text-dim)] bg-black/[0.03] px-3 py-1.5 rounded-lg font-mono">
+                      npm install -g flinchify
+                    </code>
+                  </div>
+                </div>
+              </ScrollReveal>
+            </div>
+          </div>
+        </section>
+
         {/* ═══ WHAT YOU GET ═══ */}
         <section className="py-16 sm:py-24 px-5 sm:px-6">
           <div className="max-w-[1100px] mx-auto">
