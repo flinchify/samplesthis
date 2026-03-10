@@ -6,7 +6,9 @@ import { useState, useEffect, useRef } from "react";
 
 interface DropdownItem { href: string; label: string; desc?: string; }
 
-const NAV_DROPDOWNS: { label: string; items: DropdownItem[] }[] = [
+interface DropdownItemFull extends DropdownItem { authRequired?: boolean; authMode?: string; }
+
+const NAV_DROPDOWNS: { label: string; items: DropdownItemFull[] }[] = [
   {
     label: "How it Works",
     items: [
@@ -20,15 +22,15 @@ const NAV_DROPDOWNS: { label: string; items: DropdownItem[] }[] = [
   {
     label: "For Testers",
     items: [
-      { href: "/become-a-tester", label: "Become a Tester", desc: "Earn money testing apps" },
+      { href: "#", label: "Become a Tester", desc: "Sign up and start earning", authRequired: true, authMode: "tester" },
       { href: "/explore", label: "Browse Jobs", desc: "See open test jobs" },
-      { href: "/dashboard", label: "Tester Dashboard", desc: "Manage your tests" },
+      { href: "#", label: "Tester Dashboard", desc: "Manage your tests", authRequired: true, authMode: "login" },
     ],
   },
   {
     label: "For Builders",
     items: [
-      { href: "/submit", label: "Post a Test", desc: "Get real user feedback" },
+      { href: "#", label: "Post a Test", desc: "Get real user feedback", authRequired: true, authMode: "tester" },
       { href: "/pricing", label: "Pricing", desc: "Simple pay-per-tester" },
       { href: "/contact", label: "Contact Us", desc: "Questions? Reach out" },
     ],
@@ -114,17 +116,34 @@ export default function Nav() {
 
               {openDropdown === idx && (
                 <div className="absolute top-full left-0 mt-1 w-[240px] bg-white rounded-xl border border-black/[0.06] shadow-lg py-2 animate-in fade-in duration-150">
-                  {dropdown.items.map((item, i) => (
-                    <Link
-                      key={i}
-                      href={item.href}
-                      className="block px-4 py-2.5 hover:bg-black/[0.02] transition-colors"
-                      onClick={() => setOpenDropdown(null)}
-                    >
-                      <div className="text-[13px] font-medium text-[var(--text)]">{item.label}</div>
-                      {item.desc && <div className="text-[11px] text-[var(--text-dim)] mt-0.5">{item.desc}</div>}
-                    </Link>
-                  ))}
+                  {dropdown.items.map((item, i) => {
+                    if (item.authRequired && !user) {
+                      return (
+                        <button
+                          key={i}
+                          className="block w-full text-left px-4 py-2.5 hover:bg-black/[0.02] transition-colors"
+                          onClick={() => { setOpenDropdown(null); triggerAuth(item.authMode || "tester"); }}
+                        >
+                          <div className="text-[13px] font-medium text-[var(--text)]">{item.label}</div>
+                          {item.desc && <div className="text-[11px] text-[var(--text-dim)] mt-0.5">{item.desc}</div>}
+                        </button>
+                      );
+                    }
+                    const resolvedHref = item.authRequired && user
+                      ? (item.authMode === "login" ? "/dashboard" : "/submit")
+                      : item.href;
+                    return (
+                      <Link
+                        key={i}
+                        href={resolvedHref}
+                        className="block px-4 py-2.5 hover:bg-black/[0.02] transition-colors"
+                        onClick={() => setOpenDropdown(null)}
+                      >
+                        <div className="text-[13px] font-medium text-[var(--text)]">{item.label}</div>
+                        {item.desc && <div className="text-[11px] text-[var(--text-dim)] mt-0.5">{item.desc}</div>}
+                      </Link>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -159,7 +178,7 @@ export default function Nav() {
         <div className="md:hidden bg-white border-t border-black/[0.04] animate-in max-h-[80vh] overflow-y-auto">
           <div className="px-5 py-4 space-y-0">
             {NAV_DROPDOWNS.map((dropdown, idx) => (
-              <MobileAccordion key={idx} label={dropdown.label} items={dropdown.items} onNavigate={() => setMobileOpen(false)} />
+              <MobileAccordion key={idx} label={dropdown.label} items={dropdown.items} onNavigate={() => setMobileOpen(false)} user={user} />
             ))}
             <div className="pt-4 space-y-2">
               {user ? (
@@ -181,8 +200,18 @@ export default function Nav() {
   );
 }
 
-function MobileAccordion({ label, items, onNavigate }: { label: string; items: DropdownItem[]; onNavigate: () => void }) {
+function MobileAccordion({ label, items, onNavigate, user }: { label: string; items: DropdownItemFull[]; onNavigate: () => void; user: UserInfo | null }) {
   const [open, setOpen] = useState(false);
+
+  const triggerAuth = (mode: string) => {
+    onNavigate();
+    if (window.location.pathname === "/") {
+      window.dispatchEvent(new CustomEvent("open-auth", { detail: mode }));
+    } else {
+      window.location.href = `/?auth=${mode}`;
+    }
+  };
+
   return (
     <div className="border-b border-black/[0.03]">
       <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between py-3.5 text-[15px] text-[var(--text-2)] font-medium">
@@ -193,11 +222,23 @@ function MobileAccordion({ label, items, onNavigate }: { label: string; items: D
       </button>
       {open && (
         <div className="pb-3 pl-3 space-y-0.5">
-          {items.map((item, i) => (
-            <Link key={i} href={item.href} onClick={onNavigate} className="block py-2 text-[14px] text-[var(--text-muted)]">
-              {item.label}
-            </Link>
-          ))}
+          {items.map((item, i) => {
+            if (item.authRequired && !user) {
+              return (
+                <button key={i} onClick={() => triggerAuth(item.authMode || "tester")} className="block py-2 text-[14px] text-[var(--text-muted)] text-left">
+                  {item.label}
+                </button>
+              );
+            }
+            const resolvedHref = item.authRequired && user
+              ? (item.authMode === "login" ? "/dashboard" : "/submit")
+              : item.href;
+            return (
+              <Link key={i} href={resolvedHref} onClick={onNavigate} className="block py-2 text-[14px] text-[var(--text-muted)]">
+                {item.label}
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>
