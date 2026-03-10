@@ -6,8 +6,8 @@ const body = DM_Sans({ subsets: ["latin"], variable: "--font-body", weight: ["40
 const sora = Sora({ subsets: ["latin"], variable: "--font-sora", weight: ["400", "500", "600", "700", "800"] });
 
 export const metadata: Metadata = {
-  title: "Flinchify | Find the flinch before your users do",
-  description: "Real humans matched to your audience test your app and find every friction point. Screen recordings, bug reports, UX feedback — delivered in hours.",
+  title: "Flinchify | Hire Real Users to Test Your App | Usability Testing Marketplace",
+  description: "Hire real users to test your app and find every friction point. Get paid to test websites. The usability testing marketplace for indie builders — real humans, honest feedback, delivered in hours.",
   metadataBase: new URL("https://flinchify.com"),
   icons: {
     icon: [
@@ -18,13 +18,13 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
-    title: "Flinchify | Find the flinch before your users do",
-    description: "Post a test job. Set your budget. Matched humans find every flinch moment in your app.",
+    title: "Flinchify | Hire Real Users to Test Your App | Usability Testing Marketplace",
+    description: "Hire real users to test your app. Get paid to test websites. Pay-per-tester usability testing marketplace — no subscriptions, real feedback in hours.",
     type: "website",
     siteName: "Flinchify",
   },
   twitter: { card: "summary_large_image" },
-  keywords: ["user testing", "app testing", "beta testing", "human testers", "QA testing", "flinch moments", "UX feedback"],
+  keywords: ["hire real users to test your app", "get paid to test websites", "usability testing marketplace", "user testing platform", "pay testers to test my app", "app testing", "beta testing", "UX feedback", "website usability testing", "remote user testing", "human testers"],
 };
 
 import GlobalAuth from "@/components/GlobalAuth";

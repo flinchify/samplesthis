@@ -1,3 +1,9 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Flinchify Pricing | Pay Per Tester, No Subscriptions",
+  description: "No subscriptions, no platform fees. Set your own budget and pay per tester. Usability testing starting at $5 per tester.",
+};
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import Link from "next/link";

@@ -1,3 +1,9 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About Flinchify | The Usability Testing Marketplace for Indie Builders",
+  description: "Flinchify connects app builders with real human testers. Find UX friction points before your users do. Built for indie makers who ship fast.",
+};
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";

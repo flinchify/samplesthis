@@ -1,3 +1,9 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "How Flinchify Works | Hire Testers, Get UX Feedback in Hours",
+  description: "Post a test job, set your budget, and get real user feedback in hours. See how Flinchify matches human testers to your app for honest usability testing.",
+};
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
