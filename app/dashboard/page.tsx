@@ -16,6 +16,7 @@ interface Tester {
   tech_comfort: number; bio: string | null; tests_completed: number;
   total_earned_cents: number; avg_rating: number; stripe_onboarded: boolean;
   credit_cents: number; created_at: string;
+  linkedin: string; twitter: string; github: string; portfolio: string;
 }
 
 interface MyApp {
@@ -627,7 +628,14 @@ function Dashboard() {
                                         </div>
                                         <div>
                                           <p style={{ fontSize: 14, fontWeight: 600, color: "var(--dash-text)", margin: 0 }}>{a.name}</p>
-                                          <p style={{ fontSize: 11, color: "var(--dash-text-dim)", margin: "2px 0 0" }}>{a.location || a.country || "Unknown"} · {a.tests_completed} tests · {a.avg_rating > 0 ? `${a.avg_rating}/5` : "New"}</p>
+                                          <p style={{ fontSize: 11, color: "var(--dash-text-dim)", margin: "2px 0 0" }}>
+                                            {a.location || a.country || "Unknown"}
+                                            {" · "}
+                                            <span style={{ fontWeight: 700, color: a.tests_completed >= 10 ? "#16A34A" : a.tests_completed >= 3 ? "#F97316" : "var(--dash-text-secondary)" }}>
+                                              {a.tests_completed} test{a.tests_completed !== 1 ? "s" : ""} completed
+                                            </span>
+                                            {" · "}{a.avg_rating > 0 ? `${a.avg_rating}/5 rating` : "New tester"}
+                                          </p>
                                         </div>
                                       </div>
                                       <span style={{
@@ -965,105 +973,90 @@ function Dashboard() {
             </div>
           )}
 
-          {/* ═══ PROFILE ═══ */}
-          {tab === "profile" && (
-            <div>
-              <h1 className="h" style={{ fontSize: 22, fontWeight: 700, color: "var(--dash-text)", margin: "0 0 24px" }}>Profile</h1>
-              <div style={{ background: "var(--dash-card)", border: "1px solid var(--dash-border)", borderRadius: 12, padding: "28px 32px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 28, paddingBottom: 24, borderBottom: "1px solid var(--dash-border)" }}>
-                  <div style={{ width: 64, height: 64, borderRadius: "50%", background: "linear-gradient(135deg, #F97316, #F59E0B)", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontSize: 24, fontWeight: 700 }}>
-                    {tester.name.charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                    <h2 className="h" style={{ fontSize: 18, fontWeight: 700, color: "var(--dash-text)", margin: 0 }}>{tester.name}</h2>
-                    <p style={{ fontSize: 13, color: "var(--dash-text-secondary)", margin: "4px 0 0" }}>{tester.email}</p>
-                    <p style={{ fontSize: 12, color: "var(--dash-text-dim)", margin: "2px 0 0" }}>Member since {memberSince}</p>
-                  </div>
-                </div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
-                  {tester.age_range && (
-                    <div>
-                      <p style={{ fontSize: 11, fontWeight: 600, color: "var(--dash-text-dim)", textTransform: "uppercase", letterSpacing: "0.05em", margin: "0 0 4px" }}>Age Range</p>
-                      <p style={{ fontSize: 14, color: "var(--dash-text)", margin: 0 }}>{tester.age_range}</p>
-                    </div>
-                  )}
-                  {tester.location && (
-                    <div>
-                      <p style={{ fontSize: 11, fontWeight: 600, color: "var(--dash-text-dim)", textTransform: "uppercase", letterSpacing: "0.05em", margin: "0 0 4px" }}>Location</p>
-                      <p style={{ fontSize: 14, color: "var(--dash-text)", margin: 0 }}>{tester.location}</p>
-                    </div>
-                  )}
-                  <div>
-                    <p style={{ fontSize: 11, fontWeight: 600, color: "var(--dash-text-dim)", textTransform: "uppercase", letterSpacing: "0.05em", margin: "0 0 8px" }}>Tech Comfort</p>
-                    <div style={{ display: "flex", gap: 4 }}>
-                      {[1,2,3,4,5].map(n => (
-                        <div key={n} style={{
-                          width: 24, height: 24, borderRadius: 4, fontSize: 11, fontWeight: 700,
-                          display: "flex", alignItems: "center", justifyContent: "center",
-                          background: n <= tester.tech_comfort ? "linear-gradient(135deg, #F97316, #F59E0B)" : "var(--dash-hover)",
-                          color: n <= tester.tech_comfort ? "white" : "var(--dash-text-dim)",
-                        }}>{n}</div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                {devices.length > 0 && (
-                  <div style={{ marginTop: 24 }}>
-                    <p style={{ fontSize: 11, fontWeight: 600, color: "var(--dash-text-dim)", textTransform: "uppercase", letterSpacing: "0.05em", margin: "0 0 8px" }}>Devices</p>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                      {devices.map((d: string) => <span key={d} style={{ padding: "4px 12px", borderRadius: 20, fontSize: 12, background: "var(--dash-hover)", color: "var(--dash-text-secondary)", fontWeight: 500 }}>{d}</span>)}
-                    </div>
-                  </div>
-                )}
-                {interests.length > 0 && (
-                  <div style={{ marginTop: 24 }}>
-                    <p style={{ fontSize: 11, fontWeight: 600, color: "var(--dash-text-dim)", textTransform: "uppercase", letterSpacing: "0.05em", margin: "0 0 8px" }}>Interests</p>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                      {interests.map((i: string) => <span key={i} style={{ padding: "4px 12px", borderRadius: 20, fontSize: 12, background: "rgba(249,115,22,0.08)", color: "#F97316", border: "1px solid rgba(249,115,22,0.15)", fontWeight: 500 }}>{i}</span>)}
-                    </div>
-                  </div>
-                )}
-                {tester.bio && (
-                  <div style={{ marginTop: 24 }}>
-                    <p style={{ fontSize: 11, fontWeight: 600, color: "var(--dash-text-dim)", textTransform: "uppercase", letterSpacing: "0.05em", margin: "0 0 4px" }}>About</p>
-                    <p style={{ fontSize: 14, color: "var(--dash-text-secondary)", lineHeight: 1.6, margin: 0 }}>{tester.bio}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
+          {/* ═══ PROFILE (EDITABLE) ═══ */}
+          {tab === "profile" && <ProfileTab tester={tester} devices={devices} interests={interests} memberSince={memberSince} onUpdate={(t) => setTester(t)} />}
 
           {/* ═══ SETTINGS ═══ */}
           {tab === "settings" && (
             <div>
               <h1 className="h" style={{ fontSize: 22, fontWeight: 700, color: "var(--dash-text)", margin: "0 0 24px" }}>Settings</h1>
-              <div style={{ background: "var(--dash-card)", border: "1px solid var(--dash-border)", borderRadius: 12, padding: "28px 32px" }}>
-                <div style={{ marginBottom: 24 }}>
-                  <p style={{ fontSize: 14, fontWeight: 600, color: "var(--dash-text)", margin: "0 0 4px" }}>Appearance</p>
-                  <p style={{ fontSize: 13, color: "var(--dash-text-secondary)", margin: "0 0 12px" }}>Choose your preferred theme.</p>
-                  <div style={{ display: "flex", gap: 12 }}>
-                    {(["light", "dark"] as const).map(t => (
-                      <button key={t} onClick={() => { localStorage.setItem("dash-theme", t); document.documentElement.setAttribute("data-theme", t); window.location.reload(); }}
-                        style={{
-                          padding: "10px 20px", borderRadius: 8, fontSize: 13, fontWeight: 500, cursor: "pointer",
-                          border: `2px solid ${theme === t ? "#F97316" : "var(--dash-border)"}`,
-                          background: theme === t ? "rgba(249,115,22,0.08)" : "transparent",
-                          color: theme === t ? "#F97316" : "var(--dash-text-secondary)",
-                          textTransform: "capitalize",
-                        }}>
-                        {t}
-                      </button>
-                    ))}
+
+              {/* Appearance */}
+              <div style={{ background: "var(--dash-card)", border: "1px solid var(--dash-border)", borderRadius: 12, padding: "24px 28px", marginBottom: 16 }}>
+                <p style={{ fontSize: 14, fontWeight: 600, color: "var(--dash-text)", margin: "0 0 4px" }}>Appearance</p>
+                <p style={{ fontSize: 13, color: "var(--dash-text-secondary)", margin: "0 0 12px" }}>Choose your preferred theme.</p>
+                <div style={{ display: "flex", gap: 12 }}>
+                  {(["light", "dark"] as const).map(t => (
+                    <button key={t} onClick={() => { localStorage.setItem("dash-theme", t); document.documentElement.setAttribute("data-theme", t); window.location.reload(); }}
+                      style={{
+                        padding: "10px 20px", borderRadius: 8, fontSize: 13, fontWeight: 500, cursor: "pointer",
+                        border: `2px solid ${theme === t ? "#F97316" : "var(--dash-border)"}`,
+                        background: theme === t ? "rgba(249,115,22,0.08)" : "transparent",
+                        color: theme === t ? "#F97316" : "var(--dash-text-secondary)",
+                        textTransform: "capitalize",
+                      }}>
+                      {t}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Pricing */}
+              <div style={{ background: "var(--dash-card)", border: "1px solid var(--dash-border)", borderRadius: 12, padding: "24px 28px", marginBottom: 16 }}>
+                <p style={{ fontSize: 14, fontWeight: 600, color: "var(--dash-text)", margin: "0 0 4px" }}>Pricing</p>
+                <p style={{ fontSize: 13, color: "var(--dash-text-secondary)", margin: "0 0 16px" }}>How Flinchify pricing works.</p>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 16 }}>
+                  <div style={{ background: "var(--dash-bg)", borderRadius: 8, padding: 16, textAlign: "center" }}>
+                    <p className="h" style={{ fontSize: 20, fontWeight: 700, color: "var(--dash-text)", margin: 0 }}>$5</p>
+                    <p style={{ fontSize: 11, color: "var(--dash-text-dim)", margin: "4px 0 0" }}>Minimum per tester</p>
+                  </div>
+                  <div style={{ background: "var(--dash-bg)", borderRadius: 8, padding: 16, textAlign: "center" }}>
+                    <p className="h" style={{ fontSize: 20, fontWeight: 700, color: "#F97316", margin: 0 }}>80%</p>
+                    <p style={{ fontSize: 11, color: "var(--dash-text-dim)", margin: "4px 0 0" }}>Goes to testers</p>
+                  </div>
+                  <div style={{ background: "var(--dash-bg)", borderRadius: 8, padding: 16, textAlign: "center" }}>
+                    <p className="h" style={{ fontSize: 20, fontWeight: 700, color: "var(--dash-text)", margin: 0 }}>20%</p>
+                    <p style={{ fontSize: 11, color: "var(--dash-text-dim)", margin: "4px 0 0" }}>Platform fee</p>
                   </div>
                 </div>
-                <div style={{ paddingTop: 24, borderTop: "1px solid var(--dash-border)" }}>
-                  <p style={{ fontSize: 14, fontWeight: 600, color: "var(--dash-text)", margin: "0 0 4px" }}>Account</p>
-                  <p style={{ fontSize: 13, color: "var(--dash-text-secondary)", margin: "0 0 12px" }}>Manage your account settings.</p>
-                  <button onClick={async () => { await fetch("/api/auth/logout", { method: "POST" }); window.location.href = "/"; }}
-                    style={{ padding: "8px 20px", borderRadius: 8, border: "none", background: "rgba(239,68,68,0.1)", color: "#EF4444", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
-                    Sign out
-                  </button>
+                <p style={{ fontSize: 12, color: "var(--dash-text-dim)", margin: 0 }}>
+                  You set the price per tester. No subscriptions, no hidden fees. Testers receive 80% of the amount you pay. Credit packs include the 20% fee.
+                </p>
+              </div>
+
+              {/* Legal / Agreements */}
+              <div style={{ background: "var(--dash-card)", border: "1px solid var(--dash-border)", borderRadius: 12, padding: "24px 28px", marginBottom: 16 }}>
+                <p style={{ fontSize: 14, fontWeight: 600, color: "var(--dash-text)", margin: "0 0 4px" }}>Legal</p>
+                <p style={{ fontSize: 13, color: "var(--dash-text-secondary)", margin: "0 0 16px" }}>By using Flinchify, you agree to the following:</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                  {[
+                    { label: "Terms of Service", href: "/terms", desc: "Rules for using the platform, posting jobs, and completing tests." },
+                    { label: "Privacy Policy", href: "/privacy", desc: "How we collect, use, and protect your personal information." },
+                    { label: "Tester Agreement", href: "/terms#tester-agreement", desc: "Obligations when completing test jobs: honest feedback, no plagiarism, meet deadlines." },
+                    { label: "Business Agreement", href: "/terms#business-agreement", desc: "Obligations when posting jobs: timely review, fair rejection, no harassment." },
+                  ].map(item => (
+                    <a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer"
+                      style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", borderRadius: 8, border: "1px solid var(--dash-border)", textDecoration: "none", transition: "border-color 0.15s" }}
+                      onMouseEnter={e => { e.currentTarget.style.borderColor = "#F97316"; }}
+                      onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--dash-border)"; }}>
+                      <div>
+                        <p style={{ fontSize: 13, fontWeight: 600, color: "var(--dash-text)", margin: 0 }}>{item.label}</p>
+                        <p style={{ fontSize: 12, color: "var(--dash-text-dim)", margin: "2px 0 0" }}>{item.desc}</p>
+                      </div>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--dash-text-dim)" strokeWidth="1.5" style={{ flexShrink: 0 }}><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+                    </a>
+                  ))}
                 </div>
+              </div>
+
+              {/* Account */}
+              <div style={{ background: "var(--dash-card)", border: "1px solid var(--dash-border)", borderRadius: 12, padding: "24px 28px" }}>
+                <p style={{ fontSize: 14, fontWeight: 600, color: "var(--dash-text)", margin: "0 0 4px" }}>Account</p>
+                <p style={{ fontSize: 13, color: "var(--dash-text-secondary)", margin: "0 0 12px" }}>Manage your account.</p>
+                <button onClick={async () => { await fetch("/api/auth/logout", { method: "POST" }); window.location.href = "/"; }}
+                  style={{ padding: "8px 20px", borderRadius: 8, border: "none", background: "rgba(239,68,68,0.1)", color: "#EF4444", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+                  Sign out
+                </button>
               </div>
             </div>
           )}
@@ -1086,6 +1079,217 @@ function Dashboard() {
           .dash-main > div { padding: 20px 16px 40px !important; }
         }
       `}</style>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   PROFILE TAB (EDITABLE)
+   ═══════════════════════════════════════════════ */
+
+function ProfileTab({ tester, devices, interests, memberSince, onUpdate }: {
+  tester: Tester; devices: string[]; interests: string[]; memberSince: string;
+  onUpdate: (t: Tester) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({
+    name: tester.name, bio: tester.bio || "", location: tester.location || "",
+    age_range: tester.age_range || "", tech_comfort: tester.tech_comfort,
+    linkedin: tester.linkedin || "", twitter: tester.twitter || "",
+    github: tester.github || "", portfolio: tester.portfolio || "",
+    devices: devices, interests: interests,
+  });
+  const [newDevice, setNewDevice] = useState("");
+  const [newInterest, setNewInterest] = useState("");
+
+  const save = async () => {
+    setSaving(true);
+    try {
+      const res = await fetch("/api/testers/me", {
+        method: "PATCH", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...form,
+          devices: JSON.stringify(form.devices),
+          interests: JSON.stringify(form.interests),
+        }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      // Refresh tester data
+      const me = await fetch("/api/testers/me").then(r => r.json());
+      if (me.tester) onUpdate(me.tester);
+      setEditing(false);
+    } catch { alert("Failed to save profile"); }
+    setSaving(false);
+  };
+
+  const inputStyle: React.CSSProperties = {
+    width: "100%", padding: "10px 12px", borderRadius: 8, border: "1px solid var(--dash-border)",
+    fontSize: 13, background: "var(--dash-input-bg)", color: "var(--dash-text)", outline: "none",
+  };
+  const labelStyle: React.CSSProperties = { fontSize: 11, fontWeight: 600, color: "var(--dash-text-dim)", textTransform: "uppercase", letterSpacing: "0.05em", margin: "0 0 6px", display: "block" };
+
+  return (
+    <div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
+        <h1 className="h" style={{ fontSize: 22, fontWeight: 700, color: "var(--dash-text)", margin: 0 }}>Profile</h1>
+        {!editing ? (
+          <button onClick={() => setEditing(true)} style={{ padding: "8px 20px", borderRadius: 8, border: "1px solid var(--dash-border)", background: "transparent", fontSize: 13, fontWeight: 600, color: "var(--dash-text-secondary)", cursor: "pointer" }}>
+            Edit profile
+          </button>
+        ) : (
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={() => setEditing(false)} style={{ padding: "8px 16px", borderRadius: 8, border: "1px solid var(--dash-border)", background: "transparent", fontSize: 13, fontWeight: 500, color: "var(--dash-text-secondary)", cursor: "pointer" }}>Cancel</button>
+            <button onClick={save} disabled={saving} style={{ padding: "8px 20px", borderRadius: 8, border: "none", background: "#F97316", color: "white", fontSize: 13, fontWeight: 600, cursor: "pointer", opacity: saving ? 0.5 : 1 }}>
+              {saving ? "Saving..." : "Save changes"}
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div style={{ background: "var(--dash-card)", border: "1px solid var(--dash-border)", borderRadius: 12, padding: "28px 32px" }}>
+        {/* Header */}
+        <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 28, paddingBottom: 24, borderBottom: "1px solid var(--dash-border)" }}>
+          <div style={{ width: 64, height: 64, borderRadius: "50%", background: "linear-gradient(135deg, #F97316, #F59E0B)", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontSize: 24, fontWeight: 700, flexShrink: 0 }}>
+            {tester.name.charAt(0).toUpperCase()}
+          </div>
+          <div style={{ flex: 1 }}>
+            {editing ? (
+              <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} style={{ ...inputStyle, fontSize: 16, fontWeight: 600 }} placeholder="Your name" />
+            ) : (
+              <h2 className="h" style={{ fontSize: 18, fontWeight: 700, color: "var(--dash-text)", margin: 0 }}>{tester.name}</h2>
+            )}
+            <p style={{ fontSize: 13, color: "var(--dash-text-secondary)", margin: "4px 0 0" }}>{tester.email}</p>
+            <p style={{ fontSize: 12, color: "var(--dash-text-dim)", margin: "2px 0 0" }}>Member since {memberSince} · {tester.tests_completed} tests completed</p>
+          </div>
+        </div>
+
+        {/* Basic info */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 24 }}>
+          <div>
+            <p style={labelStyle}>Location</p>
+            {editing ? (
+              <input value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} style={inputStyle} placeholder="e.g. Sydney, Australia" />
+            ) : (
+              <p style={{ fontSize: 14, color: "var(--dash-text)", margin: 0 }}>{tester.location || "Not set"}</p>
+            )}
+          </div>
+          <div>
+            <p style={labelStyle}>Age Range</p>
+            {editing ? (
+              <select value={form.age_range} onChange={e => setForm({ ...form, age_range: e.target.value })} style={inputStyle}>
+                <option value="">Select</option>
+                {["18-24","25-34","35-44","45-54","55+"].map(r => <option key={r} value={r}>{r}</option>)}
+              </select>
+            ) : (
+              <p style={{ fontSize: 14, color: "var(--dash-text)", margin: 0 }}>{tester.age_range || "Not set"}</p>
+            )}
+          </div>
+          <div style={{ gridColumn: "span 2" }}>
+            <p style={labelStyle}>Tech Comfort (1-5)</p>
+            <div style={{ display: "flex", gap: 4 }}>
+              {[1,2,3,4,5].map(n => (
+                <button key={n} onClick={() => editing && setForm({ ...form, tech_comfort: n })} style={{
+                  width: 32, height: 32, borderRadius: 6, fontSize: 13, fontWeight: 700, border: "none",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  background: n <= (editing ? form.tech_comfort : tester.tech_comfort) ? "linear-gradient(135deg, #F97316, #F59E0B)" : "var(--dash-hover)",
+                  color: n <= (editing ? form.tech_comfort : tester.tech_comfort) ? "white" : "var(--dash-text-dim)",
+                  cursor: editing ? "pointer" : "default",
+                }}>{n}</button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Bio */}
+        <div style={{ marginBottom: 24 }}>
+          <p style={labelStyle}>Bio</p>
+          {editing ? (
+            <textarea value={form.bio} onChange={e => setForm({ ...form, bio: e.target.value })} style={{ ...inputStyle, minHeight: 100, resize: "vertical" }} placeholder="Tell people about yourself, your testing experience..." />
+          ) : (
+            <p style={{ fontSize: 14, color: "var(--dash-text-secondary)", lineHeight: 1.6, margin: 0 }}>{tester.bio || "No bio yet."}</p>
+          )}
+        </div>
+
+        {/* Social links */}
+        <div style={{ marginBottom: 24 }}>
+          <p style={{ ...labelStyle, marginBottom: 12 }}>Social Links</p>
+          {editing ? (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div>
+                <p style={{ fontSize: 12, color: "var(--dash-text-secondary)", margin: "0 0 4px" }}>LinkedIn URL</p>
+                <input value={form.linkedin} onChange={e => setForm({ ...form, linkedin: e.target.value })} style={inputStyle} placeholder="https://linkedin.com/in/..." />
+              </div>
+              <div>
+                <p style={{ fontSize: 12, color: "var(--dash-text-secondary)", margin: "0 0 4px" }}>X / Twitter</p>
+                <input value={form.twitter} onChange={e => setForm({ ...form, twitter: e.target.value })} style={inputStyle} placeholder="username (no @)" />
+              </div>
+              <div>
+                <p style={{ fontSize: 12, color: "var(--dash-text-secondary)", margin: "0 0 4px" }}>GitHub</p>
+                <input value={form.github} onChange={e => setForm({ ...form, github: e.target.value })} style={inputStyle} placeholder="username" />
+              </div>
+              <div>
+                <p style={{ fontSize: 12, color: "var(--dash-text-secondary)", margin: "0 0 4px" }}>Portfolio / Website</p>
+                <input value={form.portfolio} onChange={e => setForm({ ...form, portfolio: e.target.value })} style={inputStyle} placeholder="https://..." />
+              </div>
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+              {tester.linkedin && <a href={tester.linkedin} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: "#2563EB", textDecoration: "none", fontWeight: 500 }}>LinkedIn</a>}
+              {tester.twitter && <a href={`https://x.com/${tester.twitter}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: "#2563EB", textDecoration: "none", fontWeight: 500 }}>@{tester.twitter}</a>}
+              {tester.github && <a href={`https://github.com/${tester.github}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: "#2563EB", textDecoration: "none", fontWeight: 500 }}>GitHub</a>}
+              {tester.portfolio && <a href={tester.portfolio} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: "#2563EB", textDecoration: "none", fontWeight: 500 }}>Portfolio</a>}
+              {!tester.linkedin && !tester.twitter && !tester.github && !tester.portfolio && (
+                <p style={{ fontSize: 13, color: "var(--dash-text-dim)" }}>No social links added yet.</p>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Devices */}
+        <div style={{ marginBottom: 24 }}>
+          <p style={labelStyle}>Devices</p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            {(editing ? form.devices : devices).map((d: string) => (
+              <span key={d} style={{ padding: "4px 12px", borderRadius: 20, fontSize: 12, background: "var(--dash-hover)", color: "var(--dash-text-secondary)", fontWeight: 500, display: "flex", alignItems: "center", gap: 6 }}>
+                {d}
+                {editing && (
+                  <button onClick={() => setForm({ ...form, devices: form.devices.filter(x => x !== d) })}
+                    style={{ background: "none", border: "none", cursor: "pointer", color: "var(--dash-text-dim)", fontSize: 14, lineHeight: 1, padding: 0 }}>x</button>
+                )}
+              </span>
+            ))}
+            {editing && (
+              <div style={{ display: "flex", gap: 4 }}>
+                <input value={newDevice} onChange={e => setNewDevice(e.target.value)} placeholder="Add device" onKeyDown={e => {
+                  if (e.key === "Enter" && newDevice.trim()) { setForm({ ...form, devices: [...form.devices, newDevice.trim()] }); setNewDevice(""); }
+                }} style={{ ...inputStyle, width: 140, padding: "4px 10px" }} />
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Interests */}
+        <div>
+          <p style={labelStyle}>Interests</p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            {(editing ? form.interests : interests).map((i: string) => (
+              <span key={i} style={{ padding: "4px 12px", borderRadius: 20, fontSize: 12, background: "rgba(249,115,22,0.08)", color: "#F97316", border: "1px solid rgba(249,115,22,0.15)", fontWeight: 500, display: "flex", alignItems: "center", gap: 6 }}>
+                {i}
+                {editing && (
+                  <button onClick={() => setForm({ ...form, interests: form.interests.filter(x => x !== i) })}
+                    style={{ background: "none", border: "none", cursor: "pointer", color: "#F97316", fontSize: 14, lineHeight: 1, padding: 0 }}>x</button>
+                )}
+              </span>
+            ))}
+            {editing && (
+              <input value={newInterest} onChange={e => setNewInterest(e.target.value)} placeholder="Add interest" onKeyDown={e => {
+                if (e.key === "Enter" && newInterest.trim()) { setForm({ ...form, interests: [...form.interests, newInterest.trim()] }); setNewInterest(""); }
+              }} style={{ ...inputStyle, width: 140, padding: "4px 10px" }} />
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
