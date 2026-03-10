@@ -6,7 +6,7 @@ const body = DM_Sans({ subsets: ["latin"], variable: "--font-body", weight: ["40
 const sora = Sora({ subsets: ["latin"], variable: "--font-sora", weight: ["400", "500", "600", "700", "800"] });
 
 export const metadata: Metadata = {
-  title: "Flinchify — Find the flinch before your users do",
+  title: "Flinchify | Find the flinch before your users do",
   description: "Real humans matched to your audience test your app and find every friction point. Screen recordings, bug reports, UX feedback — delivered in hours.",
   metadataBase: new URL("https://flinchify.com"),
   icons: {
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
-    title: "Flinchify — Find the flinch before your users do",
+    title: "Flinchify | Find the flinch before your users do",
     description: "Post a test job. Set your budget. Matched humans find every flinch moment in your app.",
     type: "website",
     siteName: "Flinchify",

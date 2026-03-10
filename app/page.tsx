@@ -181,7 +181,7 @@ function Home() {
         </section>
 
         {/* ═══ SOCIAL PROOF ═══ */}
-        <section className="py-12 sm:py-16 px-5 sm:px-6 border-b border-[var(--border)]">
+        <section className="py-12 sm:py-16 px-5 sm:px-6">
           <div className="max-w-[900px] mx-auto">
             <p className="text-center text-[11px] font-medium text-[var(--text-dim)] uppercase tracking-[0.2em] mb-6">Trusted by indie builders</p>
             <div className="grid sm:grid-cols-3 gap-4">
