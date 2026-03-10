@@ -17,6 +17,91 @@ const SAMPLE_JOBS = [
   { app: "AI writing assistant", audience: "Content creators", testers: 6, budget: 14, time: "1.5h ago", applied: 11 },
 ];
 
+function TesterInterest() {
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    fetch("/api/testers/interest").then(r => r.json()).then(d => {
+      if (d.total) setTotal(d.total);
+    }).catch(() => {});
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.includes("@")) { setError("Enter a valid email"); return; }
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/testers/interest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, name }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSubmitted(true);
+        setTotal(data.total);
+      } else {
+        setError(data.error || "Something went wrong");
+      }
+    } catch {
+      setError("Failed to submit");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <section className="py-16 sm:py-20 px-5 sm:px-6">
+      <div className="max-w-[520px] mx-auto text-center">
+        <ScrollReveal>
+          <h2 className="h text-[1.3rem] sm:text-[1.8rem] font-bold tracking-[-0.03em] leading-tight mb-3 text-[var(--text)]">
+            Want to earn money testing apps?
+          </h2>
+          <p className="text-[14px] sm:text-[15px] text-[var(--text-muted)] mb-6">
+            Drop your email. When a test job matches your profile, we will notify you instantly. Get paid $5-20 for 15 minutes of honest feedback.
+          </p>
+
+          {submitted ? (
+            <div className="rounded-xl border border-[var(--accent)]/20 bg-[var(--accent)]/5 p-6">
+              <p className="text-[15px] font-semibold text-[var(--text)] mb-1">You are in.</p>
+              <p className="text-[13px] text-[var(--text-muted)]">We will email you when test jobs are available.{total > 1 && ` ${total} testers waiting.`}</p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <input
+                type="text"
+                placeholder="Your name (optional)"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-[var(--border)] bg-white text-[14px] text-[var(--text)] placeholder:text-[var(--text-dim)] focus:outline-none focus:border-[var(--accent)] transition-colors"
+              />
+              <input
+                type="email"
+                placeholder="Your email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                required
+                className="w-full px-4 py-3 rounded-xl border border-[var(--border)] bg-white text-[14px] text-[var(--text)] placeholder:text-[var(--text-dim)] focus:outline-none focus:border-[var(--accent)] transition-colors"
+              />
+              {error && <p className="text-[12px] text-red-500">{error}</p>}
+              <button type="submit" disabled={loading} className="btn btn-accent w-full !py-3 text-[14px]">
+                {loading ? "Submitting..." : "Notify me when jobs are available"}
+              </button>
+              {total > 0 && <p className="text-[11px] text-[var(--text-dim)]">{total} tester{total !== 1 ? 's' : ''} already waiting</p>}
+            </form>
+          )}
+        </ScrollReveal>
+      </div>
+    </section>
+  );
+}
+
 export default function HomePage() {
   return (
     <Suspense fallback={null}>
@@ -414,6 +499,9 @@ function Home() {
             </div>
           </div>
         </section>
+
+        {/* ═══ TESTER EMAIL CAPTURE ═══ */}
+        <TesterInterest />
 
         {/* ═══ CTA ═══ */}
         <section className="warm-gradient-hero py-16 sm:py-24 px-5 sm:px-6 text-center">
