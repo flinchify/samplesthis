@@ -3,14 +3,25 @@ import { getSql } from "@/lib/db";
 import { ensureTables } from "@/lib/schema";
 
 const ADMIN_KEY = process.env.ADMIN_SECRET || "flinchify-admin-2026";
+const ADMIN_EMAILS = ["inpromptyou@gmail.com", "flinchify@gmail.com"];
 
-function checkAuth(req: NextRequest) {
+async function checkAuth(req: NextRequest) {
+  // Method 1: admin key header
   const auth = req.headers.get("x-admin-key");
-  return auth === ADMIN_KEY;
+  if (auth === ADMIN_KEY) return true;
+
+  // Method 2: cookie-based — check if logged-in user is admin email
+  const token = req.cookies.get("tester_token")?.value;
+  if (token) {
+    const sql = getSql();
+    const rows = await sql`SELECT email FROM testers WHERE token = ${token}`;
+    if (rows.length && ADMIN_EMAILS.includes(rows[0].email?.toLowerCase())) return true;
+  }
+  return false;
 }
 
 export async function GET(req: NextRequest) {
-  if (!checkAuth(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!(await checkAuth(req))) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   await ensureTables();
   const sql = getSql();
@@ -74,7 +85,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-  if (!checkAuth(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!(await checkAuth(req))) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   await ensureTables();
   const sql = getSql();
@@ -99,7 +110,7 @@ export async function PATCH(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  if (!checkAuth(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!(await checkAuth(req))) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   await ensureTables();
   const sql = getSql();

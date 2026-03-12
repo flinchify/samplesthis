@@ -76,7 +76,12 @@ const NAV_ITEMS = [
   { key: "settings", label: "Settings", section: "account", icon: (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
   )},
+  { key: "admin", label: "Admin", section: "admin", icon: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+  )},
 ];
+
+const ADMIN_EMAILS = ["inpromptyou@gmail.com", "flinchify@gmail.com"];
 
 const SORT_OPTIONS = ["Newest", "Highest pay", "Most spots"];
 const TYPE_FILTERS = ["All", "Web App", "Mobile App", "SaaS", "E-commerce", "Other"];
@@ -374,10 +379,12 @@ function Dashboard() {
   const memberSince = new Date(tester.created_at).toLocaleDateString("en-AU", { month: "long", year: "numeric" });
 
   /* ─── Sidebar sections ─── */
+  const isAdmin = tester && ADMIN_EMAILS.includes(tester.email?.toLowerCase());
   const sections = [
     { id: "main", label: null, items: NAV_ITEMS.filter(n => n.section === "main") },
     { id: "finance", label: "Finance", items: NAV_ITEMS.filter(n => n.section === "finance") },
     { id: "account", label: "Account", items: NAV_ITEMS.filter(n => n.section === "account") },
+    ...(isAdmin ? [{ id: "admin", label: "Admin", items: NAV_ITEMS.filter(n => n.section === "admin") }] : []),
   ];
 
   return (
@@ -1237,6 +1244,9 @@ function Dashboard() {
 
           {/* ═══ API KEYS ═══ */}
           {tab === "api" && <ApiKeysTab theme={theme} />}
+
+          {/* ═══ ADMIN ═══ */}
+          {tab === "admin" && isAdmin && <AdminTab />}
         </div>
       </main>
 
@@ -1672,6 +1682,236 @@ flinchify results ft_42`}</code></pre>
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   ADMIN TAB
+   ═══════════════════════════════════════════════ */
+
+type AdminSubTab = "overview" | "orders" | "testers" | "applications";
+type AObj = Record<string, unknown>;
+
+function AdminTab() {
+  const [subTab, setSubTab] = useState<AdminSubTab>("overview");
+  const [data, setData] = useState<AObj>({});
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState("");
+
+  const load = useCallback(async (t: AdminSubTab) => {
+    setLoading(true);
+    try {
+      const r = await fetch(`/api/admin?tab=${t}`);
+      if (r.ok) setData(await r.json());
+    } catch { /* ignore */ }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { load(subTab); }, [subTab, load]);
+
+  const act = async (method: string, body: AObj) => {
+    const id = `${body.type}-${body.id}-${body.status || "del"}`;
+    setBusy(id);
+    await fetch("/api/admin", { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    setBusy("");
+    load(subTab);
+  };
+
+  const payout = async (appId: unknown) => {
+    const id = `payout-${appId}`;
+    setBusy(id);
+    const r = await fetch("/api/connect/payout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ application_id: appId }),
+    });
+    const d = await r.json();
+    setBusy("");
+    if (r.ok) alert(`Paid! $${(d.payout_cents / 100).toFixed(2)}`);
+    else alert(`Payout failed: ${d.error}`);
+    load(subTab);
+  };
+
+  const aStr = (v: unknown) => String(v || "");
+  const aNum = (v: unknown) => Number(v) || 0;
+
+  const ABadge = ({ status }: { status: string }) => {
+    const colors: Record<string, string> = {
+      paid: "#16A34A", pending_payment: "#CA8A04", pending: "#CA8A04", active: "#16A34A",
+      accepted: "#16A34A", rejected: "#EF4444", banned: "#EF4444", completed: "#2563EB", refunded: "#9333EA",
+    };
+    const c = colors[status] || "#6B7280";
+    return <span style={{ display: "inline-flex", padding: "2px 8px", borderRadius: 999, fontSize: 10, fontWeight: 600, color: c, background: `${c}12`, border: `1px solid ${c}25` }}>{status}</span>;
+  };
+
+  const ABtn = ({ onClick, color, children, id: btnId }: { onClick: () => void; color: string; children: React.ReactNode; id?: string }) => (
+    <button onClick={onClick} disabled={busy === btnId}
+      style={{ padding: "4px 10px", borderRadius: 8, fontSize: 11, fontWeight: 500, border: `1px solid ${color}30`, background: `${color}10`, color, cursor: "pointer" }}>
+      {children}
+    </button>
+  );
+
+  const stats = (data.stats || {}) as Record<string, number>;
+  const orders = (data.orders || []) as AObj[];
+  const testers = (data.testers || []) as AObj[];
+  const applications = (data.applications || []) as AObj[];
+
+  const subTabs: { key: AdminSubTab; label: string }[] = [
+    { key: "overview", label: "Overview" },
+    { key: "orders", label: "Orders" },
+    { key: "testers", label: "Testers" },
+    { key: "applications", label: "Applications" },
+  ];
+
+  return (
+    <div>
+      <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--dash-text)", margin: "0 0 20px" }}>Admin Panel</h1>
+
+      {/* Sub-tabs */}
+      <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
+        {subTabs.map(t => (
+          <button key={t.key} onClick={() => setSubTab(t.key)}
+            style={{
+              padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 500, cursor: "pointer",
+              border: subTab === t.key ? "1px solid var(--dash-accent)" : "1px solid var(--dash-border)",
+              background: subTab === t.key ? "var(--dash-accent)" : "var(--dash-card)",
+              color: subTab === t.key ? "#fff" : "var(--dash-text-secondary)",
+            }}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {loading ? (
+        <div style={{ padding: "60px 0", textAlign: "center", color: "var(--dash-text-dim)" }}>Loading...</div>
+      ) : (
+        <>
+          {/* Overview */}
+          {subTab === "overview" && (
+            <div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12, marginBottom: 24 }}>
+                {[
+                  { l: "Total Testers", v: stats.totalTesters },
+                  { l: "Total Orders", v: stats.totalOrders },
+                  { l: "Paid Orders", v: stats.paidOrders, c: "#16A34A" },
+                  { l: "Pending", v: stats.pendingOrders, c: "#CA8A04" },
+                  { l: "Applications", v: stats.totalApplications },
+                  { l: "Revenue", v: `$${((stats.totalRevenue || 0) / 100).toFixed(2)}`, c: "#16A34A" },
+                ].map(x => (
+                  <div key={x.l} style={{ background: "var(--dash-card)", border: "1px solid var(--dash-border)", borderRadius: 12, padding: 16 }}>
+                    <p style={{ fontSize: 10, color: "var(--dash-text-dim)", textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 500, margin: "0 0 4px" }}>{x.l}</p>
+                    <p style={{ fontSize: 20, fontWeight: 700, color: x.c || "var(--dash-text)", margin: 0 }}>{x.v}</p>
+                  </div>
+                ))}
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
+                {(["orders", "testers", "applications"] as AdminSubTab[]).map(t => (
+                  <button key={t} onClick={() => setSubTab(t)}
+                    style={{ background: "var(--dash-card)", border: "1px solid var(--dash-border)", borderRadius: 12, padding: 16, textAlign: "left", cursor: "pointer", fontSize: 13, fontWeight: 500, color: "var(--dash-accent)" }}>
+                    View {t} →
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Orders */}
+          {subTab === "orders" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <p style={{ fontSize: 14, fontWeight: 600, color: "var(--dash-text)", margin: 0 }}>{orders.length} orders</p>
+              {orders.map((o) => (
+                <div key={aNum(o.id)} style={{ background: "var(--dash-card)", border: "1px solid var(--dash-border)", borderRadius: 12, padding: 16 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", gap: 8, marginBottom: 8 }}>
+                    <div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                        <span style={{ fontSize: 14, fontWeight: 600, color: "var(--dash-text)" }}>{dom(aStr(o.app_url))}</span>
+                        <ABadge status={aStr(o.status)} />
+                      </div>
+                      <p style={{ fontSize: 12, color: "var(--dash-text-dim)", margin: "4px 0 0" }}>{aStr(o.email)}</p>
+                    </div>
+                    <div style={{ textAlign: "right", flexShrink: 0 }}>
+                      <p style={{ fontSize: 15, fontWeight: 700, color: "var(--dash-text)", margin: 0 }}>${(aNum(o.price_cents) / 100).toFixed(0)}</p>
+                      <p style={{ fontSize: 10, color: "var(--dash-text-dim)", margin: 0 }}>{aNum(o.testers_count)} testers</p>
+                    </div>
+                  </div>
+                  {o.description && <p style={{ fontSize: 12, color: "var(--dash-text-secondary)", margin: "0 0 8px" }}>{aStr(o.description)}</p>}
+                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "flex-end" }}>
+                    {aStr(o.status) === "pending_payment" && <ABtn onClick={() => act("PATCH", { type: "order", id: o.id, status: "paid" })} color="#16A34A">Mark Paid</ABtn>}
+                    {aStr(o.status) === "paid" && <ABtn onClick={() => act("PATCH", { type: "order", id: o.id, status: "completed" })} color="#2563EB">Complete</ABtn>}
+                    <ABtn onClick={() => act("PATCH", { type: "order", id: o.id, status: "refunded" })} color="#9333EA">Refund</ABtn>
+                    <ABtn onClick={() => { if (confirm("Delete order?")) act("DELETE", { type: "order", id: o.id }); }} color="#EF4444">Delete</ABtn>
+                  </div>
+                </div>
+              ))}
+              {!orders.length && <p style={{ color: "var(--dash-text-dim)" }}>No orders yet.</p>}
+            </div>
+          )}
+
+          {/* Testers */}
+          {subTab === "testers" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <p style={{ fontSize: 14, fontWeight: 600, color: "var(--dash-text)", margin: 0 }}>{testers.length} testers</p>
+              {testers.map((t) => (
+                <div key={aNum(t.id)} style={{ background: "var(--dash-card)", border: "1px solid var(--dash-border)", borderRadius: 12, padding: 16 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", gap: 8, marginBottom: 8 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <div style={{ width: 36, height: 36, borderRadius: "50%", background: avatarColor(aStr(t.name)), display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 13, fontWeight: 700, flexShrink: 0 }}>
+                        {aStr(t.name).charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          <span style={{ fontSize: 14, fontWeight: 600, color: "var(--dash-text)" }}>{aStr(t.name)}</span>
+                          <ABadge status={aStr(t.status)} />
+                        </div>
+                        <p style={{ fontSize: 12, color: "var(--dash-text-dim)", margin: "2px 0 0" }}>{aStr(t.email)} · {aStr(t.location) || "No location"}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
+                    {aStr(t.status) === "active" && <ABtn onClick={() => act("PATCH", { type: "tester", id: t.id, status: "banned" })} color="#EF4444">Ban</ABtn>}
+                    {aStr(t.status) === "banned" && <ABtn onClick={() => act("PATCH", { type: "tester", id: t.id, status: "active" })} color="#16A34A">Unban</ABtn>}
+                    <ABtn onClick={() => { if (confirm(`Delete ${aStr(t.name)}?`)) act("DELETE", { type: "tester", id: t.id }); }} color="#EF4444">Delete</ABtn>
+                  </div>
+                </div>
+              ))}
+              {!testers.length && <p style={{ color: "var(--dash-text-dim)" }}>No testers yet.</p>}
+            </div>
+          )}
+
+          {/* Applications */}
+          {subTab === "applications" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <p style={{ fontSize: 14, fontWeight: 600, color: "var(--dash-text)", margin: 0 }}>{applications.length} applications</p>
+              {applications.map((a) => (
+                <div key={aNum(a.id)} style={{ background: "var(--dash-card)", border: "1px solid var(--dash-border)", borderRadius: 12, padding: 16 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", gap: 8, marginBottom: 8 }}>
+                    <div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: "var(--dash-text)" }}>{aStr(a.tester_name)}</span>
+                        <span style={{ color: "var(--dash-text-dim)" }}>→</span>
+                        <span style={{ fontSize: 13, color: "var(--dash-text-secondary)" }}>{dom(aStr(a.app_url))}</span>
+                        <ABadge status={aStr(a.status)} />
+                      </div>
+                      <p style={{ fontSize: 11, color: "var(--dash-text-dim)", margin: "4px 0 0" }}>{aStr(a.tester_email)}</p>
+                    </div>
+                    <p style={{ fontSize: 14, fontWeight: 700, color: "var(--dash-text)", margin: 0, flexShrink: 0 }}>${(aNum(a.price_per_tester_cents) / 100).toFixed(0)}</p>
+                  </div>
+                  <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
+                    {aStr(a.status) === "pending" && <>
+                      <ABtn onClick={() => act("PATCH", { type: "application", id: a.id, status: "accepted" })} color="#16A34A">Accept</ABtn>
+                      <ABtn onClick={() => act("PATCH", { type: "application", id: a.id, status: "rejected" })} color="#EF4444">Reject</ABtn>
+                    </>}
+                    {aStr(a.status) === "accepted" && !a.payout_transfer_id && <ABtn onClick={() => { if (confirm("Complete & pay?")) payout(a.id); }} color="#16A34A" id={`payout-${a.id}`}>Complete & Pay</ABtn>}
+                    <ABtn onClick={() => { if (confirm("Delete?")) act("DELETE", { type: "application", id: a.id }); }} color="#EF4444">Delete</ABtn>
+                  </div>
+                </div>
+              ))}
+              {!applications.length && <p style={{ color: "var(--dash-text-dim)" }}>No applications yet.</p>}
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }
