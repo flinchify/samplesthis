@@ -1624,7 +1624,18 @@ flinchify results ft_42`}</code></pre>
             <p style={{ fontSize: 12, fontWeight: 600, color: "#16A34A", margin: "0 0 8px" }}>Key created — copy it now:</p>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <code style={{ flex: 1, fontSize: 12, color: "#16A34A", background: "rgba(34,197,94,0.06)", padding: "8px 12px", borderRadius: 6, fontFamily: "monospace", wordBreak: "break-all" }}>{newKey}</code>
-              <button onClick={() => navigator.clipboard.writeText(newKey)}
+              <button onClick={() => {
+                  navigator.clipboard.writeText(newKey).then(() => {
+                    const btn = document.activeElement as HTMLButtonElement;
+                    if (btn) { btn.textContent = "Copied!"; setTimeout(() => { btn.textContent = "Copy"; }, 2000); }
+                  }).catch(() => {
+                    // Fallback: select text
+                    const el = document.querySelector('code') as HTMLElement;
+                    if (el) { const range = document.createRange(); range.selectNodeContents(el); const sel = window.getSelection(); sel?.removeAllRanges(); sel?.addRange(range); document.execCommand('copy'); sel?.removeAllRanges(); }
+                    const btn = document.activeElement as HTMLButtonElement;
+                    if (btn) { btn.textContent = "Copied!"; setTimeout(() => { btn.textContent = "Copy"; }, 2000); }
+                  });
+                }}
                 style={{ padding: "8px 12px", borderRadius: 6, border: "none", background: "rgba(34,197,94,0.15)", color: "#16A34A", fontSize: 12, fontWeight: 500, cursor: "pointer", flexShrink: 0 }}>
                 Copy
               </button>

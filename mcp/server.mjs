@@ -7,14 +7,14 @@
  * Works with Claude Desktop, Cursor, and any MCP-compatible client.
  * 
  * Setup:
- *   FLINCHIFY_API_KEY=fk_... npx @flinchify/mcp-server
+ *   FLINCHIFY_API_KEY=fk_... npx flinchify-mcp
  * 
  * Or add to claude_desktop_config.json:
  *   {
  *     "mcpServers": {
  *       "flinchify": {
  *         "command": "npx",
- *         "args": ["@flinchify/mcp-server"],
+ *         "args": ["flinchify-mcp"],
  *         "env": { "FLINCHIFY_API_KEY": "fk_your_key" }
  *       }
  *     }
@@ -38,7 +38,7 @@ if (!API_KEY) {
   process.exit(1);
 }
 
-// HTTP helper
+// HTTP helper — now returns { data, status }
 function apiRequest(method, path, body = null) {
   return new Promise((resolve, reject) => {
     const url = new URL(API_BASE + path);
@@ -50,15 +50,19 @@ function apiRequest(method, path, body = null) {
       headers: {
         "Authorization": `Bearer ${API_KEY}`,
         "Content-Type": "application/json",
-        "User-Agent": "flinchify-mcp/0.1.0",
+        "User-Agent": "flinchify-mcp/0.2.0",
       },
     };
     const req = request(opts, (res) => {
       let data = "";
       res.on("data", (c) => (data += c));
       res.on("end", () => {
-        try { resolve(JSON.parse(data)); }
-        catch { resolve({ raw: data }); }
+        try {
+          const parsed = JSON.parse(data);
+          resolve({ data: parsed, status: res.statusCode });
+        } catch {
+          resolve({ data: { raw: data }, status: res.statusCode });
+        }
       });
     });
     req.on("error", reject);
@@ -67,9 +71,26 @@ function apiRequest(method, path, body = null) {
   });
 }
 
+// Check for API errors
+function checkError(res) {
+  if (res.status === 401) {
+    return "Authentication failed. Check your FLINCHIFY_API_KEY is valid. Get a key at https://flinchify.com/dashboard → API Keys";
+  }
+  if (res.status === 403) {
+    return "Access denied. Your API key may be revoked.";
+  }
+  if (res.status >= 500) {
+    return `Server error (${res.status}): ${res.data?.message || "Please try again later."}`;
+  }
+  if (res.data?.error) {
+    return `Error: ${res.data.message || res.data.error}`;
+  }
+  return null;
+}
+
 // Server setup
 const server = new Server(
-  { name: "flinchify", version: "0.1.0" },
+  { name: "flinchify", version: "0.2.0" },
   { capabilities: { tools: {} } }
 );
 
@@ -124,7 +145,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   try {
     switch (name) {
       case "create_test": {
-        const result = await apiRequest("POST", "/tests", {
+        const res = await apiRequest("POST", "/tests", {
           url: args.url,
           flow: args.flow || "General usability test",
           testers: args.testers || 3,
@@ -134,10 +155,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           time_limit_hours: args.time_limit_hours || 24,
         });
 
-        if (result.error) {
-          return { content: [{ type: "text", text: `Error: ${result.message || result.error}` }] };
-        }
+        const err = checkError(res);
+        if (err) return { content: [{ type: "text", text: err }] };
 
+        const result = res.data;
         let text = `Test created!\n\nID: ${result.test_id}\nStatus: ${result.status}\nTesters: ${result.testers}\nTotal: $${result.total} ${result.currency?.toUpperCase() || "USD"}`;
 
         if (result.payment === "credits") {
@@ -152,17 +173,17 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case "get_test_results": {
-        const result = await apiRequest("GET", `/tests/${args.test_id}`);
+        const res = await apiRequest("GET", `/tests/${args.test_id}`);
 
-        if (result.error) {
-          return { content: [{ type: "text", text: `Error: ${result.message || result.error}` }] };
-        }
+        const err = checkError(res);
+        if (err) return { content: [{ type: "text", text: err }] };
 
+        const result = res.data;
         let text = `Test: ${result.test_id}\nURL: ${result.url}\nStatus: ${result.status}\nFlow: ${result.description}\nTesters: ${result.results?.testers_completed || 0}/${result.testers_requested} completed`;
 
         if (result.results?.issues?.length) {
           text += "\n\nIssues found:";
-          result.results.issues.forEach((issue, i) => {
+          result.results.issues.forEach((issue) => {
             text += `\n  [${issue.severity}] ${issue.description} — ${issue.tester}`;
           });
         }
@@ -180,8 +201,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case "list_tests": {
-        const result = await apiRequest("GET", "/tests");
+        const res = await apiRequest("GET", "/tests");
 
+        const err = checkError(res);
+        if (err) return { content: [{ type: "text", text: err }] };
+
+        const result = res.data;
         if (!result.tests?.length) {
           return { content: [{ type: "text", text: "No tests yet. Use create_test to submit your first test job." }] };
         }
@@ -195,8 +220,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case "check_credits": {
-        const result = await apiRequest("GET", "/credits");
+        const res = await apiRequest("GET", "/credits");
 
+        const err = checkError(res);
+        if (err) return { content: [{ type: "text", text: err }] };
+
+        const result = res.data;
         let text = `Credit balance: $${result.balance || "0.00"}`;
         if (result.packs?.length) {
           text += "\n\nAvailable packs:";
@@ -213,7 +242,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return { content: [{ type: "text", text: `Unknown tool: ${name}` }] };
     }
   } catch (error) {
-    return { content: [{ type: "text", text: `Error: ${error.message}` }] };
+    return { content: [{ type: "text", text: `Connection error: ${error.message}. Is flinchify.com reachable?` }] };
   }
 });
 
