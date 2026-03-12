@@ -24,6 +24,7 @@ export default function PostTestForm() {
     booking_date: "",
     booking_time: "",
     booking_duration: 30,
+    private_listing: false,
   });
 
   const pricePerTester = form.custom_price ? Number(form.custom_price) : form.price_per_tester;
@@ -47,6 +48,7 @@ export default function PostTestForm() {
           test_mode: form.test_mode,
           tasks: form.test_mode === "tasks" ? form.tasks.filter(t => t.trim()) : [],
           description: form.test_mode === "freeuse" ? form.description : form.tasks.filter(t => t.trim()).join(" → "),
+          private_listing: form.private_listing,
           ...(form.booking_enabled && {
             booking: {
               scheduled_date: form.booking_date,
@@ -164,6 +166,19 @@ export default function PostTestForm() {
             <label className="block text-[12px] font-medium text-[var(--text-muted)] mb-1">Target audience (optional)</label>
             <input className="input" placeholder="E.g. Women 25-40 who shop online" value={form.target_audience}
               onChange={e => setForm({ ...form, target_audience: e.target.value })} />
+          </div>
+
+          {/* Privacy toggle */}
+          <div className="border border-black/[0.06] rounded-xl p-4">
+            <label className="flex items-center gap-2.5 cursor-pointer">
+              <input type="checkbox" checked={form.private_listing}
+                onChange={e => setForm({ ...form, private_listing: e.target.checked })}
+                className="w-4 h-4 rounded border-black/[0.15] accent-orange-500" />
+              <div>
+                <span className="text-[13px] font-medium text-[var(--text)]">Keep my business private</span>
+                <p className="text-[11px] text-[var(--text-dim)]">Your name and profile won't be visible on the job listing. Testers only see the app URL and tasks.</p>
+              </div>
+            </label>
           </div>
 
           <div>

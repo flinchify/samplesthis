@@ -8,13 +8,19 @@ export async function GET() {
     await ensureTables();
     const sql = getSql();
     const rows = await sql`
-      SELECT id, app_url, app_type, description, target_audience, testers_count, 
-             price_per_tester_cents, status, created_at,
-             (SELECT COUNT(*)::int FROM applications WHERE order_id = orders.id) as applications_count,
-             (SELECT COUNT(*)::int FROM applications WHERE order_id = orders.id AND status = 'accepted') as accepted_count
-      FROM orders 
-      WHERE status = 'paid' 
-      ORDER BY created_at DESC
+      SELECT o.id, o.app_url, o.app_type, o.description, o.target_audience, o.testers_count, 
+             o.price_per_tester_cents, o.status, o.created_at, o.time_limit_hours,
+             o.test_mode, o.tasks, o.private_listing,
+             CASE WHEN o.private_listing = true THEN NULL ELSE t.name END as poster_name,
+             CASE WHEN o.private_listing = true THEN NULL ELSE t.id END as poster_id,
+             CASE WHEN o.private_listing = true THEN NULL ELSE t.bio END as poster_bio,
+             CASE WHEN o.private_listing = true THEN NULL ELSE t.avg_rating END as poster_rating,
+             (SELECT COUNT(*)::int FROM applications WHERE order_id = o.id) as applications_count,
+             (SELECT COUNT(*)::int FROM applications WHERE order_id = o.id AND status = 'accepted') as accepted_count
+      FROM orders o
+      LEFT JOIN testers t ON t.email = o.email
+      WHERE o.status = 'paid' 
+      ORDER BY o.created_at DESC
     `;
     return NextResponse.json({ jobs: rows });
   } catch (e: unknown) {
@@ -64,14 +70,15 @@ export async function POST(req: NextRequest) {
     const testMode = body.test_mode === "tasks" ? "tasks" : "freeuse";
     const tasks = Array.isArray(body.tasks) ? body.tasks.filter((t: string) => t?.trim()).map((t: string) => sanitize(t)) : [];
 
+    const privateListing = body.private_listing === true;
     const sql = getSql();
 
     const rows = await sql`
-      INSERT INTO orders (email, company, app_url, app_type, description, target_audience, plan, testers_count, price_cents, price_per_tester_cents, time_limit_hours, test_mode, tasks, status)
+      INSERT INTO orders (email, company, app_url, app_type, description, target_audience, plan, testers_count, price_cents, price_per_tester_cents, time_limit_hours, test_mode, tasks, status, private_listing)
       VALUES (
         ${email.toLowerCase()}, ${company || null}, ${app_url}, ${app_type || null},
         ${description || null}, ${target_audience || null}, ${'custom'}, ${count},
-        ${totalCents}, ${Math.round(perTester * 100)}, ${timeLimitHours}, ${testMode}, ${JSON.stringify(tasks)}, ${'pending_payment'}
+        ${totalCents}, ${Math.round(perTester * 100)}, ${timeLimitHours}, ${testMode}, ${JSON.stringify(tasks)}, ${'pending_payment'}, ${privateListing}
       )
       RETURNING id
     `;

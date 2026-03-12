@@ -945,16 +945,19 @@ function Dashboard() {
                             <span>{job.applications_count} applied</span>
                             <span>{spots > 0 ? `${spots} spots` : "Full"}</span>
                           </div>
-                          {hasApplied ? (
-                            <button disabled style={{ width: "100%", padding: "8px 0", borderRadius: 8, border: "1px solid var(--dash-border)", background: "transparent", fontSize: 12, fontWeight: 500, color: "var(--dash-text-dim)", cursor: "default" }}>Applied</button>
-                          ) : spots <= 0 ? (
-                            <button disabled style={{ width: "100%", padding: "8px 0", borderRadius: 8, border: "1px solid var(--dash-border)", background: "transparent", fontSize: 12, fontWeight: 500, color: "var(--dash-text-dim)", cursor: "default" }}>Full</button>
-                          ) : (
-                            <button onClick={() => applyToJob(job.id)} disabled={applying === job.id}
-                              style={{ width: "100%", padding: "8px 0", borderRadius: 8, border: "none", background: "var(--dash-text)", color: "var(--dash-bg)", fontSize: 12, fontWeight: 600, cursor: "pointer", opacity: applying === job.id ? 0.5 : 1 }}>
-                              {applying === job.id ? "Applying..." : "Apply"}
-                            </button>
-                          )}
+                          <div style={{ display: "flex", gap: 8 }}>
+                            <Link href={`/jobs/${job.id}`} style={{ flex: 1, display: "block", padding: "8px 0", borderRadius: 8, border: "1px solid var(--dash-border)", background: "transparent", fontSize: 12, fontWeight: 500, color: "var(--dash-text-secondary)", cursor: "pointer", textAlign: "center", textDecoration: "none" }}>View details</Link>
+                            {hasApplied ? (
+                              <button disabled style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: "1px solid var(--dash-border)", background: "transparent", fontSize: 12, fontWeight: 500, color: "var(--dash-text-dim)", cursor: "default" }}>Applied</button>
+                            ) : spots <= 0 ? (
+                              <button disabled style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: "1px solid var(--dash-border)", background: "transparent", fontSize: 12, fontWeight: 500, color: "var(--dash-text-dim)", cursor: "default" }}>Full</button>
+                            ) : (
+                              <button onClick={() => applyToJob(job.id)} disabled={applying === job.id}
+                                style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: "none", background: "var(--dash-text)", color: "var(--dash-bg)", fontSize: 12, fontWeight: 600, cursor: "pointer", opacity: applying === job.id ? 0.5 : 1 }}>
+                                {applying === job.id ? "Applying..." : "Apply"}
+                              </button>
+                            )}
+                          </div>
                         </div>
                       );
                     })}
