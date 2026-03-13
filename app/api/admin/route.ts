@@ -14,7 +14,7 @@ async function checkAuth(req: NextRequest) {
   const token = req.cookies.get("tester_token")?.value;
   if (token) {
     const sql = getSql();
-    const rows = await sql`SELECT email FROM testers WHERE token = ${token}`;
+    const rows = await sql`SELECT email FROM testers WHERE auth_token = ${token}`;
     if (rows.length && ADMIN_EMAILS.includes(rows[0].email?.toLowerCase())) return true;
   }
   return false;
