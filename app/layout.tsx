@@ -36,6 +36,35 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${body.variable} ${sora.variable}`}>
       <body className="font-[family-name:var(--font-body)] antialiased overflow-x-hidden">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              "name": "Flinchify",
+              "url": "https://flinchify.com",
+              "description": "The human signal layer for AI-built products. Real humans test your app and find every friction point — screen recordings, bug reports, and honest feedback delivered in hours.",
+              "applicationCategory": "DeveloperApplication",
+              "operatingSystem": "Web",
+              "offers": {
+                "@type": "Offer",
+                "price": "5",
+                "priceCurrency": "USD",
+                "description": "Pay per tester, starting at $5 per test"
+              },
+              "creator": {
+                "@type": "Organization",
+                "name": "Flinchify",
+                "url": "https://flinchify.com",
+                "sameAs": [
+                  "https://x.com/Flinchify",
+                  "https://www.linkedin.com/in/flinchify-undefined-60b4123b6/"
+                ]
+              }
+            }),
+          }}
+        />
         {children}
         <GlobalAuth />
         <SupportChat />
